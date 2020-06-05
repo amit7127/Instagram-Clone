@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,13 +16,14 @@ import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentSearchBinding
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.search.presenter.UserSerchAdapter
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
 
     lateinit var binding: FragmentSearchBinding
     lateinit var viewModel: SearchFragmentViewModel
@@ -52,7 +54,7 @@ class SearchFragment : Fragment() {
             LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = UserSerchAdapter(listOfUsers)
+        adapter = UserSerchAdapter(listOfUsers, this)
         recyclerView.adapter = adapter
     }
 
@@ -76,5 +78,23 @@ class SearchFragment : Fragment() {
                     }
                 }
             })
+    }
+
+    override fun onFollowButtonClicked(userId: String, view: View) {
+        if (view is Button) {
+            val status = view.text
+            viewModel.setFollowStatus(userId, status.toString()).observe(this, Observer {
+                when (it.status) {
+                    Status.statusSuccess -> {
+                        Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                    else -> {
+                        Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            })
+        }
     }
 }

@@ -19,6 +19,8 @@ class UserDetailsModel {
     var email: String = ""
     var bio: String = ""
     var image: String = ""
+    var Follower: Map<String, Boolean> = HashMap()
+    var Following: Map<String, Boolean> = HashMap()
 
     constructor()
 
@@ -28,7 +30,9 @@ class UserDetailsModel {
         userName: String,
         email: String,
         bio: String,
-        image: String
+        image: String,
+        Follower: Map<String, Boolean>,
+        Following: Map<String, Boolean>
     ) {
         this.userId = userId
         this.fullName = fullName
@@ -36,7 +40,7 @@ class UserDetailsModel {
         this.email = email
         this.bio = bio
         this.image = image
+        this.Follower = Follower
+        this.Following = Following
     }
-
-
 }

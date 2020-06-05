@@ -57,7 +57,9 @@ class SignUpViewModel : ViewModel() {
             userName,
             email,
             "IT user's BIO",
-            "https://firebasestorage.googleapis.com/v0/b/insta-clone-42122.appspot.com/o/Default%20Images%2Fprofile.png?alt=media&token=c39ad3dc-6007-43c8-a1cb-8afe52f17c89"
+            "https://firebasestorage.googleapis.com/v0/b/insta-clone-42122.appspot.com/o/Default%20Images%2Fprofile.png?alt=media&token=c39ad3dc-6007-43c8-a1cb-8afe52f17c89",
+            HashMap(),
+            HashMap()
         )
 
         result = repo.saveUserInFirebase(userDetailsModel)

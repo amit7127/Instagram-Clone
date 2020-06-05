@@ -2,8 +2,10 @@ package com.android.amit.instaclone.repo
 
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.android.amit.instaclone.data.FieldName
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
+import com.android.amit.instaclone.util.Status
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -19,6 +21,10 @@ import java.util.*
  */
 class Repository {
     val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun getCurrentUserId(): String {
+        return FirebaseAuth.getInstance().currentUser!!.uid
+    }
 
     fun createUSerWithEmailAndPassword(
         email: String,
@@ -65,7 +71,7 @@ class Repository {
     fun saveUserInFirebase(
         userDetails: UserDetailsModel
     ): MutableLiveData<Resource<Unit>> {
-        var userId = FirebaseAuth.getInstance().currentUser!!.uid
+        var userId = getCurrentUserId()
         userDetails.userId = userId
         userDetails.fullName = userDetails.fullName.toLowerCase(Locale.getDefault())
         userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
@@ -75,7 +81,8 @@ class Repository {
         val resouce = Resource<Unit>()
         result.value = resouce.loading()
 
-        val userRef: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Users")
+        val userRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
         userRef.child(userId).setValue(userDetails).addOnCompleteListener {
             if (it.isSuccessful) {
                 result.value = resouce.success(null)
@@ -87,9 +94,7 @@ class Repository {
         return result
     }
 
-
     fun getUsers(nameQuery: String): MutableLiveData<Resource<ArrayList<UserDetailsModel>>> {
-
         val users = arrayListOf<UserDetailsModel>()
 
         val result: MutableLiveData<Resource<ArrayList<UserDetailsModel>>> =
@@ -100,10 +105,11 @@ class Repository {
         if (TextUtils.isEmpty(nameQuery)) {
             result.value = resouce.success(null)
         } else {
-
-            val userRef: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Users")
+            val userId = getCurrentUserId()
+            val userRef: DatabaseReference =
+                FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
             val query =
-                userRef.orderByChild("fullName").startAt(nameQuery).endAt(
+                userRef.orderByChild(FieldName.FULL_NAME_COLUM_NAME).startAt(nameQuery).endAt(
                     nameQuery + "\uf8ff"
                 )
 
@@ -113,15 +119,66 @@ class Repository {
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    users.clear()
                     for (snapShot in dataSnapShot.children) {
                         val user = snapShot.getValue(UserDetailsModel::class.java)
-                        if (user != null) {
+                        if (user != null && !user.userId.equals(userId)) {
                             users.add(user)
                         }
                     }
                     result.value = resouce.success(users)
                 }
             })
+        }
+        return result
+    }
+
+    fun follow(followUserId: String, status: String): MutableLiveData<Resource<Unit>> {
+
+        val result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData<Resource<Unit>>()
+        val resouce = Resource<Unit>()
+        result.value = resouce.loading()
+
+        val userId = getCurrentUserId()
+        if (status.equals(Status.follow)) {
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
+                .child(FieldName.FOLLOWING_COLUMN_NAME).child(followUserId).setValue(true)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
+                            .child(followUserId)
+                            .child(FieldName.FOLLOWER_COLUMN_NAME).child(userId).setValue(true)
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    result.value = resouce.success(null)
+                                } else {
+                                    result.value = resouce.error("Unable to update status")
+                                }
+                            }
+                    } else {
+                        result.value = resouce.error("Unable to update status")
+                    }
+                }
+        } else if (status.equals(Status.following)) {
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
+                .child(FieldName.FOLLOWING_COLUMN_NAME).child(followUserId).removeValue()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
+                            .child(followUserId)
+                            .child(FieldName.FOLLOWER_COLUMN_NAME).child(userId).removeValue()
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    result.value = resouce.success(null)
+                                } else {
+                                    result.value = resouce.error("Unable to update status")
+                                }
+                            }
+                    } else {
+                        result.value = resouce.error("Unable to update status")
+                    }
+                }
         }
         return result
     }

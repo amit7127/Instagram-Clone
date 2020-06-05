@@ -1,6 +1,5 @@
 package com.android.amit.instaclone.view.search
 
-import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.amit.instaclone.data.Resource
@@ -17,14 +16,18 @@ import com.android.amit.instaclone.repo.Repository
  */
 class SearchFragmentViewModel : ViewModel() {
     var searchQuerry: String = ""
+    var repo: Repository = Repository()
 
     fun searchUserByQuerry(querry: String): MutableLiveData<Resource<ArrayList<UserDetailsModel>>> {
-        var result = MutableLiveData<Resource<ArrayList<UserDetailsModel>>>()
+        var result: MutableLiveData<Resource<ArrayList<UserDetailsModel>>>
 
 //        if (!TextUtils.isEmpty(querry)) {
-            val repo = Repository()
-            result = repo.getUsers(querry)
+        result = repo.getUsers(querry)
 //        }
         return result
+    }
+
+    fun setFollowStatus(userId: String, currentStatus: String): MutableLiveData<Resource<Unit>> {
+        return repo.follow(userId, currentStatus)
     }
 }

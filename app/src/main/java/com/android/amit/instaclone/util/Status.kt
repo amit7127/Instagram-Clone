@@ -13,5 +13,7 @@ class Status {
         val statusSuccess : String = "SUCCESS"
         val statusError : String = "ERROR"
         val statusLoading : String = "LOADING"
+        val following : String = "Following"
+        val follow : String = "Follow"
     }
 }
