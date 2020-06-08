@@ -1,5 +1,6 @@
 package com.android.amit.instaclone.view.acountsettings
 
+import android.net.Uri
 import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.LiveData
@@ -23,6 +24,7 @@ class AccountSettingsViewModel : ViewModel() {
     var fullName: String = ""
     var userName: String = ""
     var userBio: String = ""
+    var profileImageUri: Uri = Uri.EMPTY
     var mUserDetailsModel = UserDetailsModel()
     var repo: Repository = Repository()
 
@@ -32,6 +34,7 @@ class AccountSettingsViewModel : ViewModel() {
             this.fullName = userDetailsModel.fullName.capitalizeWords()
             this.userName = userDetailsModel.userName.capitalizeWords()
             this.userBio = userDetailsModel.bio
+            profileImageUri = Uri.parse(userDetailsModel.image)
             this.mUserDetailsModel = userDetailsModel
         }
     }
@@ -45,7 +48,11 @@ class AccountSettingsViewModel : ViewModel() {
             MutableLiveData<Resource<Unit>>()
 
         if (validateEteredData(view)) {
-            result = repo.saveUserInFirebase(mUserDetailsModel)
+            mUserDetailsModel.fullName = this.fullName
+            mUserDetailsModel.userName = this.userName
+            mUserDetailsModel.bio = this.userBio
+
+            result = repo.saveUserProfileWithImage(mUserDetailsModel, profileImageUri)
         }
         return result
     }
@@ -81,5 +88,9 @@ class AccountSettingsViewModel : ViewModel() {
 
             else -> return true
         }
+    }
+
+    fun setImage(uri: Uri) {
+        profileImageUri = uri
     }
 }

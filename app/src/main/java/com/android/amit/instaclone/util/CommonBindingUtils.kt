@@ -1,8 +1,11 @@
 package com.android.amit.instaclone.util
 
+import android.net.Uri
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.android.amit.instaclone.util.StringUtils.capitalizeWords
+import com.squareup.picasso.Picasso
 
 
 /**
@@ -17,4 +20,11 @@ import com.android.amit.instaclone.util.StringUtils.capitalizeWords
 @BindingAdapter("android:set_name")
 fun setName(view: TextView, text: String) {
     view.text = text.capitalizeWords()
+}
+
+@BindingAdapter("load_image")
+fun loadImage(view: ImageView?, imageUri: Uri) {
+    Picasso.get()
+        .load(imageUri)
+        .into(view);
 }

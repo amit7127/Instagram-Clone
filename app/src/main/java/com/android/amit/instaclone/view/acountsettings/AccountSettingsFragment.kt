@@ -1,5 +1,6 @@
 package com.android.amit.instaclone.view.acountsettings
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.signin.SigninActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.fragment_account_settings.*
 
 /**
@@ -111,7 +113,21 @@ class AccountSettingsFragment : Fragment() {
         })
     }
 
-    fun onFragmentClosed(){
+    fun onFragmentClosed() {
         view?.findNavController()?.popBackStack()
+    }
+
+    fun onChangeImageClicked() {
+        context?.let { CropImage.activity().setAspectRatio(1, 1).start(it, this) }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            val result = CropImage.getActivityResult(data)
+            viewModel.setImage(result.uri)
+            accountSettingBinding.invalidateAll()
+        }
     }
 }

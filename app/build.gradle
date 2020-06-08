@@ -71,10 +71,16 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //Image crop library
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+
     //Butter knife
     implementation 'com.jakewharton:butterknife:10.2.1'
     kapt 'com.jakewharton:butterknife-compiler:10.2.1'
 
     //Circular image view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //Picasso for image
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

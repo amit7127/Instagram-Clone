@@ -1,5 +1,6 @@
 package com.android.amit.instaclone.repo
 
+import android.net.Uri
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.android.amit.instaclone.data.FieldName
@@ -9,6 +10,8 @@ import com.android.amit.instaclone.util.Status
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.util.*
 
 /**
@@ -204,6 +207,52 @@ class Repository {
                 }
             }
         })
+        return result
+    }
+
+    fun saveUserProfileWithImage(userDetails: UserDetailsModel, profilePictureUri : Uri) : MutableLiveData<Resource<Unit>>{
+
+        var result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData<Resource<Unit>>()
+        val resouce = Resource<Unit>()
+        result.value = resouce.loading()
+
+        var  firebaseStorage : StorageReference = FirebaseStorage.getInstance().getReference().child("Profile Images")
+
+        var uploadTask = firebaseStorage.putFile(profilePictureUri)
+
+        val urlTask = uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    result.value = resouce.error("Unable to update")
+                    throw it
+                }
+            }
+            firebaseStorage.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                userDetails.image = downloadUri.toString()
+                //result.value = saveUserInFirebase(userDetails).value
+
+                userDetails.fullName = userDetails.fullName.toLowerCase(Locale.getDefault())
+                userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
+
+                val userRef: DatabaseReference =
+                    FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
+                userRef.child(userDetails.userId).setValue(userDetails).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        result.value = resouce.success(null)
+                    } else {
+                        result.value = resouce.error("Failed to save data")
+                        FirebaseAuth.getInstance().signOut()
+                    }
+                }
+            } else {
+                result.value = resouce.error("Unable to update")
+            }
+        }
+
         return result
     }
 }

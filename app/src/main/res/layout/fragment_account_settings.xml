@@ -71,7 +71,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edit_profile_appbar"
             android:src="@drawable/profile"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="15dp"
+            load_image="@{viewModel.profileImageUri}" />
 
         <TextView
             android:id="@+id/change_image_text_button"
@@ -84,7 +85,8 @@
             android:layout_marginTop="6dp"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:onClick="@{() -> accountSettings.onChangeImageClicked()}" />
 
         <EditText
             android:id="@+id/fullname_edittext_editprofile"
