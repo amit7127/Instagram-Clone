@@ -12,7 +12,5 @@ import java.util.*
  */
 object StringUtils {
     @ExperimentalStdlibApi
-    fun capitalizeEachWord(setntance: String): String {
-        return setntance.capitalize(Locale.getDefault())
-    }
+    fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it.capitalize(Locale.getDefault()) }
 }

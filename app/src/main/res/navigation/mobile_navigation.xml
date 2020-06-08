@@ -13,24 +13,27 @@
         android:id="@+id/searchFragment"
         android:name="com.android.amit.instaclone.view.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.android.amit.instaclone.view.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile">
         <action
-            android:id="@+id/action_profileFragment_to_acountSettingsActivity"
-            app:destination="@id/acountSettingsActivity" />
+            android:id="@+id/action_profileFragment_to_accountSettingsFragment"
+            app:destination="@id/accountSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.android.amit.instaclone.view.notification.NotificationFragment"
         android:label="notification_fragment"
         tools:layout="@layout/notification_fragment" />
-    <activity
-        android:id="@+id/acountSettingsActivity"
-        android:name="com.android.amit.instaclone.view.acountsettings.AcountSettingsActivity"
-        android:label="activity_acount_settings"
-        tools:layout="@layout/activity_acount_settings" />
+    <fragment
+        android:id="@+id/accountSettingsFragment"
+        android:name="com.android.amit.instaclone.view.acountsettings.AccountSettingsFragment"
+        android:label="AccountSettingsFragment" />
 </navigation>

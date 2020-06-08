@@ -1,10 +1,8 @@
 package com.android.amit.instaclone
 
 import android.os.Bundle
-import android.widget.TextView
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
@@ -19,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     @BindView(R.id.nav_view)
     lateinit var navView: BottomNavigationView
 
-    lateinit var navController : NavController
+    lateinit var navController: NavController
 
     private val onNavigationItemClickListener =
         BottomNavigationView.OnNavigationItemSelectedListener {
@@ -45,5 +43,26 @@ class MainActivity : AppCompatActivity() {
 
         navController = Navigation.findNavController(this, R.id.nav_container)
         NavigationUI.setupWithNavController(navView, navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.homeFragment -> showBottomNav()
+                R.id.searchFragment -> showBottomNav()
+                R.id.notificationFragment -> showBottomNav()
+                R.id.profileFragment -> showBottomNav()
+                else -> hideBottomNav()
+            }
+        }
+
+    }
+
+    private fun showBottomNav() {
+        navView.visibility = View.VISIBLE
+
+    }
+
+    private fun hideBottomNav() {
+        navView.visibility = View.GONE
+
     }
 }

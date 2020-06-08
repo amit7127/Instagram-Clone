@@ -182,4 +182,28 @@ class Repository {
         }
         return result
     }
+
+    fun getUserDetails(userId: String): MutableLiveData<Resource<UserDetailsModel>> {
+
+        var result = MutableLiveData<Resource<UserDetailsModel>>()
+        val resouce = Resource<UserDetailsModel>()
+
+        val userRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
+        result.value = resouce.loading()
+        userRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+            override fun onDataChange(dataSnapShot: DataSnapshot) {
+                if (dataSnapShot.exists()) {
+                    val user = dataSnapShot.getValue(UserDetailsModel::class.java)
+                    result.value = resouce.success(user)
+                } else {
+                    result.value = resouce.error("No user exists")
+                }
+            }
+        })
+        return result
+    }
 }

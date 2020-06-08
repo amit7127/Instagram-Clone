@@ -1,9 +1,8 @@
 package com.android.amit.instaclone.util
 
 import android.widget.TextView
-
 import androidx.databinding.BindingAdapter
-import java.util.*
+import com.android.amit.instaclone.util.StringUtils.capitalizeWords
 
 
 /**
@@ -17,5 +16,5 @@ import java.util.*
 @ExperimentalStdlibApi
 @BindingAdapter("android:set_name")
 fun setName(view: TextView, text: String) {
-    view.text = text.capitalize(Locale.getDefault())
+    view.text = text.capitalizeWords()
 }

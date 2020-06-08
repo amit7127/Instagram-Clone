@@ -9,4 +9,6 @@
 
     <string name="follow">Follow</string>
     <string name="following">Following</string>
+
+    <string name="edit_profile_button_text">Edit Profile</string>
 </resources>

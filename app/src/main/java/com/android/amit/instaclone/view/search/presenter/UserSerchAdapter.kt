@@ -60,5 +60,6 @@ class UserSerchAdapter(
 
     interface UserSearchListener {
         fun onFollowButtonClicked(userId: String, view: View)
+        fun onProfileClicked(userId: String)
     }
 }

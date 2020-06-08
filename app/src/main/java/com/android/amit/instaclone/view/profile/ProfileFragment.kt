@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.android.amit.instaclone.MainActivity
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.databinding.FragmentProfileBinding
+import com.android.amit.instaclone.util.Status
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_profile.*
 
 /**
  * A simple [Fragment] subclass.
@@ -17,7 +22,15 @@ import com.android.amit.instaclone.databinding.FragmentProfileBinding
 class ProfileFragment : Fragment() {
 
     lateinit var profileBinding: FragmentProfileBinding
+    lateinit var viewModel: ProfileFragmentViewModel
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+
+    }
+
+    @ExperimentalStdlibApi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,14 +38,71 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         profileBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
+        viewModel = ViewModelProvider(this).get(ProfileFragmentViewModel::class.java)
 
         profileBinding.profile = this
-
+        profileBinding.viewModel = viewModel
+        init()
         return profileBinding.root;
     }
 
-    fun onEditProfileClicked() {
-        view?.findNavController()?.navigate(R.id.action_profileFragment_to_acountSettingsActivity)
+    @ExperimentalStdlibApi
+    private fun init() {
+        var id: String? = null
+        if (arguments?.getString("userId") != null) {
+            id = arguments?.getString("userId")!!
+        }
+        viewModel.getUserData(id)?.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusLoading -> {
+                    profile_fragment_progress_bar.visibility = View.VISIBLE
+                }
+                Status.statusSuccess -> {
+                    viewModel.setUserDetails(it.data)
+                    profileBinding.invalidateAll()
+                    profile_fragment_progress_bar.visibility = View.GONE
+                }
+                else -> {
+                    profile_fragment_progress_bar.visibility = View.GONE
+                    Snackbar.make(profileBinding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        })
     }
 
+    fun onEditProfileClicked(isEditProfile: Boolean, userId: String, buttonView: View) {
+        if (isEditProfile)
+            view?.findNavController()
+                ?.navigate(R.id.action_profileFragment_to_accountSettingsFragment)
+        else {
+            onFollowButtonClicked(userId, buttonView)
+        }
+    }
+
+    fun onFollowButtonClicked(userId: String, view: View) {
+        if (view is Button) {
+            val status = view.text
+            viewModel.setFollowStatus(userId, status.toString()).observe(this, Observer {
+                when (it.status) {
+                    Status.statusSuccess -> {
+                        Snackbar.make(
+                            profileBinding.root,
+                            it.message.toString(),
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                    else -> {
+                        Snackbar.make(
+                            profileBinding.root,
+                            it.message.toString(),
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+            })
+        }
+    }
 }
