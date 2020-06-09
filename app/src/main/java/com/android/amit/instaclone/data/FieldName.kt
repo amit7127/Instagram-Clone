@@ -14,4 +14,6 @@ object FieldName {
     val FOLLOWING_COLUMN_NAME = "Following"
     val FULL_NAME_COLUM_NAME = "fullName"
     val USER_ID_COLUMN_NAME = "userId"
+
+    val POST_TABLE_NAME = "Posts"
 }

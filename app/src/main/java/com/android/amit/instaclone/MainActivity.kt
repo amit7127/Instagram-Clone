@@ -1,6 +1,7 @@
 package com.android.amit.instaclone
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -54,6 +55,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+//        navView.setOnNavigationItemSelectedListener {
+//            when (it.itemId) {
+//                R.id.nav_post -> {
+//                    Log.i("Menu", "Post clicked")
+//                    return@setOnNavigationItemSelectedListener false
+//                }
+//                else -> {
+//                    Log.i("Menu", "Other clicked")
+//                    return@setOnNavigationItemSelectedListener true
+//                }
+//            }
+//        }
     }
 
     private fun showBottomNav() {

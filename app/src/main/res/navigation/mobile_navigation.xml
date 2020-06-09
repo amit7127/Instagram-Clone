@@ -36,4 +36,8 @@
         android:id="@+id/accountSettingsFragment"
         android:name="com.android.amit.instaclone.view.acountsettings.AccountSettingsFragment"
         android:label="AccountSettingsFragment" />
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="com.android.amit.instaclone.view.posts.PostsFragment"
+        android:label="PostsFragment" />
 </navigation>

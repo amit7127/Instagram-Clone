@@ -4,6 +4,7 @@ import android.net.Uri
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.android.amit.instaclone.data.FieldName
+import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.util.Status
@@ -198,6 +199,7 @@ class Repository {
             override fun onCancelled(p0: DatabaseError) {
 
             }
+
             override fun onDataChange(dataSnapShot: DataSnapshot) {
                 if (dataSnapShot.exists()) {
                     val user = dataSnapShot.getValue(UserDetailsModel::class.java)
@@ -210,14 +212,19 @@ class Repository {
         return result
     }
 
-    fun saveUserProfileWithImage(userDetails: UserDetailsModel, profilePictureUri : Uri) : MutableLiveData<Resource<Unit>>{
+    fun saveUserProfileWithImage(
+        userDetails: UserDetailsModel,
+        profilePictureUri: Uri
+    ): MutableLiveData<Resource<Unit>> {
 
         var result: MutableLiveData<Resource<Unit>> =
             MutableLiveData<Resource<Unit>>()
         val resouce = Resource<Unit>()
         result.value = resouce.loading()
 
-        var  firebaseStorage : StorageReference = FirebaseStorage.getInstance().getReference().child("Profile Images")
+        var firebaseStorage: StorageReference =
+            FirebaseStorage.getInstance().getReference().child("Profile Images")
+                .child(userDetails.userId + "jpg")
 
         var uploadTask = firebaseStorage.putFile(profilePictureUri)
 
@@ -241,6 +248,53 @@ class Repository {
                 val userRef: DatabaseReference =
                     FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
                 userRef.child(userDetails.userId).setValue(userDetails).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        result.value = resouce.success(null)
+                    } else {
+                        result.value = resouce.error("Failed to save data")
+                        FirebaseAuth.getInstance().signOut()
+                    }
+                }
+            } else {
+                result.value = resouce.error("Unable to update")
+            }
+        }
+
+        return result
+    }
+
+    fun postWithImage(profilePictureUri: Uri, comment: String): MutableLiveData<Resource<Unit>> {
+        var result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData<Resource<Unit>>()
+        val resouce = Resource<Unit>()
+        result.value = resouce.loading()
+
+        var firebaseStorage: StorageReference =
+            FirebaseStorage.getInstance().getReference().child("Posts Pictures").child(System.currentTimeMillis().toString() + ".jpg")
+
+        var uploadTask = firebaseStorage.putFile(profilePictureUri)
+
+        val urlTask = uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    result.value = resouce.error("Unable to update")
+                    throw it
+                }
+            }
+            firebaseStorage.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+
+                val userRef: DatabaseReference =
+                    FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
+
+                val uId = getCurrentUserId()
+                val postId = userRef.push().key
+
+                var post = Post(postId!!, comment, uId, downloadUri.toString())
+
+                userRef.child(postId).setValue(post).addOnCompleteListener {
                     if (it.isSuccessful) {
                         result.value = resouce.success(null)
                     } else {

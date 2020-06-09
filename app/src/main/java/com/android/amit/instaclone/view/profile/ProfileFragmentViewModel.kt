@@ -1,5 +1,6 @@
 package com.android.amit.instaclone.view.profile
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.amit.instaclone.data.Resource
@@ -22,6 +23,7 @@ class ProfileFragmentViewModel : ViewModel() {
     var mPost: Int = 0
     var mFullName = "N/A"
     var mBio = "N/A"
+    var mProfileImage = Uri.EMPTY
     var isEditProfile : Boolean = false
     var mEditButtonText = Status.follow
 
@@ -44,6 +46,7 @@ class ProfileFragmentViewModel : ViewModel() {
             mFollowing = userDetailsModel.Following.size
             mFullName = userDetailsModel.fullName.capitalizeWords()
             mBio = userDetailsModel.bio
+            mProfileImage = Uri.parse(userDetailsModel.image)
 
             if (!isEditProfile){
                 setStatus(userDetailsModel)

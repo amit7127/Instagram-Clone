@@ -23,8 +23,10 @@ fun setName(view: TextView, text: String) {
 }
 
 @BindingAdapter("load_image")
-fun loadImage(view: ImageView?, imageUri: Uri) {
-    Picasso.get()
-        .load(imageUri)
-        .into(view);
+fun loadImage(view: ImageView?, imageUri: Uri?) {
+    if (imageUri != null && imageUri != Uri.EMPTY) {
+        Picasso.get()
+            .load(imageUri)
+            .into(view);
+    }
 }
