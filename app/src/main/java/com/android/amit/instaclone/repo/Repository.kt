@@ -3,10 +3,7 @@ package com.android.amit.instaclone.repo
 import android.net.Uri
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
-import com.android.amit.instaclone.data.FieldName
-import com.android.amit.instaclone.data.Post
-import com.android.amit.instaclone.data.Resource
-import com.android.amit.instaclone.data.UserDetailsModel
+import com.android.amit.instaclone.data.*
 import com.android.amit.instaclone.util.Status
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -270,7 +267,8 @@ class Repository {
         result.value = resouce.loading()
 
         var firebaseStorage: StorageReference =
-            FirebaseStorage.getInstance().getReference().child("Posts Pictures").child(System.currentTimeMillis().toString() + ".jpg")
+            FirebaseStorage.getInstance().getReference().child("Posts Pictures")
+                .child(System.currentTimeMillis().toString() + ".jpg")
 
         var uploadTask = firebaseStorage.putFile(profilePictureUri)
 
@@ -307,6 +305,82 @@ class Repository {
             }
         }
 
+        return result
+    }
+
+    fun getPostsList(): MutableLiveData<Resource<ArrayList<PostListItem>>> {
+        val posts = arrayListOf<PostListItem>()
+
+        val result: MutableLiveData<Resource<ArrayList<PostListItem>>> =
+            MutableLiveData<Resource<ArrayList<PostListItem>>>()
+        val resouce = Resource<ArrayList<PostListItem>>()
+        result.value = resouce.loading()
+
+        val postsRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
+        val userRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
+
+        val currentUserReference = userRef.child(getCurrentUserId())
+
+        currentUserReference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(userDataSnapshot: DataSnapshot) {
+
+                if (userDataSnapshot.exists()) {
+                    val currentUserDetails = userDataSnapshot.getValue(UserDetailsModel::class.java)
+
+                    postsRef.addValueEventListener(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                            result.value = resouce.error("Unable to fetch data")
+                        }
+
+                        override fun onDataChange(dataSnapShot: DataSnapshot) {
+                            for (snapShot in dataSnapShot.children) {
+                                val post = snapShot.getValue(PostListItem::class.java)
+                                if (post != null) {
+                                    val userId = post.publisher
+                                    if (currentUserDetails != null && (currentUserDetails.Following.containsKey(userId) || currentUserDetails.userId == userId)) {
+                                        userRef.child(userId)
+                                            .addValueEventListener(object : ValueEventListener {
+                                                override fun onCancelled(p0: DatabaseError) {
+                                                    post.publisherImageUrl = ""
+                                                    post.publisherUserName = "N/A"
+                                                }
+
+                                                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                                                    if (dataSnapShot.exists()) {
+                                                        val userDetails =
+                                                            dataSnapShot.getValue(UserDetailsModel::class.java)
+                                                        if (userDetails != null) {
+                                                            post.publisherImageUrl =
+                                                                userDetails.image
+                                                            post.publisherUserName =
+                                                                userDetails.fullName
+                                                        } else {
+                                                            post.publisherImageUrl = ""
+                                                            post.publisherUserName = "N/A"
+                                                        }
+                                                    } else {
+                                                        post.publisherImageUrl = ""
+                                                        post.publisherUserName = "N/A"
+                                                    }
+                                                    posts.add(post)
+                                                    result.value = resouce.success(posts)
+                                                }
+                                            })
+                                    }
+                                }
+                            }
+                            result.value = resouce.success(posts)
+                        }
+                    })
+                }
+            }
+
+        })
         return result
     }
 }

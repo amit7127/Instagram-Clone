@@ -25,7 +25,7 @@ class UserSerchAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserSearchViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ProfileListItemBinding.inflate(inflater)
+        val binding = ProfileListItemBinding.inflate(inflater, parent, false)
         return UserSearchViewHolder(binding, searchListener)
     }
 
