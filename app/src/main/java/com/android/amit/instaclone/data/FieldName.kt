@@ -16,4 +16,5 @@ object FieldName {
     val USER_ID_COLUMN_NAME = "userId"
 
     val POST_TABLE_NAME = "Posts"
+    val LIKES_TABLE_NAME = "Likes"
 }

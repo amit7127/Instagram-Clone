@@ -5,6 +5,8 @@ import android.text.TextUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.android.amit.instaclone.R
+import com.android.amit.instaclone.repo.Repository
 import com.android.amit.instaclone.util.StringUtils.capitalizeWords
 import com.squareup.picasso.Picasso
 
@@ -39,5 +41,14 @@ fun loadImage(view: ImageView?, imageUrlString: String?) {
         Picasso.get()
             .load(imageUri)
             .into(view);
+    }
+}
+
+@BindingAdapter("set_like")
+fun isLiked(imageView: ImageView, isLike: Boolean) {
+    if (isLike) {
+        imageView.setImageResource(R.drawable.heart_clicked)
+    } else {
+        imageView.setImageResource(R.drawable.heart_not_clicked)
     }
 }

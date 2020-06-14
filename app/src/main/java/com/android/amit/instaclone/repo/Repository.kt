@@ -11,6 +11,8 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * ================================================
@@ -341,6 +343,7 @@ class Repository {
                             for (snapShot in dataSnapShot.children) {
                                 val post = snapShot.getValue(PostListItem::class.java)
                                 if (post != null) {
+                                    posts.clear()
                                     val userId = post.publisher
                                     if (currentUserDetails != null && (currentUserDetails.Following.containsKey(userId) || currentUserDetails.userId == userId)) {
                                         userRef.child(userId)
@@ -348,6 +351,7 @@ class Repository {
                                                 override fun onCancelled(p0: DatabaseError) {
                                                     post.publisherImageUrl = ""
                                                     post.publisherUserName = "N/A"
+                                                    post.publisherFullName = "N/A"
                                                 }
 
                                                 override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -355,17 +359,18 @@ class Repository {
                                                         val userDetails =
                                                             dataSnapShot.getValue(UserDetailsModel::class.java)
                                                         if (userDetails != null) {
-                                                            post.publisherImageUrl =
-                                                                userDetails.image
-                                                            post.publisherUserName =
-                                                                userDetails.fullName
+                                                            post.publisherImageUrl = userDetails.image
+                                                            post.publisherUserName = userDetails.userName
+                                                            post.publisherFullName = userDetails.fullName
                                                         } else {
                                                             post.publisherImageUrl = ""
                                                             post.publisherUserName = "N/A"
+                                                            post.publisherFullName = "N/A"
                                                         }
                                                     } else {
                                                         post.publisherImageUrl = ""
                                                         post.publisherUserName = "N/A"
+                                                        post.publisherFullName = "N/A"
                                                     }
                                                     posts.add(post)
                                                     result.value = resouce.success(posts)
@@ -382,5 +387,49 @@ class Repository {
 
         })
         return result
+    }
+
+    fun getLikesList(postsList : ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, LikeModel>>>{
+        val result: MutableLiveData<Resource<HashMap<String, LikeModel>>> =
+            MutableLiveData<Resource<HashMap<String, LikeModel>>>()
+        val resouce = Resource<HashMap<String, LikeModel>>()
+        result.value = resouce.loading()
+
+        val likesMap = HashMap<String, LikeModel>()
+        val userId = getCurrentUserId()
+
+        val postsRef: DatabaseReference = FirebaseDatabase.getInstance().reference.child(FieldName.LIKES_TABLE_NAME)
+
+        for (post in postsList){
+            postsRef.child(post.postId).addValueEventListener(object : ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    val likeModel = LikeModel()
+                    if (p0.child(userId).exists()){
+                        likeModel.isLikes = true
+                    }
+
+                    likeModel.likesCount = p0.childrenCount.toInt()
+                    likesMap.put(post.postId, likeModel)
+                    result.value = resouce.success(likesMap)
+                }
+
+            })
+        }
+        return result;
+    }
+
+    fun likeUnlikePost(postId: String, oldStatusIsLike: Boolean) {
+        val userId = getCurrentUserId()
+        val postsRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.LIKES_TABLE_NAME).child(postId)
+        if (!oldStatusIsLike) {
+            postsRef.child(userId).setValue(true)
+        } else{
+            postsRef.child(userId).removeValue()
+        }
     }
 }

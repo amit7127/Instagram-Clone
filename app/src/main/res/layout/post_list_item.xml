@@ -4,9 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="postListItem"
             type="com.android.amit.instaclone.data.PostListItem" />
+
+        <variable
+            name="holder"
+            type="com.android.amit.instaclone.view.home.presenter.PostsListAdapter.PostsListViewHolder" />
+
+        <variable
+            name="likeModel"
+            type="com.android.amit.instaclone.data.LikeModel" />
+
+        <variable
+            name="viewModel"
+            type="com.android.amit.instaclone.view.home.HomeViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -37,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:set_name="@{postListItem.publisherUserName}"
+                android:text="@{postListItem.publisherUserName}"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -64,7 +77,8 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
-                android:src="@drawable/heart_not_clicked" />
+                set_like="@{likeModel.likes}"
+                android:onClick="@{(view) -> viewModel.likeButtonClicked(postListItem.postId, likeModel.likes)}"/>
 
             <ImageView
                 android:id="@+id/post_image_comment_btn"
@@ -74,7 +88,8 @@
                 app:layout_constraintLeft_toRightOf="@id/post_image_like_btn"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="7dp"
-                android:src="@drawable/comment" />
+                android:src="@drawable/comment"
+                android:onClick="@{() -> viewModel.likeButtonClicked(postListItem.postId, false)}"/>
 
             <ImageView
                 android:id="@+id/post_save_comment_btn"
@@ -84,7 +99,8 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="7dp"
-                android:src="@drawable/save_unfilled_large_icon" />
+                android:src="@drawable/save_unfilled_large_icon"
+                android:onClick="@{() -> holder.onLikeClicked(postListItem.postId, likeModel.likes)}"/>
 
             <TextView
                 android:id="@+id/likes_post_item"
@@ -93,6 +109,7 @@
                 app:layout_constraintTop_toBottomOf="@id/post_image_like_btn"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginStart="10dp"
+                android:text="@{String.valueOf(likeModel.likesCount)}"
                 android:textStyle="bold"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark" />
@@ -104,6 +121,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/likes_post_item"
                 android:layout_marginStart="10dp"
+                android:set_name="@{postListItem.publisherFullName}"
                 android:textStyle="bold"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimaryDark" />
@@ -117,7 +135,7 @@
                 android:layout_marginStart="10dp"
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimary"
-                android:text="@{postListItem.description}"/>
+                android:text="@{postListItem.description}" />
 
             <TextView
                 android:id="@+id/comments_post_item"

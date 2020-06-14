@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
+import com.android.amit.instaclone.data.LikeModel
 import com.android.amit.instaclone.data.PostListItem
 import com.android.amit.instaclone.databinding.FragmentHomeBinding
 import com.android.amit.instaclone.util.Status
@@ -21,12 +22,13 @@ import kotlinx.android.synthetic.main.fragment_home.*
 /**
  * A simple [Fragment] subclass.
  */
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), PostsListAdapter.PostListener {
 
     lateinit var homeBinding: FragmentHomeBinding
     lateinit var viewModel: HomeViewModel
     lateinit var adapter: PostsListAdapter
     var listOfPosts = arrayListOf<PostListItem>()
+    var likesList = HashMap<String, LikeModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +50,7 @@ class HomeFragment : Fragment() {
             LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = PostsListAdapter(listOfPosts)
+        adapter = PostsListAdapter(listOfPosts, this, likesList, viewModel)
         recyclerView.adapter = adapter
 
         init()
@@ -64,9 +66,21 @@ class HomeFragment : Fragment() {
 
                 Status.statusSuccess -> {
                     Log.i("Data", "Success")
-                    listOfPosts.clear()
                     if (it.data != null) {
+                        listOfPosts.clear()
                         listOfPosts.addAll(it.data!!)
+
+                        viewModel.getLikesList(it.data!!).observe(viewLifecycleOwner, Observer {
+                            when (it.status) {
+                                Status.statusSuccess -> {
+                                    if (it.data != null) {
+                                        likesList.putAll(it.data!!)
+                                        adapter.notifyDataSetChanged()
+                                        homeBinding.invalidateAll()
+                                    }
+                                }
+                            }
+                        })
                     }
                     adapter.notifyDataSetChanged()
                     home_fragment_progressbar.visibility = View.GONE
@@ -78,5 +92,10 @@ class HomeFragment : Fragment() {
                 }
             }
         })
+
+    }
+
+    override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
+        viewModel.likeButtonClicked(postId, oldStatusIsLike)
     }
 }

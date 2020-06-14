@@ -15,6 +15,7 @@ class PostListItem {
     var postImage: String = ""
     var publisherImageUrl = ""
     var publisherUserName = ""
+    var publisherFullName = ""
 
     constructor()
 
@@ -24,7 +25,8 @@ class PostListItem {
         publisher: String,
         postImage: String,
         publisherImageUrl: String,
-        publisherUserName: String
+        publisherUserName: String,
+        publisherFullName: String
     ) {
         this.postId = postId
         this.description = description
@@ -32,7 +34,7 @@ class PostListItem {
         this.postImage = postImage
         this.publisherImageUrl = publisherImageUrl
         this.publisherUserName = publisherUserName
+        this.publisherFullName = publisherFullName
     }
-
 
 }
