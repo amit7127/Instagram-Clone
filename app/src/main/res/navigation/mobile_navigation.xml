@@ -8,7 +8,11 @@
         android:id="@+id/homeFragment"
         android:name="com.android.amit.instaclone.view.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.android.amit.instaclone.view.search.SearchFragment"
@@ -40,4 +44,9 @@
         android:id="@+id/postsFragment"
         android:name="com.android.amit.instaclone.view.posts.PostsFragment"
         android:label="PostsFragment" />
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.android.amit.instaclone.view.CommentsFragment"
+        android:label="fragment_comments"
+        tools:layout="@layout/fragment_comments" />
 </navigation>
