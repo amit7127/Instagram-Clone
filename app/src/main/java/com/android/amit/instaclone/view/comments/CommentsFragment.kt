@@ -1,18 +1,21 @@
 package com.android.amit.instaclone.view.comments
 
 import android.os.Bundle
-import android.text.TextUtils
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
+import com.android.amit.instaclone.data.CommentModel
+import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentCommentsBinding
 import com.android.amit.instaclone.util.Status
-import com.android.amit.instaclone.view.home.HomeViewModel
+import com.android.amit.instaclone.view.comments.presenter.CommnetsListAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_comments.*
 
@@ -32,6 +35,9 @@ class CommentsFragment : Fragment() {
     lateinit var viewModel: CommentsFragmentViewModel
     var postId: String? = null
     var postImageString: String? = null
+    var commentsList = ArrayList<CommentModel>()
+    var usersMap = HashMap<String, UserDetailsModel>()
+    lateinit var adapter: CommnetsListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +56,57 @@ class CommentsFragment : Fragment() {
 
         initDataFetching()
 
+        initCommentsList()
+
         return commentFragmentBinding.root
+    }
+
+    private fun initCommentsList() {
+        val recyclerView: RecyclerView =
+            commentFragmentBinding.commentsRecyclerView // In xml we have given id rv_movie_list to RecyclerView
+
+        val layoutManager =
+            LinearLayoutManager(context) // you can use getContext() instead of "this"
+
+        recyclerView.layoutManager = layoutManager
+        adapter = CommnetsListAdapter(commentsList, usersMap)
+        recyclerView.adapter = adapter
+
+        viewModel.getComments(postId!!).observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusLoading -> {
+                    load_comment_loader.visibility = View.VISIBLE
+                }
+                Status.statusSuccess -> {
+                    if (it.data != null) {
+                        commentsList.clear()
+                        commentsList.addAll(it.data!!)
+                        adapter.notifyDataSetChanged()
+                        viewModel.getUsersMap(commentsList)
+                            .observe(viewLifecycleOwner, Observer { result ->
+                                when (result.status) {
+                                    Status.statusSuccess -> {
+                                        if (result.data != null) {
+                                            usersMap.putAll(result.data!!)
+                                            adapter.notifyDataSetChanged()
+                                        }
+                                    }
+                                }
+                            })
+                    }
+
+                    load_comment_loader.visibility = View.GONE
+                }
+
+                else -> {
+                    load_comment_loader.visibility = View.GONE
+                    it.message?.let { it1 ->
+                        Snackbar.make(commentFragmentBinding.root, it1, Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        })
     }
 
     private fun initDataFetching() {

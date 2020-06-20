@@ -11,4 +11,8 @@
     <string name="following">Following</string>
 
     <string name="edit_profile_button_text">Edit Profile</string>
+
+<!--    Post list items-->
+    <string name="comments_count">%d Comments</string>
+    <string name="likes_count">%d Likes</string>
 </resources>

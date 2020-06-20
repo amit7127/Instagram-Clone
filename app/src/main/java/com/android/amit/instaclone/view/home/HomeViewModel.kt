@@ -24,7 +24,6 @@ class HomeViewModel : ViewModel() {
     }
 
     fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
-        log("Amit")
         repo.likeUnlikePost(postId, oldStatusIsLike)
     }
 
@@ -32,7 +31,7 @@ class HomeViewModel : ViewModel() {
         return repo.getLikesList(postsList)
     }
 
-    fun log (log: String){
-        Log.i("Log", log)
+    fun getCommentsCount(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, Int>>>{
+        return repo.getCommentsList(postsList)
     }
 }

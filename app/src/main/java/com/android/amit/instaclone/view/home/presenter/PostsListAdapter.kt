@@ -23,6 +23,7 @@ class PostsListAdapter(
     private val postsList: ArrayList<PostListItem>,
     private val postListener: PostListener,
     private val likesList: HashMap<String, LikeModel>,
+    private val commentsList: HashMap<String, Int>,
     private val homeViewModel : HomeViewModel
 ) :
     RecyclerView.Adapter<PostsListAdapter.PostsListViewHolder>() {
@@ -41,14 +42,17 @@ class PostsListAdapter(
         if (likesList.get(post.postId) != null)
             like = likesList.getValue(post.postId)
         holder.apply {
-            bind(post, like)
+            bind(post, like, commentsList[post.postId])
         }
     }
 
     class PostsListViewHolder(val binding: PostListItemBinding, val postListener: PostListener, val homeViewModel : HomeViewModel) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: PostListItem, like: LikeModel) {
+        var commentsCount : Int? = 0
+
+        fun bind(item: PostListItem, like: LikeModel, commentsCount: Int?) {
+            this.commentsCount = commentsCount
             binding.apply {
                 postListItem = item
                 holder = this@PostsListViewHolder
@@ -56,20 +60,6 @@ class PostsListAdapter(
                 viewModel = homeViewModel
                 executePendingBindings()
             }
-        }
-
-//        fun isLiked(imageView: ImageView, likesMap: HashMap<String, Boolean>): Int {
-//            val repo = Repository()
-//            val currentUserId = repo.getCurrentUserId()
-//            if (likesMap.containsKey(currentUserId)) {
-//                return R.drawable.heart_clicked
-//            } else {
-//                return R.drawable.heart_not_clicked
-//            }
-//        }
-
-        fun onLikeClicked(postId: String, isLiked: Boolean) {
-            postListener.onLikeButtonClicked(postId, isLiked)
         }
 
         fun onCommentClicked(postId: String, postImageUrlString : String){

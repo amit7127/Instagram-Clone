@@ -31,6 +31,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
     lateinit var adapter: PostsListAdapter
     var listOfPosts = arrayListOf<PostListItem>()
     var likesList = HashMap<String, LikeModel>()
+    var mCommentsList = HashMap<String, Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +53,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
             LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = PostsListAdapter(listOfPosts, this, likesList, viewModel)
+        adapter = PostsListAdapter(listOfPosts, this, likesList, mCommentsList, viewModel)
         recyclerView.adapter = adapter
 
         init()
@@ -72,17 +73,8 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
                         listOfPosts.clear()
                         listOfPosts.addAll(it.data!!)
 
-                        viewModel.getLikesList(it.data!!).observe(viewLifecycleOwner, Observer {
-                            when (it.status) {
-                                Status.statusSuccess -> {
-                                    if (it.data != null) {
-                                        likesList.putAll(it.data!!)
-                                        adapter.notifyDataSetChanged()
-                                        homeBinding.invalidateAll()
-                                    }
-                                }
-                            }
-                        })
+                        getLikes(it.data!!)
+                        getCommentsCount(it.data!!)
                     }
                     adapter.notifyDataSetChanged()
                     home_fragment_progressbar.visibility = View.GONE
@@ -94,7 +86,40 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
                 }
             }
         })
+    }
 
+    /**
+     * get Likes list from post list
+     */
+    fun getLikes(postLists: ArrayList<PostListItem>) {
+        viewModel.getLikesList(postLists).observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    if (it.data != null) {
+                        likesList.putAll(it.data!!)
+                        adapter.notifyDataSetChanged()
+                        homeBinding.invalidateAll()
+                    }
+                }
+            }
+        })
+    }
+
+    /**
+     * Get comments count
+     */
+    fun getCommentsCount(postLists: ArrayList<PostListItem>) {
+        viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    if (it.data != null) {
+                        mCommentsList.putAll(it.data!!)
+                        adapter.notifyDataSetChanged()
+                        homeBinding.invalidateAll()
+                    }
+                }
+            }
+        })
     }
 
     override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean) {

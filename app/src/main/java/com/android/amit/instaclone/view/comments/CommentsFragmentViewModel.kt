@@ -11,31 +11,44 @@ import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
 import com.google.android.material.snackbar.Snackbar
 
-class CommentsFragmentViewModel: ViewModel() {
+class CommentsFragmentViewModel : ViewModel() {
     var repo: Repository = Repository()
-    var postImageUri : Uri = Uri.EMPTY
-    var publisherProfileImageUri : Uri = Uri.EMPTY
-    var commentString : String = ""
-    var userId : String = ""
+    var postImageUri: Uri = Uri.EMPTY
+    var publisherProfileImageUri: Uri = Uri.EMPTY
+    var commentString: String = ""
+    var userId: String = ""
 
     private lateinit var mView: View
 
-    fun setPostData(postImageUrl : String){
+    fun setPostData(postImageUrl: String) {
         postImageUri = Uri.parse(postImageUrl)
     }
 
-    fun setUserData(userDetailsModel: UserDetailsModel?, view: View){
+    fun setUserData(userDetailsModel: UserDetailsModel?, view: View) {
         if (userDetailsModel != null) {
             publisherProfileImageUri = Uri.parse(userDetailsModel.image)
             userId = userDetailsModel.userId
         }
     }
 
+    fun getComments(postId: String): MutableLiveData<Resource<ArrayList<CommentModel>>> {
+        return repo.getListOfComments(postId)
+    }
+
+    fun getUsersMap(comments: ArrayList<CommentModel>): MutableLiveData<Resource<HashMap<String, UserDetailsModel>>> {
+        var usersIdList = HashSet<String>()
+        for (comment in comments) {
+            usersIdList.add(comment.publisher)
+        }
+
+        return repo.getUsersListFromIDList(usersIdList)
+    }
+
     fun getUserData(): MutableLiveData<Resource<UserDetailsModel>> {
         return repo.getUserDetails(repo.getCurrentUserId())
     }
 
-    fun postComment(postId: String) : MutableLiveData<Resource<Unit>>{
+    fun postComment(postId: String): MutableLiveData<Resource<Unit>> {
         var result: MutableLiveData<Resource<Unit>> = MutableLiveData<Resource<Unit>>()
         if (validateEteredData()) {
             var commentModel = CommentModel(userId, commentString)
@@ -45,7 +58,7 @@ class CommentsFragmentViewModel: ViewModel() {
         return result
     }
 
-    fun clearComment(){
+    fun clearComment() {
         commentString = ""
     }
 

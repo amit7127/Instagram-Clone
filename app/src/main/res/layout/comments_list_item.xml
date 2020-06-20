@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="commentItem"
+            type="com.android.amit.instaclone.data.CommentModel" />
+
+        <variable
+            name="user"
+            type="com.android.amit.instaclone.data.UserDetailsModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardElevation="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_profile_image_comment_list_item"
+                load_image="@{user.image}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:src="@drawable/profile"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/user_name_comment_list_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:set_name="@{user.fullName}"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/user_profile_image_comment_list_item"
+                app:layout_constraintTop_toTopOf="@id/user_profile_image_comment_list_item" />
+
+            <TextView
+                android:id="@+id/comment_text_comment_list_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="10dp"
+                android:text="@{commentItem.comment}"
+                app:layout_constraintLeft_toRightOf="@id/user_profile_image_comment_list_item"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/user_name_comment_list_item" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
+
