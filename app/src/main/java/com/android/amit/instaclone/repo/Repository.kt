@@ -432,4 +432,22 @@ class Repository {
             postsRef.child(userId).removeValue()
         }
     }
+
+    fun postComment(postId: String, comment: CommentModel): MutableLiveData<Resource<Unit>> {
+        var result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData<Resource<Unit>>()
+        val resouce = Resource<Unit>()
+        result.value = resouce.loading()
+
+        val commentRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.COMMENT_TABLE_NAME)
+        commentRef.child(postId).push().setValue(comment).addOnCompleteListener{
+            if (it.isSuccessful) {
+                result.value = resouce.success(null)
+            } else{
+                result.value = resouce.error("Unable to Post Comment")
+            }
+        }
+        return result
+    }
 }

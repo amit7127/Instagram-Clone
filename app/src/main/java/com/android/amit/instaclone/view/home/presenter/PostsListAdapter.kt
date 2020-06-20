@@ -71,9 +71,14 @@ class PostsListAdapter(
         fun onLikeClicked(postId: String, isLiked: Boolean) {
             postListener.onLikeButtonClicked(postId, isLiked)
         }
+
+        fun onCommentClicked(postId: String, postImageUrlString : String){
+            postListener.onCommentButtonClicked(postId, postImageUrlString)
+        }
     }
 
     interface PostListener {
         fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean)
+        fun onCommentButtonClicked(postId: String, postImageUrlString : String)
     }
 }

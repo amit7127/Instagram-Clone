@@ -46,7 +46,7 @@
         android:label="PostsFragment" />
     <fragment
         android:id="@+id/commentsFragment"
-        android:name="com.android.amit.instaclone.view.CommentsFragment"
+        android:name="com.android.amit.instaclone.view.comments.CommentsFragment"
         android:label="fragment_comments"
         tools:layout="@layout/fragment_comments" />
 </navigation>

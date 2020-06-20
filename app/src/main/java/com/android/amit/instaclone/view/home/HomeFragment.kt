@@ -5,10 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
@@ -97,5 +99,12 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
 
     override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
         viewModel.likeButtonClicked(postId, oldStatusIsLike)
+    }
+
+    override fun onCommentButtonClicked(postId: String, postImageUrlString: String) {
+        var bundle = Bundle()
+        bundle.putString("postImageUrl", postImageUrlString)
+        bundle.putString("postId", postId)
+        view?.findNavController()?.navigate(R.id.action_homeFragment_to_commentsFragment, bundle)
     }
 }
