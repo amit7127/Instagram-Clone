@@ -18,4 +18,5 @@ object FieldName {
     val POST_TABLE_NAME = "Posts"
     val LIKES_TABLE_NAME = "Likes"
     val COMMENT_TABLE_NAME = "Comments"
+    val PUBLISHER_COLUMN_NAME = "publisher"
 }

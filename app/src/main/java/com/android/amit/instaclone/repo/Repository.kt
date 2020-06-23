@@ -13,7 +13,6 @@ import com.google.firebase.storage.StorageReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 /**
  * ================================================
@@ -380,6 +379,7 @@ class Repository {
                                                         post.publisherFullName = "N/A"
                                                     }
                                                     posts.add(post)
+                                                    posts.reverse()
                                                     result.value = resouce.success(posts)
                                                 }
                                             })
@@ -566,6 +566,40 @@ class Repository {
                 }
             })
         }
+        return result
+    }
+
+    fun getUserPosts(userId: String): MutableLiveData<Resource<ArrayList<Post>>> {
+        val posts = ArrayList<Post>()
+
+        val result: MutableLiveData<Resource<ArrayList<Post>>> =
+            MutableLiveData()
+        val resouce = Resource<ArrayList<Post>>()
+        result.value = resouce.loading()
+
+        val postsRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
+        val query = postsRef.orderByChild(FieldName.PUBLISHER_COLUMN_NAME).equalTo(userId)
+
+        query.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapShot: DataSnapshot) {
+                if (dataSnapShot.exists()){
+                    posts.clear()
+                    for (snapShot in dataSnapShot.children) {
+                        val post = snapShot.getValue(Post::class.java)
+                        if (post != null) {
+                            posts.add(post)
+                        }
+                    }
+                    result.value = resouce.success(posts)
+                }
+            }
+
+        })
         return result
     }
 }

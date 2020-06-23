@@ -10,11 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
+import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.databinding.FragmentProfileBinding
 import com.android.amit.instaclone.util.Status
+import com.android.amit.instaclone.view.profile.presenter.UploadedPostImagesAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_profile.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -23,6 +29,8 @@ class ProfileFragment : Fragment() {
 
     lateinit var profileBinding: FragmentProfileBinding
     lateinit var viewModel: ProfileFragmentViewModel
+    var postsList: ArrayList<Post> = ArrayList()
+    lateinit var adapter: UploadedPostImagesAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -66,6 +74,32 @@ class ProfileFragment : Fragment() {
                     profile_fragment_progress_bar.visibility = View.GONE
                     Snackbar.make(profileBinding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
                         .show()
+                }
+            }
+        })
+
+        getUsersPostList()
+    }
+
+    fun getUsersPostList() {
+        val recyclerView: RecyclerView =
+            profileBinding.userPostImagesRv // In xml we have given id rv_movie_list to RecyclerView
+
+        val layoutManager =
+            GridLayoutManager(context, 3) // you can use getContext() instead of "this"
+
+        recyclerView.layoutManager = layoutManager
+        adapter = UploadedPostImagesAdapter(postsList)
+        recyclerView.adapter = adapter
+
+        viewModel.getPostsImages().observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    if (it.data != null) {
+                        postsList.addAll(it.data!!)
+                        postsList.reverse()
+                    }
+                    adapter.notifyDataSetChanged()
                 }
             }
         })

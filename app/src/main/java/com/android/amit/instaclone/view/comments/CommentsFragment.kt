@@ -67,7 +67,7 @@ class CommentsFragment : Fragment() {
 
         val layoutManager =
             LinearLayoutManager(context) // you can use getContext() instead of "this"
-
+        layoutManager.reverseLayout = true
         recyclerView.layoutManager = layoutManager
         adapter = CommnetsListAdapter(commentsList, usersMap)
         recyclerView.adapter = adapter

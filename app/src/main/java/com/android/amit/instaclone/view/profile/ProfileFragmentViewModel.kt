@@ -3,6 +3,7 @@ package com.android.amit.instaclone.view.profile
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
@@ -64,5 +65,9 @@ class ProfileFragmentViewModel : ViewModel() {
 
     fun setFollowStatus(userId: String, currentStatus: String): MutableLiveData<Resource<Unit>> {
         return repo.follow(userId, currentStatus)
+    }
+
+    fun getPostsImages(): MutableLiveData<Resource<ArrayList<Post>>> {
+        return repo.getUserPosts(id)
     }
 }
