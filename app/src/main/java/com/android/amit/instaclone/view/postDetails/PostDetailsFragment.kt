@@ -1,7 +1,6 @@
-package com.android.amit.instaclone.view.home
+package com.android.amit.instaclone.view.postDetails
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,73 +14,76 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.LikeModel
 import com.android.amit.instaclone.data.PostListItem
-import com.android.amit.instaclone.databinding.FragmentHomeBinding
+import com.android.amit.instaclone.databinding.FragmentPostDetailsBinding
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.home.presenter.PostsListAdapter
-import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_post_details.*
+
 
 /**
  * A simple [Fragment] subclass.
+ * Use the [PostDetailsFragment.newInstance] factory method to
+ * create an instance of this fragment.
  */
-class HomeFragment : Fragment(), PostsListAdapter.PostListener {
+class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
 
-    lateinit var homeBinding: FragmentHomeBinding
-    lateinit var viewModel: HomeViewModel
+    private var postId: String = ""
+
+    lateinit var postDetailsBinding: FragmentPostDetailsBinding
+    lateinit var viewModel: PostDetailsViewModel
     lateinit var adapter: PostsListAdapter
-    var listOfPosts = arrayListOf<PostListItem>()
+    var postList = ArrayList<PostListItem>()
     var likesList = HashMap<String, LikeModel>()
     var mCommentsList = HashMap<String, Int>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (arguments?.getString("postId") != null) {
+            postId = arguments?.getString("postId")!!
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
-        return homeBinding.root
+        postDetailsBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_post_details, container, false)
+        viewModel = ViewModelProvider(this).get(PostDetailsViewModel::class.java)
+
+        return postDetailsBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView: RecyclerView =
-            homeBinding.homeRecyclerView // In xml we have given id rv_movie_list to RecyclerView
+            postDetailsBinding.postDetailsRecyclerview // In xml we have given id rv_movie_list to RecyclerView
 
         val layoutManager =
             LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = PostsListAdapter(listOfPosts, this, likesList, mCommentsList)
+        adapter = PostsListAdapter(postList, this, likesList, mCommentsList)
         recyclerView.adapter = adapter
 
-        init()
-    }
-
-    private fun init() {
-        viewModel.getPosts().observe(viewLifecycleOwner, Observer {
-            when (it.status) {
+        viewModel.getPostDetails(postId).observe(viewLifecycleOwner, Observer {
+            when(it.status){
                 Status.statusLoading -> {
-                    Log.i("Data", "Loading")
-                    home_fragment_progressbar.visibility = View.VISIBLE
+                    post_details_progressbar.visibility = View.VISIBLE
                 }
 
                 Status.statusSuccess -> {
-                    Log.i("Data", "Success")
                     if (it.data != null) {
-                        listOfPosts.clear()
-                        listOfPosts.addAll(it.data!!)
-
-                        getLikes(it.data!!)
-                        getCommentsCount(it.data!!)
+                        postList.clear()
+                        postList.add(it.data!!)
+                        adapter.notifyDataSetChanged()
+                        getLikes(postList)
+                        getCommentsCount(postList)
                     }
-                    adapter.notifyDataSetChanged()
-                    home_fragment_progressbar.visibility = View.GONE
-                }
-
-                else -> {
-                    Log.i("Data", "Error")
-                    home_fragment_progressbar.visibility = View.GONE
+                    post_details_progressbar.visibility = View.GONE
                 }
             }
         })
@@ -97,7 +99,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
                     if (it.data != null) {
                         likesList.putAll(it.data!!)
                         adapter.notifyDataSetChanged()
-                        homeBinding.invalidateAll()
+                        postDetailsBinding.invalidateAll()
                     }
                 }
             }
@@ -114,7 +116,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
                     if (it.data != null) {
                         mCommentsList.putAll(it.data!!)
                         adapter.notifyDataSetChanged()
-                        homeBinding.invalidateAll()
+                        postDetailsBinding.invalidateAll()
                     }
                 }
             }
@@ -129,6 +131,6 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
         var bundle = Bundle()
         bundle.putString("postImageUrl", postImageUrlString)
         bundle.putString("postId", postId)
-        view?.findNavController()?.navigate(R.id.action_homeFragment_to_commentsFragment, bundle)
+        view?.findNavController()?.navigate(R.id.action_postDetailsFragment_to_commentsFragment, bundle)
     }
 }

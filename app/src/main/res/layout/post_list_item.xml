@@ -16,10 +16,6 @@
         <variable
             name="likeModel"
             type="com.android.amit.instaclone.data.LikeModel" />
-
-        <variable
-            name="viewModel"
-            type="com.android.amit.instaclone.view.home.HomeViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -78,7 +74,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 set_like="@{likeModel.likes}"
-                android:onClick="@{(view) -> viewModel.likeButtonClicked(postListItem.postId, likeModel.likes)}"/>
+                android:onClick="@{(view) -> holder.likeButtonClicked(postListItem.postId, likeModel.likes)}"/>
 
             <ImageView
                 android:id="@+id/post_image_comment_btn"

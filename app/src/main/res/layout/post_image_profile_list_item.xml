@@ -6,13 +6,17 @@
         <variable
             name="post"
             type="com.android.amit.instaclone.data.Post" />
+        <variable
+            name="listener"
+            type="com.android.amit.instaclone.view.profile.presenter.UploadedPostImagesAdapter.PostImageHandler" />
     </data>
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        app:cardElevation="5dp">
+        app:cardElevation="5dp"
+        android:onClick="@{() -> listener.onPostClicked(post.postId)}">
 
         <ImageView
             android:id="@+id/uploaded_image_list_item"

@@ -581,13 +581,13 @@ class Repository {
             FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
         val query = postsRef.orderByChild(FieldName.PUBLISHER_COLUMN_NAME).equalTo(userId)
 
-        query.addValueEventListener(object : ValueEventListener{
+        query.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
             override fun onDataChange(dataSnapShot: DataSnapshot) {
-                if (dataSnapShot.exists()){
+                if (dataSnapShot.exists()) {
                     posts.clear()
                     for (snapShot in dataSnapShot.children) {
                         val post = snapShot.getValue(Post::class.java)
@@ -600,6 +600,36 @@ class Repository {
             }
 
         })
+        return result
+    }
+
+    /**
+     * get post from the post id
+     */
+    fun getPostFromId(postId: String): MutableLiveData<Resource<PostListItem>> {
+        val result: MutableLiveData<Resource<PostListItem>> =
+            MutableLiveData()
+        val resouce = Resource<PostListItem>()
+        result.value = resouce.loading()
+
+        val postsRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME).child(postId)
+        postsRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if (p0.exists()) {
+                    val post = p0.getValue(PostListItem::class.java)
+                    post?.let {
+                        result.value = resouce.success(post)
+                    }
+                }
+            }
+
+        })
+
         return result
     }
 }

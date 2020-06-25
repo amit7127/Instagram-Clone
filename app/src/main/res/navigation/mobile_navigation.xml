@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_profileFragment_to_accountSettingsFragment"
             app:destination="@id/accountSettingsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
@@ -49,4 +52,12 @@
         android:name="com.android.amit.instaclone.view.comments.CommentsFragment"
         android:label="fragment_comments"
         tools:layout="@layout/fragment_comments" />
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.android.amit.instaclone.view.postDetails.PostDetailsFragment"
+        android:label="PostDetailsFragment" >
+        <action
+            android:id="@+id/action_postDetailsFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
 </navigation>

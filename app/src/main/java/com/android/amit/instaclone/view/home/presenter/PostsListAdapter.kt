@@ -23,15 +23,14 @@ class PostsListAdapter(
     private val postsList: ArrayList<PostListItem>,
     private val postListener: PostListener,
     private val likesList: HashMap<String, LikeModel>,
-    private val commentsList: HashMap<String, Int>,
-    private val homeViewModel : HomeViewModel
+    private val commentsList: HashMap<String, Int>
 ) :
     RecyclerView.Adapter<PostsListAdapter.PostsListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = PostListItemBinding.inflate(inflater, parent, false)
-        return PostsListViewHolder(binding, postListener, homeViewModel)
+        return PostsListViewHolder(binding, postListener)
     }
 
     override fun getItemCount(): Int = postsList.size
@@ -46,7 +45,7 @@ class PostsListAdapter(
         }
     }
 
-    class PostsListViewHolder(val binding: PostListItemBinding, val postListener: PostListener, val homeViewModel : HomeViewModel) :
+    class PostsListViewHolder(val binding: PostListItemBinding, val postListener: PostListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         var commentsCount : Int? = 0
@@ -57,13 +56,16 @@ class PostsListAdapter(
                 postListItem = item
                 holder = this@PostsListViewHolder
                 likeModel = like
-                viewModel = homeViewModel
                 executePendingBindings()
             }
         }
 
         fun onCommentClicked(postId: String, postImageUrlString : String){
             postListener.onCommentButtonClicked(postId, postImageUrlString)
+        }
+
+        fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
+            postListener.onLikeButtonClicked(postId, oldStatusIsLike)
         }
     }
 

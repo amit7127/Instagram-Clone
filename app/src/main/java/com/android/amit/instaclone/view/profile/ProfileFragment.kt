@@ -19,13 +19,11 @@ import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.profile.presenter.UploadedPostImagesAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_profile.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
  */
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler {
 
     lateinit var profileBinding: FragmentProfileBinding
     lateinit var viewModel: ProfileFragmentViewModel
@@ -89,12 +87,13 @@ class ProfileFragment : Fragment() {
             GridLayoutManager(context, 3) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = UploadedPostImagesAdapter(postsList)
+        adapter = UploadedPostImagesAdapter(postsList, this)
         recyclerView.adapter = adapter
 
         viewModel.getPostsImages().observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
+                    postsList.clear()
                     if (it.data != null) {
                         postsList.addAll(it.data!!)
                         postsList.reverse()
@@ -138,5 +137,12 @@ class ProfileFragment : Fragment() {
                 }
             })
         }
+    }
+
+    override fun onPostClicked(postId: String) {
+        var bundle = Bundle()
+        bundle.putString("postId", postId)
+        view?.findNavController()
+            ?.navigate(R.id.action_profileFragment_to_postDetailsFragment, bundle)
     }
 }
