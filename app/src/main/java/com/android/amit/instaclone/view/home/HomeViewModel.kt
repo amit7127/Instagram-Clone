@@ -1,6 +1,5 @@
 package com.android.amit.instaclone.view.home
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.amit.instaclone.data.LikeModel
@@ -31,7 +30,15 @@ class HomeViewModel : ViewModel() {
         return repo.getLikesList(postsList)
     }
 
-    fun getCommentsCount(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, Int>>>{
+    fun getCommentsCount(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, Int>>> {
         return repo.getCommentsList(postsList)
+    }
+
+    fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
+        return repo.getSavedList()
+    }
+
+    fun savedClicked(postId: String, oldStatus: Boolean) {
+        repo.saveClicked(postId, oldStatus)
     }
 }

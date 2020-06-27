@@ -26,4 +26,12 @@ class PostDetailsViewModel : ViewModel() {
     fun getCommentsCount(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, Int>>>{
         return repo.getCommentsList(postsList)
     }
+
+    fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
+        return repo.getSavedList()
+    }
+
+    fun savedClicked(postId: String, oldStatus: Boolean) {
+        repo.saveClicked(postId, oldStatus)
+    }
 }

@@ -9,14 +9,15 @@ package com.android.amit.instaclone.data
  * Description:
  */
 object FieldName {
-    val USER_TABLE_NAME = "Users"
-    val FOLLOWER_COLUMN_NAME = "Follower"
-    val FOLLOWING_COLUMN_NAME = "Following"
-    val FULL_NAME_COLUM_NAME = "fullName"
-    val USER_ID_COLUMN_NAME = "userId"
+    const val USER_TABLE_NAME = "Users"
+    const val FOLLOWER_COLUMN_NAME = "Follower"
+    const val FOLLOWING_COLUMN_NAME = "Following"
+    const val FULL_NAME_COLUMN_NAME = "fullName"
+    const val USER_ID_COLUMN_NAME = "userId"
 
-    val POST_TABLE_NAME = "Posts"
-    val LIKES_TABLE_NAME = "Likes"
-    val COMMENT_TABLE_NAME = "Comments"
-    val PUBLISHER_COLUMN_NAME = "publisher"
+    const val POST_TABLE_NAME = "Posts"
+    const val LIKES_TABLE_NAME = "Likes"
+    const val SAVED_TABLE_NAME = "Saved"
+    const val COMMENT_TABLE_NAME = "Comments"
+    const val PUBLISHER_COLUMN_NAME = "publisher"
 }

@@ -8,6 +8,7 @@ import com.android.amit.instaclone.util.Status
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.util.*
@@ -112,7 +113,7 @@ class Repository {
             val userRef: DatabaseReference =
                 FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
             val query =
-                userRef.orderByChild(FieldName.FULL_NAME_COLUM_NAME).startAt(nameQuery).endAt(
+                userRef.orderByChild(FieldName.FULL_NAME_COLUMN_NAME).startAt(nameQuery).endAt(
                     nameQuery + "\uf8ff"
                 )
 
@@ -666,6 +667,51 @@ class Repository {
                 }
             }
         })
+        return result
+    }
+
+    /**
+     * on saved button clicked
+     */
+    fun saveClicked(postId: String, oldStatus: Boolean) {
+        val saveRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.SAVED_TABLE_NAME)
+                .child(getCurrentUserId())
+        if (oldStatus) {
+            saveRef.child(postId).removeValue()
+        } else {
+            saveRef.child(postId).setValue(true)
+        }
+    }
+
+    /**
+     * get saved list
+     */
+    fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
+
+        val result: MutableLiveData<Resource<HashMap<String, Boolean>>> =
+            MutableLiveData()
+        val resouce = Resource<HashMap<String, Boolean>>()
+        result.value = resouce.loading()
+
+        var savedMap = HashMap<String, Boolean>()
+        val saveRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.SAVED_TABLE_NAME)
+                .child(getCurrentUserId())
+        saveRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                savedMap.clear()
+                if (p0.exists()) {
+                    savedMap.putAll(p0.getValue<HashMap<String, Boolean>>()!!)
+                }
+
+                result.value = resouce.success(savedMap)
+            }
+        })
+
         return result
     }
 }

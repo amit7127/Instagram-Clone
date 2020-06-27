@@ -52,3 +52,12 @@ fun isLiked(imageView: ImageView, isLike: Boolean) {
         imageView.setImageResource(R.drawable.heart_not_clicked)
     }
 }
+
+@BindingAdapter("set_saved_status")
+fun isSaved(imageView: ImageView, isSaved: Boolean) {
+    if (isSaved) {
+        imageView.setImageResource(R.drawable.save_large_icon)
+    } else {
+        imageView.setImageResource(R.drawable.save_unfilled_large_icon)
+    }
+}

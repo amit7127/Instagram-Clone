@@ -35,6 +35,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
     var postList = ArrayList<PostListItem>()
     var likesList = HashMap<String, LikeModel>()
     var mCommentsList = HashMap<String, Int>()
+    var mSavedList = HashMap<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +67,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
             LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = PostsListAdapter(postList, this, likesList, mCommentsList)
+        adapter = PostsListAdapter(postList, this, likesList, mCommentsList, mSavedList)
         recyclerView.adapter = adapter
 
         viewModel.getPostDetails(postId).observe(viewLifecycleOwner, Observer {
@@ -82,6 +83,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
                         adapter.notifyDataSetChanged()
                         getLikes(postList)
                         getCommentsCount(postList)
+                        getSavedList()
                     }
                     post_details_progressbar.visibility = View.GONE
                 }
@@ -123,6 +125,21 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         })
     }
 
+    fun getSavedList() {
+        viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    mSavedList.clear()
+                    if (it.data != null) {
+                        mSavedList.putAll(it.data!!)
+                    }
+                    adapter.notifyDataSetChanged()
+                    postDetailsBinding.invalidateAll()
+                }
+            }
+        })
+    }
+
     override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
         viewModel.likeButtonClicked(postId, oldStatusIsLike)
     }
@@ -132,5 +149,9 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         bundle.putString("postImageUrl", postImageUrlString)
         bundle.putString("postId", postId)
         view?.findNavController()?.navigate(R.id.action_postDetailsFragment_to_commentsFragment, bundle)
+    }
+
+    override fun onSaveButtonClicked(postId: String, oldStatus: Boolean) {
+        viewModel.savedClicked(postId, oldStatus)
     }
 }

@@ -31,6 +31,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
     var listOfPosts = arrayListOf<PostListItem>()
     var likesList = HashMap<String, LikeModel>()
     var mCommentsList = HashMap<String, Int>()
+    var mSavedList = HashMap<String, Boolean>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +53,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
             LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
-        adapter = PostsListAdapter(listOfPosts, this, likesList, mCommentsList)
+        adapter = PostsListAdapter(listOfPosts, this, likesList, mCommentsList, mSavedList)
         recyclerView.adapter = adapter
 
         init()
@@ -74,6 +75,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
 
                         getLikes(it.data!!)
                         getCommentsCount(it.data!!)
+                        getSavedList()
                     }
                     adapter.notifyDataSetChanged()
                     home_fragment_progressbar.visibility = View.GONE
@@ -121,6 +123,21 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
         })
     }
 
+    fun getSavedList() {
+        viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    mSavedList.clear()
+                    if (it.data != null) {
+                        mSavedList.putAll(it.data!!)
+                    }
+                    adapter.notifyDataSetChanged()
+                    homeBinding.invalidateAll()
+                }
+            }
+        })
+    }
+
     override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
         viewModel.likeButtonClicked(postId, oldStatusIsLike)
     }
@@ -130,5 +147,9 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
         bundle.putString("postImageUrl", postImageUrlString)
         bundle.putString("postId", postId)
         view?.findNavController()?.navigate(R.id.action_homeFragment_to_commentsFragment, bundle)
+    }
+
+    override fun onSaveButtonClicked(postId: String, oldStatus: Boolean) {
+        viewModel.savedClicked(postId, oldStatus)
     }
 }

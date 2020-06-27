@@ -23,7 +23,8 @@ class PostsListAdapter(
     private val postsList: ArrayList<PostListItem>,
     private val postListener: PostListener,
     private val likesList: HashMap<String, LikeModel>,
-    private val commentsList: HashMap<String, Int>
+    private val commentsList: HashMap<String, Int>,
+    private val savedList: HashMap<String, Boolean>
 ) :
     RecyclerView.Adapter<PostsListAdapter.PostsListViewHolder>() {
 
@@ -38,10 +39,15 @@ class PostsListAdapter(
     override fun onBindViewHolder(holder: PostsListViewHolder, position: Int) {
         var like = LikeModel()
         var post = postsList[position]
+        var isSaved: Boolean = false
         if (likesList.get(post.postId) != null)
             like = likesList.getValue(post.postId)
+
+        if (savedList.containsKey(post.postId))
+            isSaved = true
+
         holder.apply {
-            bind(post, like, commentsList[post.postId])
+            bind(post, like, commentsList[post.postId], isSaved)
         }
     }
 
@@ -49,9 +55,11 @@ class PostsListAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         var commentsCount : Int? = 0
+        var isSaved : Boolean = false
 
-        fun bind(item: PostListItem, like: LikeModel, commentsCount: Int?) {
+        fun bind(item: PostListItem, like: LikeModel, commentsCount: Int?, isSaved: Boolean) {
             this.commentsCount = commentsCount
+            this.isSaved = isSaved
             binding.apply {
                 postListItem = item
                 holder = this@PostsListViewHolder
@@ -67,10 +75,15 @@ class PostsListAdapter(
         fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
             postListener.onLikeButtonClicked(postId, oldStatusIsLike)
         }
+
+        fun onSaveButtonClicked(postId: String, oldStatus: Boolean){
+            postListener.onSaveButtonClicked(postId, oldStatus)
+        }
     }
 
     interface PostListener {
         fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean)
         fun onCommentButtonClicked(postId: String, postImageUrlString : String)
+        fun onSaveButtonClicked(postId: String, oldStatus: Boolean)
     }
 }
