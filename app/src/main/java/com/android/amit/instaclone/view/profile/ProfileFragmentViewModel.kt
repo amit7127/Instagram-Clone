@@ -70,4 +70,8 @@ class ProfileFragmentViewModel : ViewModel() {
     fun getPostsImages(): MutableLiveData<Resource<ArrayList<Post>>> {
         return repo.getUserPosts(id)
     }
+
+    fun setPostsCount(postsCount: Int){
+        mPost = postsCount
+    }
 }

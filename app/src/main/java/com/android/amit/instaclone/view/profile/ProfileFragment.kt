@@ -97,6 +97,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler {
                     if (it.data != null) {
                         postsList.addAll(it.data!!)
                         postsList.reverse()
+                        viewModel.setPostsCount(postsList.size)
                     }
                     adapter.notifyDataSetChanged()
                 }

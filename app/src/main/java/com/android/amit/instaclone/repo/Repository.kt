@@ -614,6 +614,10 @@ class Repository {
 
         val postsRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME).child(postId)
+
+        val userRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
+
         postsRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
@@ -622,14 +626,46 @@ class Repository {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.exists()) {
                     val post = p0.getValue(PostListItem::class.java)
-                    post?.let {
+                    if (post != null) {
+                        val userId = post.publisher
+
+                        userRef.child(userId)
+                            .addValueEventListener(object : ValueEventListener {
+                                override fun onCancelled(p0: DatabaseError) {
+                                    post.publisherImageUrl = ""
+                                    post.publisherUserName = "N/A"
+                                    post.publisherFullName = "N/A"
+                                }
+
+                                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                                    if (dataSnapShot.exists()) {
+                                        val userDetails =
+                                            dataSnapShot.getValue(UserDetailsModel::class.java)
+                                        if (userDetails != null) {
+                                            post.publisherImageUrl =
+                                                userDetails.image
+                                            post.publisherUserName =
+                                                userDetails.userName
+                                            post.publisherFullName =
+                                                userDetails.fullName
+                                        } else {
+                                            post.publisherImageUrl = ""
+                                            post.publisherUserName = "N/A"
+                                            post.publisherFullName = "N/A"
+                                        }
+                                    } else {
+                                        post.publisherImageUrl = ""
+                                        post.publisherUserName = "N/A"
+                                        post.publisherFullName = "N/A"
+                                    }
+                                    result.value = resouce.success(post)
+                                }
+                            })
                         result.value = resouce.success(post)
                     }
                 }
             }
-
         })
-
         return result
     }
 }
