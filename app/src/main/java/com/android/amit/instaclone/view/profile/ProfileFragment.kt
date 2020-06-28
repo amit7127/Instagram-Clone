@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.databinding.FragmentProfileBinding
+import com.android.amit.instaclone.util.CustomTab
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.profile.presenter.UploadedPostImagesAdapter
 import com.google.android.material.snackbar.Snackbar
@@ -23,7 +25,8 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 /**
  * A simple [Fragment] subclass.
  */
-class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler {
+class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
+    CustomTab.CustomTabListener {
 
     lateinit var profileBinding: FragmentProfileBinding
     lateinit var viewModel: ProfileFragmentViewModel
@@ -48,6 +51,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler {
 
         profileBinding.profile = this
         profileBinding.viewModel = viewModel
+        profileBinding.tabListener = this
         init()
         return profileBinding.root;
     }
@@ -145,5 +149,9 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler {
         bundle.putString("postId", postId)
         view?.findNavController()
             ?.navigate(R.id.action_profileFragment_to_postDetailsFragment, bundle)
+    }
+
+    override fun onTabChanged(id: Int) {
+        Toast.makeText(context, id.toString(), Toast.LENGTH_LONG).show()
     }
 }

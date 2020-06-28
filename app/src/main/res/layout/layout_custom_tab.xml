@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.android.amit.instaclone.util.CustomTab" />
+
+        <import type="com.android.amit.instaclone.util.Constants" />
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/post_image_view_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/button_black_background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/images_gridview_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="@{() -> listener.onTabSelected(Constants.postsTab)}"
+            android:src="@drawable/grid"
+            android:tint="@{listener.selectedTab == Constants.postsTab?  @color/colorPrimary :  @color/colorGrey}" />
+
+        <ImageButton
+            android:id="@+id/images_save_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="1dp"
+            android:layout_height="49dp"
+            android:layout_weight="1"
+            android:onClick="@{(view) -> listener.onTabSelected(Constants.savedTab)}"
+            android:scaleType="fitCenter"
+            android:src="@drawable/save_large_icon"
+            android:tint="@{listener.selectedTab == Constants.savedTab?  @color/colorPrimary :  @color/colorGrey}" />
+    </LinearLayout>
+</layout>

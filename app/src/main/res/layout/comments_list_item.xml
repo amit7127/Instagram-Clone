@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:text="@{commentItem.comment}"
                 app:layout_constraintLeft_toRightOf="@id/user_profile_image_comment_list_item"
                 app:layout_constraintRight_toRightOf="parent"

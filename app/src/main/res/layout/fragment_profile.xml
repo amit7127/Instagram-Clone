@@ -12,6 +12,9 @@
         <variable
             name="viewModel"
             type="com.android.amit.instaclone.view.profile.ProfileFragmentViewModel" />
+        <variable
+            name="tabListener"
+            type="com.android.amit.instaclone.util.CustomTab.CustomTabListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -183,7 +186,7 @@
                     android:textSize="18sp"
                     android:text="@{viewModel.MBio}" />
 
-                <LinearLayout
+                <!--<LinearLayout
                     android:id="@+id/post_image_view_tab_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -211,7 +214,15 @@
                         android:layout_weight="1"
                         android:src="@drawable/save_large_icon"
                         style="?android:attr/buttonBarButtonStyle" />
-                </LinearLayout>
+                </LinearLayout>-->
+
+                <com.android.amit.instaclone.util.CustomTab
+                    android:id="@+id/post_image_view_tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/profile_bio"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:listener="@{tabListener}"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/user_post_images_rv"
