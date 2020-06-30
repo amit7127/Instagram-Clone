@@ -9,6 +9,7 @@ import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.util.StringUtils.capitalizeWords
+import java.util.*
 
 /**
  * ================================================
@@ -25,7 +26,7 @@ class ProfileFragmentViewModel : ViewModel() {
     var mFullName = "N/A"
     var mBio = "N/A"
     var mProfileImage = Uri.EMPTY
-    var isEditProfile : Boolean = false
+    var isEditProfile: Boolean = false
     var mEditButtonText = Status.follow
 
     var repo: Repository = Repository()
@@ -34,7 +35,7 @@ class ProfileFragmentViewModel : ViewModel() {
     fun getUserData(userId: String?): MutableLiveData<Resource<UserDetailsModel>>? {
         if (userId != null) {
             id = userId
-        } else{
+        } else {
             isEditProfile = true
         }
         return id.let { repo.getUserDetails(it) }
@@ -49,7 +50,7 @@ class ProfileFragmentViewModel : ViewModel() {
             mBio = userDetailsModel.bio
             mProfileImage = Uri.parse(userDetailsModel.image)
 
-            if (!isEditProfile){
+            if (!isEditProfile) {
                 setStatus(userDetailsModel)
             }
         }
@@ -71,7 +72,15 @@ class ProfileFragmentViewModel : ViewModel() {
         return repo.getUserPosts(id)
     }
 
-    fun setPostsCount(postsCount: Int){
+    fun getSavedPostsImages(idList: ArrayList<String>): MutableLiveData<Resource<ArrayList<Post>>> {
+        return repo.getPostsFromIds(idList)
+    }
+
+    fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
+        return repo.getSavedList()
+    }
+
+    fun setPostsCount(postsCount: Int) {
         mPost = postsCount
     }
 }

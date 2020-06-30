@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.databinding.FragmentProfileBinding
+import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.CustomTab
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.profile.presenter.UploadedPostImagesAdapter
@@ -31,7 +31,9 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     lateinit var profileBinding: FragmentProfileBinding
     lateinit var viewModel: ProfileFragmentViewModel
     var postsList: ArrayList<Post> = ArrayList()
+    var savedPostsList: ArrayList<Post> = ArrayList()
     lateinit var adapter: UploadedPostImagesAdapter
+    lateinit var savedListAdapter: UploadedPostImagesAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -81,6 +83,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         })
 
         getUsersPostList()
+        getSavedPostList()
     }
 
     fun getUsersPostList() {
@@ -104,6 +107,45 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                         viewModel.setPostsCount(postsList.size)
                     }
                     adapter.notifyDataSetChanged()
+                }
+            }
+        })
+    }
+
+    fun getSavedPostList() {
+        val recyclerView: RecyclerView =
+            profileBinding.savedPostImagesRv // In xml we have given id rv_movie_list to RecyclerView
+
+        val layoutManager =
+            GridLayoutManager(context, 3) // you can use getContext() instead of "this"
+
+        recyclerView.layoutManager = layoutManager
+        savedListAdapter = UploadedPostImagesAdapter(savedPostsList, this)
+        recyclerView.adapter = savedListAdapter
+
+        var mSavedList = HashMap<String, Boolean>()
+
+        viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    mSavedList.clear()
+                    if (it.data != null) {
+                        mSavedList.putAll(it.data!!)
+                    }
+
+                    viewModel.getSavedPostsImages(mSavedList.keys.toList() as java.util.ArrayList<String>)
+                        .observe(viewLifecycleOwner, Observer {
+                            when (it.status) {
+                                Status.statusSuccess -> {
+                                    savedPostsList.clear()
+                                    if (it.data != null) {
+                                        savedPostsList.addAll(it.data!!)
+                                        savedPostsList.reverse()
+                                    }
+                                    savedListAdapter.notifyDataSetChanged()
+                                }
+                            }
+                        })
                 }
             }
         })
@@ -152,6 +194,13 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     }
 
     override fun onTabChanged(id: Int) {
-        Toast.makeText(context, id.toString(), Toast.LENGTH_LONG).show()
+        if (id == Constants.postsTab) {
+            user_post_images_rv.visibility = View.VISIBLE
+            saved_post_images_rv.visibility = View.GONE
+        } else if (id == Constants.savedTab) {
+            user_post_images_rv.visibility = View.GONE
+            saved_post_images_rv.visibility = View.VISIBLE
+        }
+
     }
 }

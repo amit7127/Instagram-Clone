@@ -714,4 +714,38 @@ class Repository {
 
         return result
     }
+
+    /**
+     * get posts list from id list
+     */
+    fun getPostsFromIds(idList: ArrayList<String>): MutableLiveData<Resource<ArrayList<Post>>> {
+        val result: MutableLiveData<Resource<ArrayList<Post>>> =
+            MutableLiveData()
+        val resouce = Resource<ArrayList<Post>>()
+        result.value = resouce.loading()
+
+        var postsList = ArrayList<Post>()
+
+        val postsRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
+        for (postId in idList) {
+            postsRef.child(postId).addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.exists()) {
+                        val post = p0.getValue(Post::class.java)
+                        if (post != null) {
+                            postsList.add(post)
+                            result.value = resouce.success(postsList)
+                        }
+                    }
+                }
+            })
+        }
+
+        return result
+    }
 }
