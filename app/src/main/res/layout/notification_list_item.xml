@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="user"
+            type="com.android.amit.instaclone.data.UserDetailsModel" />
+
+        <variable
+            name="notification"
+            type="com.android.amit.instaclone.data.Notification" />
+
+        <variable
+            name="listener"
+            type="com.android.amit.instaclone.view.notification.presenter.NotificationListAdapter.NotificationListHandler" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@{notification.view == false? @color/colorLightGrey : @color/colorWhite}"
+        android:onClick="@{() -> listener.onNotificationClicked(notification)}"
+        android:layout_margin="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="0dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp">
+
+            <View
+                android:id="@+id/notification_new"
+                android:layout_width="6dp"
+                android:layout_height="0dp"
+                android:background="@color/colorPrimary"
+                android:visibility="@{notification.view == false? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/notification_user_image"
+                load_image="@{user.image}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/profile"
+                app:layout_constraintLeft_toRightOf="@id/notification_new"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/notification_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@{user.userName}"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/notification_user_image"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/notification_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@{notification.notificationText}"
+                app:layout_constraintLeft_toRightOf="@id/notification_user_image"
+                app:layout_constraintTop_toBottomOf="@id/notification_user_name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</layout>

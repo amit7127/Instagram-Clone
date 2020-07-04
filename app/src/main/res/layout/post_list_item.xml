@@ -72,7 +72,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
-                android:onClick="@{(view) -> holder.likeButtonClicked(postListItem.postId, likeModel.likes)}"
+                android:onClick="@{(view) -> holder.likeButtonClicked(postListItem.postId, likeModel.likes, postListItem.publisher)}"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/post_image_post_item" />
 
@@ -82,7 +82,7 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="7dp"
-                android:onClick="@{() -> holder.onCommentClicked(postListItem.postId, postListItem.postImage)}"
+                android:onClick="@{() -> holder.onCommentClicked(postListItem.postId, postListItem.postImage, postListItem.publisher)}"
                 android:src="@drawable/comment"
                 app:layout_constraintLeft_toRightOf="@id/post_image_like_btn"
                 app:layout_constraintTop_toBottomOf="@id/post_image_post_item" />

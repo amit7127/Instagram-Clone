@@ -44,7 +44,14 @@
         android:id="@+id/notificationFragment"
         android:name="com.android.amit.instaclone.view.notification.NotificationFragment"
         android:label="notification_fragment"
-        tools:layout="@layout/notification_fragment" />
+        tools:layout="@layout/notification_fragment" >
+        <action
+            android:id="@+id/action_notificationFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/accountSettingsFragment"
         android:name="com.android.amit.instaclone.view.acountsettings.AccountSettingsFragment"

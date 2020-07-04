@@ -14,6 +14,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentSearchBinding
 import com.android.amit.instaclone.util.Status
@@ -49,9 +50,11 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView: RecyclerView = binding.homeRecyclerView // In xml we have given id rv_movie_list to RecyclerView
+        val recyclerView: RecyclerView =
+            binding.homeRecyclerView // In xml we have given id rv_movie_list to RecyclerView
 
-        val layoutManager = LinearLayoutManager(context) // you can use getContext() instead of "this"
+        val layoutManager =
+            LinearLayoutManager(context) // you can use getContext() instead of "this"
 
         recyclerView.layoutManager = layoutManager
         adapter = UserSerchAdapter(listOfUsers, this)
@@ -88,6 +91,10 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
                     Status.statusSuccess -> {
                         Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
                             .show()
+
+                        if (status.equals(Status.follow)) {
+                            sendNotification(userId)
+                        }
                     }
                     else -> {
                         Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
@@ -101,5 +108,13 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
     override fun onProfileClicked(userId: String) {
         var bundle = bundleOf("userId" to userId)
         view?.findNavController()?.navigate(R.id.action_searchFragment_to_profileFragment, bundle)
+    }
+
+    private fun sendNotification(targetId: String) {
+        var notification = Notification()
+        notification.isFollow = true
+        notification.notificationText = getString(R.string.follow_notification_text)
+
+        targetId.let { viewModel.addNotification(notification, it) }
     }
 }

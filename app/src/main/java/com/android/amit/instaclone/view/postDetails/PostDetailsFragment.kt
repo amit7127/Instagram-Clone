@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.LikeModel
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.PostListItem
 import com.android.amit.instaclone.databinding.FragmentPostDetailsBinding
 import com.android.amit.instaclone.util.Constants
@@ -141,14 +142,17 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         })
     }
 
-    override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
+    override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean,  publisherId: String) {
         viewModel.likeButtonClicked(postId, oldStatusIsLike)
+        if (!oldStatusIsLike)
+            sendNotification(postId, publisherId)
     }
 
-    override fun onCommentButtonClicked(postId: String, postImageUrlString: String) {
+    override fun onCommentButtonClicked(postId: String, postImageUrlString: String, publisherId: String) {
         var bundle = Bundle()
         bundle.putString(Constants.POST_IMAGE_URL_ID_TAG, postImageUrlString)
         bundle.putString(Constants.POST_ID_TAG, postId)
+        bundle.putString(Constants.PUBLISHER_ID_TAG, publisherId)
         view?.findNavController()
             ?.navigate(R.id.action_postDetailsFragment_to_commentsFragment, bundle)
     }
@@ -163,5 +167,14 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         bundle.putString(Constants.PURPOSE, Constants.LIKES_TAG)
         view?.findNavController()
             ?.navigate(R.id.action_postDetailsFragment_to_usersListFragment, bundle)
+    }
+
+    private fun sendNotification(postId: String, publisherId: String) {
+        var notification = Notification()
+        notification.isPost = true
+        notification.postId = postId
+        notification.notificationText = getString(R.string.like_notification_text)
+
+        publisherId?.let { viewModel.addNotification(notification, it) }
     }
 }

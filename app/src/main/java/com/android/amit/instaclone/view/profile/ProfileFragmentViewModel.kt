@@ -3,6 +3,7 @@ package com.android.amit.instaclone.view.profile
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
@@ -82,5 +83,9 @@ class ProfileFragmentViewModel : ViewModel() {
 
     fun setPostsCount(postsCount: Int) {
         mPost = postsCount
+    }
+
+    fun addNotification(notification: Notification, tergetUserId: String) {
+        repo.addNotification(notification, tergetUserId)
     }
 }

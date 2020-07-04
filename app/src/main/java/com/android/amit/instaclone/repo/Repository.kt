@@ -4,6 +4,7 @@ import android.net.Uri
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.android.amit.instaclone.data.*
+import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -839,6 +840,86 @@ class Repository {
             }
 
         })
+        return result
+    }
+
+    fun addNotification(notification: Notification, targetUserId: String) {
+        notification.publisherId = getCurrentUserId()
+        val notificationRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
+                .child(targetUserId)
+        val id = notificationRef.push().key
+        if (id != null) {
+            notification.id = id
+            notificationRef.child(id).setValue(notification)
+        }
+    }
+
+    fun getNotifications(): MutableLiveData<Resource<ArrayList<Notification>>> {
+        val result: MutableLiveData<Resource<ArrayList<Notification>>> =
+            MutableLiveData()
+        val resouce = Resource<ArrayList<Notification>>()
+        result.value = resouce.loading()
+
+        val notifications = ArrayList<Notification>()
+
+        val notificationRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
+                .child(getCurrentUserId())
+        notificationRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapShot: DataSnapshot) {
+                notifications.clear()
+                for (snapShot in dataSnapShot.children) {
+                    val notification = snapShot.getValue(Notification::class.java)
+                    if (notification != null) {
+                        notifications.add(notification)
+                    }
+                }
+
+                result.value = resouce.success(notifications)
+            }
+
+        })
+        return result
+    }
+
+    /**
+     * Mark notification as read
+     */
+    fun markReadNotification(notification: Notification) {
+        FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
+            .child(getCurrentUserId()).child(notification.id).child(Constants.VIEW_COLUMN)
+            .setValue(true)
+    }
+
+    fun getNotificationCount(): MutableLiveData<Resource<Int>> {
+        var result = MutableLiveData<Resource<Int>>()
+        val resouce = Resource<Int>()
+        result.value = resouce.loading()
+
+        var notificationRef =
+            FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
+                .child(getCurrentUserId())
+
+        var query = notificationRef.orderByChild(Constants.VIEW_COLUMN).equalTo(false)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.exists()) {
+                        result.value = resouce.success(p0.children.count())
+                    } else{
+                        result.value = resouce.success(0)
+                    }
+                }
+            })
+
         return result
     }
 }

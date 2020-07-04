@@ -6,6 +6,7 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.amit.instaclone.data.CommentModel
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
@@ -84,5 +85,9 @@ class CommentsFragmentViewModel : ViewModel() {
 
             else -> return true
         }
+    }
+
+    fun addNotification(notification: Notification, tergetUserId: String){
+        repo.addNotification(notification, tergetUserId)
     }
 }

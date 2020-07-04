@@ -2,6 +2,7 @@ package com.android.amit.instaclone.view.search
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
@@ -29,5 +30,9 @@ class SearchFragmentViewModel : ViewModel() {
 
     fun setFollowStatus(userId: String, currentStatus: String): MutableLiveData<Resource<Unit>> {
         return repo.follow(userId, currentStatus)
+    }
+
+    fun addNotification(notification: Notification, tergetUserId: String){
+        repo.addNotification(notification, tergetUserId)
     }
 }

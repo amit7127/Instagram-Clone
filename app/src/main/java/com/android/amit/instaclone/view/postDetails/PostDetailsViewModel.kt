@@ -3,6 +3,7 @@ package com.android.amit.instaclone.view.postDetails
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.amit.instaclone.data.LikeModel
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.PostListItem
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.repo.Repository
@@ -33,5 +34,9 @@ class PostDetailsViewModel : ViewModel() {
 
     fun savedClicked(postId: String, oldStatus: Boolean) {
         repo.saveClicked(postId, oldStatus)
+    }
+
+    fun addNotification(notification: Notification, tergetUserId: String){
+        repo.addNotification(notification, tergetUserId)
     }
 }

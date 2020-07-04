@@ -6,6 +6,7 @@ object Constants {
 
     const val POST_ID_TAG = "postId"
     const val POST_IMAGE_URL_ID_TAG = "postImageUrl"
+    const val PUBLISHER_ID_TAG = "postPublisher"
     const val USER_ID_TAG = "userId"
 
     const val PURPOSE = "Purpose"
@@ -13,4 +14,5 @@ object Constants {
     const val LIKES_TAG = "Likes"
     const val FOLLOWERS_TAG = "Followers"
     const val FOLLOWING_TAG = "Following"
+    const val VIEW_COLUMN = "view"
 }

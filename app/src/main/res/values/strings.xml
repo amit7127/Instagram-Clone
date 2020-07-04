@@ -15,4 +15,9 @@
     <!--    Post list items-->
     <string name="comments_count">%d Comments</string>
     <string name="likes_count">%d Likes</string>
+
+    <!--  Notification texts  -->
+    <string name="comment_notification_text">Added comment on your post.</string>
+    <string name="like_notification_text">Liked your post.</string>
+    <string name="follow_notification_text">is now Following you.</string>
 </resources>

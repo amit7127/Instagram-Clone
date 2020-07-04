@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.databinding.FragmentProfileBinding
 import com.android.amit.instaclone.util.Constants
@@ -131,21 +132,23 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                     mSavedList.clear()
                     if (it.data != null) {
                         mSavedList.putAll(it.data!!)
-                    }
 
-                    viewModel.getSavedPostsImages(mSavedList.keys.toList() as java.util.ArrayList<String>)
-                        .observe(viewLifecycleOwner, Observer {
-                            when (it.status) {
-                                Status.statusSuccess -> {
-                                    savedPostsList.clear()
-                                    if (it.data != null) {
-                                        savedPostsList.addAll(it.data!!)
-                                        savedPostsList.reverse()
+                        if (mSavedList.size > 0) {
+                            viewModel.getSavedPostsImages(mSavedList.keys.toList() as java.util.ArrayList<String>)
+                                .observe(viewLifecycleOwner, Observer {
+                                    when (it.status) {
+                                        Status.statusSuccess -> {
+                                            savedPostsList.clear()
+                                            if (it.data != null) {
+                                                savedPostsList.addAll(it.data!!)
+                                                savedPostsList.reverse()
+                                            }
+                                            savedListAdapter.notifyDataSetChanged()
+                                        }
                                     }
-                                    savedListAdapter.notifyDataSetChanged()
-                                }
-                            }
-                        })
+                                })
+                        }
+                    }
                 }
             }
         })
@@ -172,6 +175,9 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                             Snackbar.LENGTH_SHORT
                         )
                             .show()
+                        if (status.equals(Status.follow)) {
+                            sendNotification(userId)
+                        }
                     }
                     else -> {
                         Snackbar.make(
@@ -217,5 +223,13 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         bundle.putString(Constants.USER_ID_TAG, id)
         view?.findNavController()
             ?.navigate(R.id.action_profileFragment_to_usersListFragment, bundle)
+    }
+
+    private fun sendNotification(targetId: String) {
+        var notification = Notification()
+        notification.isFollow = true
+        notification.notificationText = getString(R.string.follow_notification_text)
+
+        targetId.let { viewModel.addNotification(notification, it) }
     }
 }

@@ -68,12 +68,12 @@ class PostsListAdapter(
             }
         }
 
-        fun onCommentClicked(postId: String, postImageUrlString : String){
-            postListener.onCommentButtonClicked(postId, postImageUrlString)
+        fun onCommentClicked(postId: String, postImageUrlString : String, publisherId: String){
+            postListener.onCommentButtonClicked(postId, postImageUrlString, publisherId)
         }
 
-        fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
-            postListener.onLikeButtonClicked(postId, oldStatusIsLike)
+        fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean, publisherId: String) {
+            postListener.onLikeButtonClicked(postId, oldStatusIsLike, publisherId)
         }
 
         fun onSaveButtonClicked(postId: String, oldStatus: Boolean){
@@ -86,8 +86,8 @@ class PostsListAdapter(
     }
 
     interface PostListener {
-        fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean)
-        fun onCommentButtonClicked(postId: String, postImageUrlString : String)
+        fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean, publisherId: String)
+        fun onCommentButtonClicked(postId: String, postImageUrlString : String, publisherId: String)
         fun onSaveButtonClicked(postId: String, oldStatus: Boolean)
         fun onLikeTextClicked(postId: String)
     }

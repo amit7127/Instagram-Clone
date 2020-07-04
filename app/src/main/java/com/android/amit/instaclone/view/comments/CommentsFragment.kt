@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.CommentModel
+import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentCommentsBinding
 import com.android.amit.instaclone.util.Constants
@@ -35,6 +36,7 @@ class CommentsFragment : Fragment() {
     lateinit var commentFragmentBinding: FragmentCommentsBinding
     lateinit var viewModel: CommentsFragmentViewModel
     var postId: String? = null
+    var publisherId: String? = null
     var postImageString: String? = null
     var commentsList = ArrayList<CommentModel>()
     var usersMap = HashMap<String, UserDetailsModel>()
@@ -42,6 +44,10 @@ class CommentsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (arguments?.getString(Constants.PUBLISHER_ID_TAG) != null) {
+            publisherId = arguments?.getString(Constants.PUBLISHER_ID_TAG)!!
+        }
     }
 
     override fun onCreateView(
@@ -141,6 +147,7 @@ class CommentsFragment : Fragment() {
                     Status.statusSuccess -> {
                         publish_comment_progress_bar.visibility = View.GONE
                         publish_button_comment_fragment.visibility = View.VISIBLE
+                        sendNotification(postId!!)
                         viewModel.clearComment()
                         commentFragmentBinding.invalidateAll()
                     }
@@ -156,6 +163,15 @@ class CommentsFragment : Fragment() {
                 }
             })
         }
+    }
+
+    private fun sendNotification(postId: String) {
+        var notification = Notification()
+        notification.isPost = true
+        notification.postId = postId
+        notification.notificationText = getString(R.string.comment_notification_text)
+
+        publisherId?.let { viewModel.addNotification(notification, it) }
     }
 
 }
