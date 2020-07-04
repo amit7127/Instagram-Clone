@@ -16,6 +16,7 @@ import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.LikeModel
 import com.android.amit.instaclone.data.PostListItem
 import com.android.amit.instaclone.databinding.FragmentHomeBinding
+import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.home.presenter.PostsListAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -144,12 +145,19 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
 
     override fun onCommentButtonClicked(postId: String, postImageUrlString: String) {
         var bundle = Bundle()
-        bundle.putString("postImageUrl", postImageUrlString)
-        bundle.putString("postId", postId)
+        bundle.putString(Constants.POST_IMAGE_URL_ID_TAG, postImageUrlString)
+        bundle.putString(Constants.POST_ID_TAG, postId)
         view?.findNavController()?.navigate(R.id.action_homeFragment_to_commentsFragment, bundle)
     }
 
     override fun onSaveButtonClicked(postId: String, oldStatus: Boolean) {
         viewModel.savedClicked(postId, oldStatus)
+    }
+
+    override fun onLikeTextClicked(postId: String) {
+        var bundle = Bundle()
+        bundle.putString(Constants.POST_ID_TAG, postId)
+        bundle.putString(Constants.PURPOSE, Constants.LIKES_TAG)
+        view?.findNavController()?.navigate(R.id.action_homeFragment_to_usersListFragment, bundle)
     }
 }

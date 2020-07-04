@@ -34,6 +34,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     var savedPostsList: ArrayList<Post> = ArrayList()
     lateinit var adapter: UploadedPostImagesAdapter
     lateinit var savedListAdapter: UploadedPostImagesAdapter
+    var id: String? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -60,9 +61,8 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
 
     @ExperimentalStdlibApi
     private fun init() {
-        var id: String? = null
-        if (arguments?.getString("userId") != null) {
-            id = arguments?.getString("userId")!!
+        if (arguments?.getString(Constants.USER_ID_TAG) != null) {
+            id = arguments?.getString(Constants.USER_ID_TAG)!!
         }
         viewModel.getUserData(id)?.observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -187,8 +187,8 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     }
 
     override fun onPostClicked(postId: String) {
-        var bundle = Bundle()
-        bundle.putString("postId", postId)
+        val bundle = Bundle()
+        bundle.putString(Constants.POST_ID_TAG, postId)
         view?.findNavController()
             ?.navigate(R.id.action_profileFragment_to_postDetailsFragment, bundle)
     }
@@ -202,5 +202,20 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
             saved_post_images_rv.visibility = View.VISIBLE
         }
 
+    }
+
+    fun onFollowersClicked() {
+        val bundle = Bundle()
+        bundle.putString(Constants.PURPOSE, Constants.FOLLOWERS_TAG)
+        view?.findNavController()
+            ?.navigate(R.id.action_profileFragment_to_usersListFragment, bundle)
+    }
+
+    fun onFollowingClicked() {
+        val bundle = Bundle()
+        bundle.putString(Constants.PURPOSE, Constants.FOLLOWING_TAG)
+        bundle.putString(Constants.USER_ID_TAG, id)
+        view?.findNavController()
+            ?.navigate(R.id.action_profileFragment_to_usersListFragment, bundle)
     }
 }

@@ -748,4 +748,97 @@ class Repository {
 
         return result
     }
+
+    /**
+     * get users id list for a post likes
+     */
+    fun getLikedUsersList(postId: String): MutableLiveData<Resource<ArrayList<String>>> {
+        val result: MutableLiveData<Resource<ArrayList<String>>> =
+            MutableLiveData()
+        val resouce = Resource<ArrayList<String>>()
+        result.value = resouce.loading()
+
+        var usersList = ArrayList<String>()
+
+        val likesRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.LIKES_TABLE_NAME)
+        likesRef.child(postId).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                usersList.clear()
+                if (p0.exists()) {
+                    usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
+                    result.value = resouce.success(usersList)
+                }
+            }
+
+        })
+
+        return result
+    }
+
+    /**
+     * Get followers user id list
+     */
+    fun getFollowerUserList(userId: String): MutableLiveData<Resource<ArrayList<String>>> {
+        val result: MutableLiveData<Resource<ArrayList<String>>> =
+            MutableLiveData()
+        val resouce = Resource<ArrayList<String>>()
+        result.value = resouce.loading()
+
+        var usersList = ArrayList<String>()
+
+        val followerRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
+                .child(FieldName.FOLLOWER_COLUMN_NAME)
+        followerRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                usersList.clear()
+                if (p0.exists()) {
+                    usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
+                    result.value = resouce.success(usersList)
+                }
+            }
+
+        })
+        return result
+    }
+
+    /**
+     * Get Following user id list
+     */
+    fun getFollowingUserList(userId: String): MutableLiveData<Resource<ArrayList<String>>> {
+        val result: MutableLiveData<Resource<ArrayList<String>>> =
+            MutableLiveData()
+        val resouce = Resource<ArrayList<String>>()
+        result.value = resouce.loading()
+
+        var usersList = ArrayList<String>()
+
+        val followingRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
+                .child(FieldName.FOLLOWING_COLUMN_NAME)
+        followingRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                usersList.clear()
+                if (p0.exists()) {
+                    usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
+                    result.value = resouce.success(usersList)
+                }
+            }
+
+        })
+        return result
+    }
 }

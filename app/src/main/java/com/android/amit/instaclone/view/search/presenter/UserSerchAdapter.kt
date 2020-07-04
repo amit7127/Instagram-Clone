@@ -19,7 +19,7 @@ import com.android.amit.instaclone.util.Status
  */
 class UserSerchAdapter(
     private val usersList: ArrayList<UserDetailsModel>,
-    private val searchListener: UserSerchAdapter.UserSearchListener
+    private val searchListener: UserSearchListener
 ) :
     RecyclerView.Adapter<UserSerchAdapter.UserSearchViewHolder>() {
 
@@ -37,7 +37,7 @@ class UserSerchAdapter(
 
     class UserSearchViewHolder(
         val binding: ProfileListItemBinding,
-        val searchListener: UserSerchAdapter.UserSearchListener
+        val searchListener: UserSearchListener
     ) :
         RecyclerView.ViewHolder(binding.root) {
 

@@ -14,6 +14,7 @@ import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.CommentModel
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentCommentsBinding
+import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.comments.presenter.CommnetsListAdapter
 import com.google.android.material.snackbar.Snackbar
@@ -110,13 +111,13 @@ class CommentsFragment : Fragment() {
     }
 
     private fun initDataFetching() {
-        if (arguments?.getString("postImageUrl") != null) {
-            postImageString = arguments?.getString("postImageUrl")!!
+        if (arguments?.getString(Constants.POST_IMAGE_URL_ID_TAG) != null) {
+            postImageString = arguments?.getString(Constants.POST_IMAGE_URL_ID_TAG)!!
 
             viewModel.setPostData(postImageString!!)
         }
-        if (arguments?.getString("postId") != null) {
-            postId = arguments?.getString("postId")!!
+        if (arguments?.getString(Constants.POST_ID_TAG) != null) {
+            postId = arguments?.getString(Constants.POST_ID_TAG)!!
         }
 
         viewModel.getUserData().observe(viewLifecycleOwner, Observer {

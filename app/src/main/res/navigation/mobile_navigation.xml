@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_homeFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -33,6 +36,9 @@
         <action
             android:id="@+id/action_profileFragment_to_postDetailsFragment"
             app:destination="@id/postDetailsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
@@ -59,5 +65,16 @@
         <action
             android:id="@+id/action_postDetailsFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_postDetailsFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/usersListFragment"
+        android:name="com.android.amit.instaclone.view.users.UsersListFragment"
+        android:label="UsersListFragment" >
+        <action
+            android:id="@+id/action_usersListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
 </navigation>

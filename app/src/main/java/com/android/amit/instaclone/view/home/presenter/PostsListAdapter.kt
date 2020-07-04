@@ -79,11 +79,16 @@ class PostsListAdapter(
         fun onSaveButtonClicked(postId: String, oldStatus: Boolean){
             postListener.onSaveButtonClicked(postId, oldStatus)
         }
+
+        fun onLikeTextClicked(postId: String){
+            postListener.onLikeTextClicked(postId)
+        }
     }
 
     interface PostListener {
         fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean)
         fun onCommentButtonClicked(postId: String, postImageUrlString : String)
         fun onSaveButtonClicked(postId: String, oldStatus: Boolean)
+        fun onLikeTextClicked(postId: String)
     }
 }
