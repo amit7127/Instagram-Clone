@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.Notification
+import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.NotificationFragmentBinding
 import com.android.amit.instaclone.util.Constants
@@ -26,6 +27,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
     lateinit var adapter: NotificationListAdapter
     var notificationList = ArrayList<Notification>()
     var usersMap = HashMap<String, UserDetailsModel>()
+    private var postList = ArrayList<Post>()
 
 
     override fun onCreateView(
@@ -47,7 +49,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
         val layoutManager =
             LinearLayoutManager(context) // you can use getContext() instead of "this"
         recyclerView.layoutManager = layoutManager
-        adapter = NotificationListAdapter(notificationList, usersMap, this)
+        adapter = NotificationListAdapter(notificationList, usersMap, this, postList)
         recyclerView.adapter = adapter
 
 
@@ -59,11 +61,28 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
                         notificationList.addAll(it.data!!)
                         var userList = it.data!!.map { it.publisherId }
                         getUserList(userList)
+                        getPostList(it.data!!)
                     }
                     adapter.notifyDataSetChanged()
                 }
             }
         })
+    }
+
+    private fun getPostList(data: ArrayList<Notification>) {
+        var postIdList = data.filter { it.isPost }.map { it.postId }
+        viewModel.getPostList(postIdList as ArrayList<String>)
+            .observe(viewLifecycleOwner, Observer {
+                when (it.status) {
+                    Status.statusSuccess -> {
+                        postList.clear()
+                        if (it.data != null && it.data!!.size > 0) {
+                            this.postList.addAll(it.data!!)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            })
     }
 
     private fun getUserList(userList: List<String>) {

@@ -4,13 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.data.Notification
+import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.NotificationListItemBinding
 
 class NotificationListAdapter(
     private val notificationList: ArrayList<Notification>,
     private val userList: HashMap<String, UserDetailsModel>,
-    private val notificationListener: NotificationListHandler
+    private val notificationListener: NotificationListHandler,
+    private val postList: ArrayList<Post>
 ) : RecyclerView.Adapter<NotificationListAdapter.NotificationListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationListViewHolder {
@@ -26,9 +28,13 @@ class NotificationListAdapter(
     override fun onBindViewHolder(holder: NotificationListViewHolder, position: Int) {
         var notification = notificationList[position]
         var user = userList[notification.publisherId]
+        var post: Post? = null
+        if (notification.isPost) {
+            post = postList.find { it.postId == notification.postId }
+        }
         user?.let {
             holder.bind(
-                it, notification, notificationListener
+                it, notification, notificationListener, post
             )
         }
 
@@ -37,18 +43,26 @@ class NotificationListAdapter(
     class NotificationListViewHolder(private val notificationBinding: NotificationListItemBinding) :
         RecyclerView.ViewHolder(notificationBinding.root) {
 
-        fun bind(user: UserDetailsModel, notification: Notification, notificationListener: NotificationListHandler) {
+        fun bind(
+            user: UserDetailsModel,
+            notification: Notification,
+            notificationListener: NotificationListHandler,
+            post: Post?
+        ) {
 
             notificationBinding.apply {
                 this.user = user
                 this.notification = notification
                 this.listener = notificationListener
+                if (post != null) {
+                    this.post = post
+                }
                 executePendingBindings()
             }
         }
     }
 
-    interface NotificationListHandler{
+    interface NotificationListHandler {
         fun onNotificationClicked(notification: Notification)
     }
 }
