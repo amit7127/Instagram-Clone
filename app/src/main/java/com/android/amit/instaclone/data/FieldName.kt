@@ -21,4 +21,5 @@ object FieldName {
     const val COMMENT_TABLE_NAME = "Comments"
     const val PUBLISHER_COLUMN_NAME = "publisher"
     const val NOTIFICATION_TABLE_NAME = "Notifications"
+    const val STORY_TABLE_NAME = "Story"
 }

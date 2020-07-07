@@ -2,12 +2,10 @@ package com.android.amit.instaclone.view.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.android.amit.instaclone.data.LikeModel
-import com.android.amit.instaclone.data.Notification
-import com.android.amit.instaclone.data.PostListItem
-import com.android.amit.instaclone.data.Resource
+import com.android.amit.instaclone.data.*
 import com.android.amit.instaclone.repo.Repository
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * ================================================
@@ -45,5 +43,13 @@ class HomeViewModel : ViewModel() {
 
     fun addNotification(notification: Notification, tergetUserId: String){
         repo.addNotification(notification, tergetUserId)
+    }
+
+    fun getFollowingUsersList(): MutableLiveData<Resource<ArrayList<String>>> {
+        return repo.getFollowingUserList(repo.getCurrentUserId())
+    }
+
+    fun getStories(followingList : ArrayList<String>): MutableLiveData<Resource<ArrayList<StoryModel>>> {
+        return repo.getStories(followingList)
     }
 }

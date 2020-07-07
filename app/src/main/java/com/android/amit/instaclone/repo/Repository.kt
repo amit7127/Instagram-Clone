@@ -914,12 +914,56 @@ class Repository {
                 override fun onDataChange(p0: DataSnapshot) {
                     if (p0.exists()) {
                         result.value = resouce.success(p0.children.count())
-                    } else{
+                    } else {
                         result.value = resouce.success(0)
                     }
                 }
             })
 
+        return result
+    }
+
+    /**
+     * get story list for following user list
+     */
+    fun getStories(followingUserList: ArrayList<String>): MutableLiveData<Resource<ArrayList<StoryModel>>> {
+        var result = MutableLiveData<Resource<ArrayList<StoryModel>>>()
+        val resouce = Resource<ArrayList<StoryModel>>()
+        result.value = resouce.loading()
+
+        val storyList = ArrayList<StoryModel>()
+
+        var storyReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
+        storyReference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val timeCurrent = System.currentTimeMillis()
+                storyList.clear()
+                storyList.add(StoryModel())
+
+                for (id in followingUserList) {
+                    var count = 0
+                    var story: StoryModel? = null
+
+                    for (snapShot in p0.child(id).children) {
+                        story = snapShot.getValue(StoryModel::class.java)
+
+                        if (story != null && timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
+                            count++
+                        }
+                    }
+
+                    if (count > 0) {
+                        storyList.add(story!!)
+                    }
+                }
+                result.value = resouce.success(storyList)
+            }
+        })
         return result
     }
 }

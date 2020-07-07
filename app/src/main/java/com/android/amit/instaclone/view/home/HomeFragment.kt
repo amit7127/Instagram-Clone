@@ -16,24 +16,28 @@ import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.LikeModel
 import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.PostListItem
+import com.android.amit.instaclone.data.StoryModel
 import com.android.amit.instaclone.databinding.FragmentHomeBinding
 import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.home.presenter.PostsListAdapter
+import com.android.amit.instaclone.view.home.presenter.StoryListAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class HomeFragment : Fragment(), PostsListAdapter.PostListener {
+class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter.StoryListHandler {
 
     lateinit var homeBinding: FragmentHomeBinding
     lateinit var viewModel: HomeViewModel
     lateinit var adapter: PostsListAdapter
+    lateinit var storyAdapter: StoryListAdapter
     var listOfPosts = arrayListOf<PostListItem>()
     var likesList = HashMap<String, LikeModel>()
     var mCommentsList = HashMap<String, Int>()
     var mSavedList = HashMap<String, Boolean>()
+    var mStoryList = ArrayList<StoryModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +63,43 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
         recyclerView.adapter = adapter
 
         init()
+
+        initStoryList()
+    }
+
+    private fun initStoryList() {
+        val storyRecyclerView: RecyclerView =
+            homeBinding.recyclerViewStory // In xml we have given id rv_movie_list to RecyclerView
+
+        val layoutManager =
+            LinearLayoutManager(context) // you can use getContext() instead of "this"
+
+        storyRecyclerView.layoutManager = layoutManager
+
+        storyRecyclerView.layoutManager = layoutManager
+        storyAdapter = StoryListAdapter(this, mStoryList)
+        storyRecyclerView.adapter = storyAdapter
+
+        viewModel.getFollowingUsersList().observe(viewLifecycleOwner, Observer {
+            when(it.status){
+                Status.statusSuccess -> {
+                    viewModel.getStories(it.data!!).observe(viewLifecycleOwner, Observer { result ->
+                        when(result.status){
+                            Status.statusSuccess -> {
+                                mStoryList.clear()
+                                if (result.data != null){
+                                    mStoryList.addAll(result.data!!)
+                                }
+
+                                storyAdapter.notifyDataSetChanged()
+                                homeBinding.invalidateAll()
+                            }
+                        }
+                    })
+                }
+            }
+        })
+
     }
 
     private fun init() {
@@ -181,5 +222,9 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener {
         notification.notificationText = getString(R.string.like_notification_text)
 
         publisherId?.let { viewModel.addNotification(notification, it) }
+    }
+
+    override fun onAddStoryClicked() {
+
     }
 }

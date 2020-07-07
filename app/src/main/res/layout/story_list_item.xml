@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="story"
+            type="com.android.amit.instaclone.data.StoryModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/story_unseen"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/profile"
+            app:civ_border_color="#f23b5a"
+            app:civ_border_width="2dp"
+            android:layout_marginTop="5dp"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/story_seen"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            app:layout_constraintTop_toBottomOf="@id/story_unseen"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/profile"
+            app:civ_border_color="#afafaf"
+            app:civ_border_width="2dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/story_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/story_seen"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="username"
+            android:maxLines="1"
+            android:textColor="@color/colorPrimaryDark"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
