@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_homeFragment_to_usersListFragment"
             app:destination="@id/usersListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addStoryFragment"
+            app:destination="@id/addStoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -84,4 +87,8 @@
             android:id="@+id/action_usersListFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addStoryFragment"
+        android:name="com.android.amit.instaclone.view.story.AddStoryFragment"
+        android:label="AddStoryFragment" />
 </navigation>

@@ -13,10 +13,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.R
-import com.android.amit.instaclone.data.LikeModel
-import com.android.amit.instaclone.data.Notification
-import com.android.amit.instaclone.data.PostListItem
-import com.android.amit.instaclone.data.StoryModel
+import com.android.amit.instaclone.data.*
 import com.android.amit.instaclone.databinding.FragmentHomeBinding
 import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
@@ -38,6 +35,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
     var mCommentsList = HashMap<String, Int>()
     var mSavedList = HashMap<String, Boolean>()
     var mStoryList = ArrayList<StoryModel>()
+    var mUserMap = HashMap<String, UserDetailsModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,29 +65,34 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
         initStoryList()
     }
 
+    /**
+     * initialize story list
+     */
     private fun initStoryList() {
         val storyRecyclerView: RecyclerView =
             homeBinding.recyclerViewStory // In xml we have given id rv_movie_list to RecyclerView
 
         val layoutManager =
-            LinearLayoutManager(context) // you can use getContext() instead of "this"
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) // you can use getContext() instead of "this"
 
         storyRecyclerView.layoutManager = layoutManager
 
         storyRecyclerView.layoutManager = layoutManager
-        storyAdapter = StoryListAdapter(this, mStoryList)
+        storyAdapter = StoryListAdapter(this, mStoryList, mUserMap)
         storyRecyclerView.adapter = storyAdapter
 
         viewModel.getFollowingUsersList().observe(viewLifecycleOwner, Observer {
-            when(it.status){
+            when (it.status) {
                 Status.statusSuccess -> {
                     viewModel.getStories(it.data!!).observe(viewLifecycleOwner, Observer { result ->
-                        when(result.status){
+                        when (result.status) {
                             Status.statusSuccess -> {
                                 mStoryList.clear()
-                                if (result.data != null){
+                                if (result.data != null) {
                                     mStoryList.addAll(result.data!!)
                                 }
+
+                                getUserMapForStory(mStoryList)
 
                                 storyAdapter.notifyDataSetChanged()
                                 homeBinding.invalidateAll()
@@ -102,6 +105,23 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
 
     }
 
+    /**
+     * get user map from Story List
+     */
+    private fun getUserMapForStory(mStoryList: ArrayList<StoryModel>) {
+        viewModel.getUsersMap(mStoryList).observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.statusSuccess -> {
+                    mUserMap.clear()
+                    mUserMap.putAll(it.data!!)
+                    storyAdapter.notifyDataSetChanged()
+                    homeBinding.invalidateAll()
+                }
+            }
+        })
+    }
+
+    //Initialize posts
     private fun init() {
         viewModel.getPosts().observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -225,6 +245,6 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
     }
 
     override fun onAddStoryClicked() {
-
+        view?.findNavController()?.navigate(R.id.action_homeFragment_to_addStoryFragment)
     }
 }

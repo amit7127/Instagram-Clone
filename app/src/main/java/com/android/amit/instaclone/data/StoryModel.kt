@@ -8,11 +8,16 @@ class StoryModel {
     var userId: String = ""
 
     constructor()
+
     constructor(imageUrl: String, timeStart: Long, timeEnd: Long, storyId: String, userId: String) {
         this.imageUrl = imageUrl
         this.timeStart = timeStart
         this.timeEnd = timeEnd
         this.storyId = storyId
+        this.userId = userId
+    }
+
+    constructor(userId: String) {
         this.userId = userId
     }
 }

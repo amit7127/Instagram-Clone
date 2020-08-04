@@ -103,7 +103,7 @@ class Repository {
         val users = arrayListOf<UserDetailsModel>()
 
         val result: MutableLiveData<Resource<ArrayList<UserDetailsModel>>> =
-            MutableLiveData<Resource<ArrayList<UserDetailsModel>>>()
+            MutableLiveData()
         val resouce = Resource<ArrayList<UserDetailsModel>>()
         result.value = resouce.loading()
 
@@ -843,6 +843,9 @@ class Repository {
         return result
     }
 
+    /**
+     * Add notification to DB
+     */
     fun addNotification(notification: Notification, targetUserId: String) {
         notification.publisherId = getCurrentUserId()
         val notificationRef: DatabaseReference =
@@ -855,6 +858,9 @@ class Repository {
         }
     }
 
+    /**
+     * get notification list
+     */
     fun getNotifications(): MutableLiveData<Resource<ArrayList<Notification>>> {
         val result: MutableLiveData<Resource<ArrayList<Notification>>> =
             MutableLiveData()
@@ -896,6 +902,9 @@ class Repository {
             .setValue(true)
     }
 
+    /**
+     * get number of unread notification
+     */
     fun getNotificationCount(): MutableLiveData<Resource<Int>> {
         var result = MutableLiveData<Resource<Int>>()
         val resouce = Resource<Int>()
@@ -927,43 +936,91 @@ class Repository {
      * get story list for following user list
      */
     fun getStories(followingUserList: ArrayList<String>): MutableLiveData<Resource<ArrayList<StoryModel>>> {
+        followingUserList.add(getCurrentUserId())
+
         var result = MutableLiveData<Resource<ArrayList<StoryModel>>>()
         val resouce = Resource<ArrayList<StoryModel>>()
         result.value = resouce.loading()
 
         val storyList = ArrayList<StoryModel>()
 
+        val timeCurrent = System.currentTimeMillis()
+        storyList.add(StoryModel(getCurrentUserId()))
+
         var storyReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
-        storyReference.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
 
-            }
+        for (id in followingUserList) {
+            //dummy
+            storyReference.orderByChild(Constants.USER_ID_TAG).equalTo(id)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
 
-            override fun onDataChange(p0: DataSnapshot) {
-                val timeCurrent = System.currentTimeMillis()
-                storyList.clear()
-                storyList.add(StoryModel())
-
-                for (id in followingUserList) {
-                    var count = 0
-                    var story: StoryModel? = null
-
-                    for (snapShot in p0.child(id).children) {
-                        story = snapShot.getValue(StoryModel::class.java)
-
-                        if (story != null && timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
-                            count++
-                        }
                     }
 
-                    if (count > 0) {
-                        storyList.add(story!!)
+                    override fun onDataChange(dataSnapShot: DataSnapshot) {
+                        if (dataSnapShot.exists()) {
+                            for (snapShot in dataSnapShot.children) {
+                                val story = snapShot.getValue(StoryModel::class.java)
+                                if (story != null && timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
+                                    storyList.add(story)
+                                    break
+                                }
+                            }
+                        }
+                        result.value = resouce.success(storyList)
+                    }
+
+                })
+        }
+        return result
+    }
+
+    /**
+     * Posts story to DB
+     */
+    fun postStory(storyPictureUri: Uri, story: StoryModel): MutableLiveData<Resource<Unit>> {
+        var result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData<Resource<Unit>>()
+        val resouce = Resource<Unit>()
+        result.value = resouce.loading()
+
+        var firebaseStorage: StorageReference =
+            FirebaseStorage.getInstance().getReference().child("Story Pictures")
+                .child(System.currentTimeMillis().toString() + ".jpg")
+
+        var uploadTask = firebaseStorage.putFile(storyPictureUri)
+
+        val urlTask = uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    result.value = resouce.error("Unable to update")
+                    throw it
+                }
+            }
+            firebaseStorage.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result.toString()
+
+                val storyref: DatabaseReference =
+                    FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
+                val storyId = storyref.push().key.toString()
+
+                story.storyId = storyId
+                story.imageUrl = downloadUri
+
+                storyref.child(storyId).setValue(story).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        result.value = resouce.success(null)
+                    } else {
+                        result.value = resouce.error("Failed to save data")
                     }
                 }
-                result.value = resouce.success(storyList)
+            } else {
+                result.value = resouce.error("Unable to update")
             }
-        })
+        }
         return result
     }
 }

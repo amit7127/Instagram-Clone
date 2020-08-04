@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.data.StoryModel
+import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.AddStoryListItemBinding
 import com.android.amit.instaclone.databinding.StoryListItemBinding
 
 class StoryListAdapter(
     private val listener: StoryListHandler,
-    private val storyList: ArrayList<StoryModel>
+    private val storyList: ArrayList<StoryModel>,
+    private val userMap: HashMap<String, UserDetailsModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /***
@@ -47,17 +49,20 @@ class StoryListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
             StoryType.ADD_STORY.ordinal -> {
+                val story = storyList[position]
+                val user = userMap[story.userId]
                 val addViewHolder = holder as AddStoryViewHolder
                 addViewHolder.apply {
-                    bind(listener)
+                    bind(listener, user)
                 }
             }
 
             StoryType.STORY.ordinal -> {
                 val story = storyList[position]
+                val user = userMap[story.userId]
                 val storyViewHolder = holder as StoryViewHolder
                 storyViewHolder.apply {
-                    bind(story)
+                    bind(story, user)
                 }
             }
         }
@@ -72,18 +77,20 @@ class StoryListAdapter(
 
     class AddStoryViewHolder(val binding: AddStoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(listener: StoryListHandler) {
+        fun bind(listener: StoryListHandler, user: UserDetailsModel?) {
             binding.apply {
                 this.listener = listener
+                this.user = user
             }
         }
     }
 
     class StoryViewHolder(val binding: StoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(story: StoryModel) {
+        fun bind(story: StoryModel, user: UserDetailsModel?) {
             binding.apply {
                 this.story = story
+                this.user = user
             }
         }
     }
