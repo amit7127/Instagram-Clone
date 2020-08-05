@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_homeFragment_to_addStoryFragment"
             app:destination="@id/addStoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_showStoryFragment"
+            app:destination="@id/showStoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -91,4 +94,8 @@
         android:id="@+id/addStoryFragment"
         android:name="com.android.amit.instaclone.view.story.AddStoryFragment"
         android:label="AddStoryFragment" />
+    <fragment
+        android:id="@+id/showStoryFragment"
+        android:name="com.android.amit.instaclone.view.story.ShowStoryFragment"
+        android:label="ShowStoryFragment" />
 </navigation>

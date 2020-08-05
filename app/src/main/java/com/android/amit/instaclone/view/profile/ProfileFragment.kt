@@ -134,7 +134,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                         mSavedList.putAll(it.data!!)
 
                         if (mSavedList.size > 0) {
-                            viewModel.getSavedPostsImages(mSavedList.keys.toList() as java.util.ArrayList<String>)
+                            viewModel.getSavedPostsImages(ArrayList(mSavedList.keys.toList()))
                                 .observe(viewLifecycleOwner, Observer {
                                     when (it.status) {
                                         Status.statusSuccess -> {

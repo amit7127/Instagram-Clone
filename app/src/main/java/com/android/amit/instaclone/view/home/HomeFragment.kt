@@ -73,7 +73,11 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
             homeBinding.recyclerViewStory // In xml we have given id rv_movie_list to RecyclerView
 
         val layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) // you can use getContext() instead of "this"
+            LinearLayoutManager(
+                context,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            ) // you can use getContext() instead of "this"
 
         storyRecyclerView.layoutManager = layoutManager
 
@@ -217,7 +221,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
         postImageUrlString: String,
         publisherId: String
     ) {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(Constants.POST_IMAGE_URL_ID_TAG, postImageUrlString)
         bundle.putString(Constants.POST_ID_TAG, postId)
         bundle.putString(Constants.PUBLISHER_ID_TAG, publisherId)
@@ -229,22 +233,29 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
     }
 
     override fun onLikeTextClicked(postId: String) {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(Constants.POST_ID_TAG, postId)
         bundle.putString(Constants.PURPOSE, Constants.LIKES_TAG)
         view?.findNavController()?.navigate(R.id.action_homeFragment_to_usersListFragment, bundle)
     }
 
     private fun sendNotification(postId: String, publisherId: String) {
-        var notification = Notification()
+        val notification = Notification()
         notification.isPost = true
         notification.postId = postId
         notification.notificationText = getString(R.string.like_notification_text)
 
-        publisherId?.let { viewModel.addNotification(notification, it) }
+        publisherId.let { viewModel.addNotification(notification, it) }
     }
 
     override fun onAddStoryClicked() {
         view?.findNavController()?.navigate(R.id.action_homeFragment_to_addStoryFragment)
+    }
+
+    override fun onShowStoryClicked(userId: String) {
+        val bundle = Bundle()
+        bundle.putString(Constants.USER_ID_TAG, userId)
+
+        view?.findNavController()?.navigate(R.id.action_homeFragment_to_showStoryFragment, bundle)
     }
 }

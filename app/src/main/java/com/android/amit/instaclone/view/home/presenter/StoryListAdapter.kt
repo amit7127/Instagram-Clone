@@ -62,7 +62,7 @@ class StoryListAdapter(
                 val user = userMap[story.userId]
                 val storyViewHolder = holder as StoryViewHolder
                 storyViewHolder.apply {
-                    bind(story, user)
+                    bind(listener, story, user)
                 }
             }
         }
@@ -87,8 +87,9 @@ class StoryListAdapter(
 
     class StoryViewHolder(val binding: StoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(story: StoryModel, user: UserDetailsModel?) {
+        fun bind(listener: StoryListHandler, story: StoryModel, user: UserDetailsModel?) {
             binding.apply {
+                this.listener = listener
                 this.story = story
                 this.user = user
             }
@@ -100,5 +101,6 @@ class StoryListAdapter(
      */
     interface StoryListHandler {
         fun onAddStoryClicked()
+        fun onShowStoryClicked(userId : String)
     }
 }

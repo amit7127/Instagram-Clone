@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="story"
+            type="com.android.amit.instaclone.data.StoryModel" />
+
+        <variable
+            name="user"
+            type="com.android.amit.instaclone.data.UserDetailsModel" />
+
+        <variable
+            name="activity"
+            type="com.android.amit.instaclone.view.story.ShowStoryFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        tools:context=".view.story.ShowStoryFragment">
+
+        <ImageView
+            android:id="@+id/story_image_view"
+            load_image="@{activity.currentStory.imageUrl}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:src="@drawable/profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <View
+            android:id="@+id/story_previous"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/story_skip"
+            android:onClick="@{() -> activity.onPreviousClicked()}"/>
+
+        <View
+            android:id="@+id/story_skip"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/story_previous"
+            app:layout_constraintRight_toRightOf="parent"
+            android:onClick="@{() -> activity.onNextClicked()}"/>
+
+        <jp.shts.android.storiesprogressview.StoriesProgressView
+            android:id="@+id/story_progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/story_user_profile_pic"
+            load_image="@{user.image}"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/profile"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/story_progress_view" />
+
+        <TextView
+            android:id="@+id/story_user_profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:set_name="@{user.fullName}"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/story_user_profile_pic"
+            app:layout_constraintLeft_toRightOf="@id/story_user_profile_pic"
+            app:layout_constraintTop_toTopOf="@id/story_user_profile_pic" />
+
+        <TextView
+            android:id="@+id/story_view_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="#20000000"
+            android:text="Views : 0"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <TextView
+            android:id="@+id/story_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="#20000000"
+            android:text="Delete"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/story_loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

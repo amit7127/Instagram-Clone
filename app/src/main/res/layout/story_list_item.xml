@@ -11,12 +11,17 @@
         <variable
             name="user"
             type="com.android.amit.instaclone.data.UserDetailsModel" />
+
+        <variable
+            name="listener"
+            type="com.android.amit.instaclone.view.home.presenter.StoryListAdapter.StoryListHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp">
+        android:layout_marginStart="10dp"
+        android:onClick="@{() -> listener.onShowStoryClicked(user.userId)}">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/story_unseen"

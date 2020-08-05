@@ -76,7 +76,7 @@ class Repository {
     fun saveUserInFirebase(
         userDetails: UserDetailsModel
     ): MutableLiveData<Resource<Unit>> {
-        var userId = getCurrentUserId()
+        val userId = getCurrentUserId()
         userDetails.userId = userId
         userDetails.fullName = userDetails.fullName.toLowerCase(Locale.getDefault())
         userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
@@ -190,7 +190,7 @@ class Repository {
 
     fun getUserDetails(userId: String): MutableLiveData<Resource<UserDetailsModel>> {
 
-        var result = MutableLiveData<Resource<UserDetailsModel>>()
+        val result = MutableLiveData<Resource<UserDetailsModel>>()
         val resouce = Resource<UserDetailsModel>()
 
         val userRef: DatabaseReference =
@@ -218,16 +218,16 @@ class Repository {
         profilePictureUri: Uri
     ): MutableLiveData<Resource<Unit>> {
 
-        var result: MutableLiveData<Resource<Unit>> =
+        val result: MutableLiveData<Resource<Unit>> =
             MutableLiveData<Resource<Unit>>()
         val resouce = Resource<Unit>()
         result.value = resouce.loading()
 
-        var firebaseStorage: StorageReference =
+        val firebaseStorage: StorageReference =
             FirebaseStorage.getInstance().getReference().child("Profile Images")
                 .child(userDetails.userId + "jpg")
 
-        var uploadTask = firebaseStorage.putFile(profilePictureUri)
+        val uploadTask = firebaseStorage.putFile(profilePictureUri)
 
         val urlTask = uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
@@ -265,16 +265,16 @@ class Repository {
     }
 
     fun postWithImage(profilePictureUri: Uri, comment: String): MutableLiveData<Resource<Unit>> {
-        var result: MutableLiveData<Resource<Unit>> =
+        val result: MutableLiveData<Resource<Unit>> =
             MutableLiveData<Resource<Unit>>()
         val resouce = Resource<Unit>()
         result.value = resouce.loading()
 
-        var firebaseStorage: StorageReference =
+        val firebaseStorage: StorageReference =
             FirebaseStorage.getInstance().getReference().child("Posts Pictures")
                 .child(System.currentTimeMillis().toString() + ".jpg")
 
-        var uploadTask = firebaseStorage.putFile(profilePictureUri)
+        val uploadTask = firebaseStorage.putFile(profilePictureUri)
 
         val urlTask = uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
@@ -294,7 +294,7 @@ class Repository {
                 val uId = getCurrentUserId()
                 val postId = userRef.push().key
 
-                var post = Post(postId!!, comment, uId, downloadUri.toString())
+                val post = Post(postId!!, comment, uId, downloadUri.toString())
 
                 userRef.child(postId).setValue(post).addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -488,7 +488,7 @@ class Repository {
      * To post a comment
      */
     fun postComment(postId: String, comment: CommentModel): MutableLiveData<Resource<Unit>> {
-        var result: MutableLiveData<Resource<Unit>> =
+        val result: MutableLiveData<Resource<Unit>> =
             MutableLiveData<Resource<Unit>>()
         val resouce = Resource<Unit>()
         result.value = resouce.loading()
@@ -695,7 +695,7 @@ class Repository {
         val resouce = Resource<HashMap<String, Boolean>>()
         result.value = resouce.loading()
 
-        var savedMap = HashMap<String, Boolean>()
+        val savedMap = HashMap<String, Boolean>()
         val saveRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.SAVED_TABLE_NAME)
                 .child(getCurrentUserId())
@@ -725,7 +725,7 @@ class Repository {
         val resouce = Resource<ArrayList<Post>>()
         result.value = resouce.loading()
 
-        var postsList = ArrayList<Post>()
+        val postsList = ArrayList<Post>()
 
         val postsRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
@@ -759,7 +759,7 @@ class Repository {
         val resouce = Resource<ArrayList<String>>()
         result.value = resouce.loading()
 
-        var usersList = ArrayList<String>()
+        val usersList = ArrayList<String>()
 
         val likesRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.LIKES_TABLE_NAME)
@@ -790,7 +790,7 @@ class Repository {
         val resouce = Resource<ArrayList<String>>()
         result.value = resouce.loading()
 
-        var usersList = ArrayList<String>()
+        val usersList = ArrayList<String>()
 
         val followerRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
@@ -821,7 +821,7 @@ class Repository {
         val resouce = Resource<ArrayList<String>>()
         result.value = resouce.loading()
 
-        var usersList = ArrayList<String>()
+        val usersList = ArrayList<String>()
 
         val followingRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
@@ -835,8 +835,8 @@ class Repository {
                 usersList.clear()
                 if (p0.exists()) {
                     usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
-                    result.value = resouce.success(usersList)
                 }
+                result.value = resouce.success(usersList)
             }
 
         })
@@ -906,15 +906,15 @@ class Repository {
      * get number of unread notification
      */
     fun getNotificationCount(): MutableLiveData<Resource<Int>> {
-        var result = MutableLiveData<Resource<Int>>()
+        val result = MutableLiveData<Resource<Int>>()
         val resouce = Resource<Int>()
         result.value = resouce.loading()
 
-        var notificationRef =
+        val notificationRef =
             FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
                 .child(getCurrentUserId())
 
-        var query = notificationRef.orderByChild(Constants.VIEW_COLUMN).equalTo(false)
+        notificationRef.orderByChild(Constants.VIEW_COLUMN).equalTo(false)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
 
@@ -938,7 +938,7 @@ class Repository {
     fun getStories(followingUserList: ArrayList<String>): MutableLiveData<Resource<ArrayList<StoryModel>>> {
         followingUserList.add(getCurrentUserId())
 
-        var result = MutableLiveData<Resource<ArrayList<StoryModel>>>()
+        val result = MutableLiveData<Resource<ArrayList<StoryModel>>>()
         val resouce = Resource<ArrayList<StoryModel>>()
         result.value = resouce.loading()
 
@@ -947,7 +947,7 @@ class Repository {
         val timeCurrent = System.currentTimeMillis()
         storyList.add(StoryModel(getCurrentUserId()))
 
-        var storyReference =
+        val storyReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
 
         for (id in followingUserList) {
@@ -963,14 +963,21 @@ class Repository {
                             for (snapShot in dataSnapShot.children) {
                                 val story = snapShot.getValue(StoryModel::class.java)
                                 if (story != null && timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
-                                    storyList.add(story)
+                                    var isPresent = false
+                                    for (storyModel in storyList) {
+                                        if (storyModel.storyId == story.storyId) {
+                                            isPresent = true
+                                            storyList[storyList.indexOf(storyModel)] = story
+                                        }
+                                    }
+                                    if (!isPresent)
+                                        storyList.add(story)
                                     break
                                 }
                             }
                         }
                         result.value = resouce.success(storyList)
                     }
-
                 })
         }
         return result
@@ -980,16 +987,16 @@ class Repository {
      * Posts story to DB
      */
     fun postStory(storyPictureUri: Uri, story: StoryModel): MutableLiveData<Resource<Unit>> {
-        var result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
+        val result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData()
         val resouce = Resource<Unit>()
         result.value = resouce.loading()
 
-        var firebaseStorage: StorageReference =
+        val firebaseStorage: StorageReference =
             FirebaseStorage.getInstance().getReference().child("Story Pictures")
                 .child(System.currentTimeMillis().toString() + ".jpg")
 
-        var uploadTask = firebaseStorage.putFile(storyPictureUri)
+        val uploadTask = firebaseStorage.putFile(storyPictureUri)
 
         val urlTask = uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
@@ -1022,5 +1029,55 @@ class Repository {
             }
         }
         return result
+    }
+
+    //get story for the user id
+    fun getStoryListForTheUser(userId: String): MutableLiveData<Resource<List<StoryModel>>> {
+        val result: MutableLiveData<Resource<List<StoryModel>>> =
+            MutableLiveData()
+        val resource = Resource<List<StoryModel>>()
+        result.value = resource.loading()
+
+        val storyList = ArrayList<StoryModel>()
+
+        val timeCurrent = System.currentTimeMillis()
+        val storyReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
+
+        storyReference.orderByChild(Constants.USER_ID_TAG).equalTo(userId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    if (dataSnapShot.exists()) {
+                        for (snapShot in dataSnapShot.children) {
+                            val story = snapShot.getValue(StoryModel::class.java)
+                            if (story != null && timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
+                                var isPresent = false
+                                for (storyModel in storyList) {
+                                    if (storyModel.storyId == story.storyId) {
+                                        isPresent = true
+                                        storyList[storyList.indexOf(storyModel)] = story
+                                    }
+                                }
+                                if (!isPresent)
+                                    storyList.add(story)
+                            }
+                        }
+                    }
+                    result.value = resource.success(storyList)
+                }
+            })
+        return result
+    }
+
+    fun setStorySeen(storyId: String) {
+        val currentUserId = getCurrentUserId()
+
+        FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
+            .child(storyId)
+            .child("Seen").child(currentUserId).setValue(true)
     }
 }

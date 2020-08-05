@@ -83,4 +83,7 @@ dependencies {
 
     //Picasso for image
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //Story progress bar
+    implementation 'com.github.shts:StoriesProgressView:3.0.0'
 }
