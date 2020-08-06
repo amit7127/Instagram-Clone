@@ -8,6 +8,7 @@ object Constants {
     const val POST_IMAGE_URL_ID_TAG = "postImageUrl"
     const val PUBLISHER_ID_TAG = "postPublisher"
     const val USER_ID_TAG = "userId"
+    const val STORY_ID_TAG = "storyId"
 
     const val PURPOSE = "Purpose"
 

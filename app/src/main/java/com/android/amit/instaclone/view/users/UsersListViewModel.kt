@@ -3,6 +3,7 @@ package com.android.amit.instaclone.view.users
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.amit.instaclone.data.Resource
+import com.android.amit.instaclone.data.StoryModel
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
 
@@ -29,5 +30,9 @@ class UsersListViewModel : ViewModel() {
 
     fun getUsersFromIdList(usersIdList: ArrayList<String>): MutableLiveData<Resource<HashMap<String, UserDetailsModel>>> {
         return repo.getUsersListFromIDList(usersIdList.toHashSet())
+    }
+
+    fun getStory(storyId: String): MutableLiveData<Resource<StoryModel>> {
+        return repo.getStoryById(storyId)
     }
 }

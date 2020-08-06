@@ -74,6 +74,26 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
             Constants.FOLLOWING_TAG -> {
                 setFollowingData()
             }
+
+            Constants.VIEW_COLUMN -> {
+                setStoryViews()
+            }
+        }
+    }
+
+    private fun setStoryViews() {
+        if (arguments?.getString(Constants.STORY_ID_TAG) != null) {
+            val storyId = arguments?.getString(Constants.STORY_ID_TAG)
+            storyId?.let { it ->
+                viewModel.getStory(it).observe(viewLifecycleOwner, Observer {
+                    when (it.status) {
+                        Status.statusSuccess -> {
+                            setUserList(ArrayList(it.data!!.seen.keys))
+                        }
+                    }
+                })
+            }
+
         }
     }
 

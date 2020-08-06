@@ -97,5 +97,9 @@
     <fragment
         android:id="@+id/showStoryFragment"
         android:name="com.android.amit.instaclone.view.story.ShowStoryFragment"
-        android:label="ShowStoryFragment" />
+        android:label="ShowStoryFragment" >
+        <action
+            android:id="@+id/action_showStoryFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
+    </fragment>
 </navigation>

@@ -19,7 +19,11 @@ class ShowStoryViewModel : ViewModel() {
         return repo.getUserDetails(userId)
     }
 
-    fun setStorySeen(storyId: String){
+    fun setStorySeen(storyId: String) {
         repo.setStorySeen(storyId)
+    }
+
+    fun deleteStory(storyId: String) {
+        repo.deleteStory(storyId)
     }
 }

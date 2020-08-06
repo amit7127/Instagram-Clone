@@ -945,7 +945,8 @@ class Repository {
         val storyList = ArrayList<StoryModel>()
 
         val timeCurrent = System.currentTimeMillis()
-        storyList.add(StoryModel(getCurrentUserId()))
+        val currentUserId = getCurrentUserId()
+        storyList.add(StoryModel(currentUserId))
 
         val storyReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
@@ -965,7 +966,10 @@ class Repository {
                                 if (story != null && timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
                                     var isPresent = false
                                     for (storyModel in storyList) {
-                                        if (storyModel.storyId == story.storyId) {
+                                        if (storyModel.storyId == story.storyId && !story.seen.containsKey(
+                                                currentUserId
+                                            )
+                                        ) {
                                             isPresent = true
                                             storyList[storyList.indexOf(storyModel)] = story
                                         }
@@ -1073,11 +1077,42 @@ class Repository {
         return result
     }
 
+    //Set story seen as for current user
     fun setStorySeen(storyId: String) {
         val currentUserId = getCurrentUserId()
 
         FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
             .child(storyId)
-            .child("Seen").child(currentUserId).setValue(true)
+            .child("seen").child(currentUserId).setValue(true)
+    }
+
+    // delete story by story id
+    fun deleteStory(storyId: String) {
+        FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
+            .child(storyId).removeValue()
+    }
+
+    //Get story by story id
+    fun getStoryById(storyId: String): MutableLiveData<Resource<StoryModel>> {
+        val result: MutableLiveData<Resource<StoryModel>> =
+            MutableLiveData()
+        val resource = Resource<StoryModel>()
+        result.value = resource.loading()
+
+        FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
+            .child(storyId).addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.exists()) {
+                        val story = p0.getValue(StoryModel::class.java)
+                        result.value = resource.success(story)
+                    }
+                }
+
+            })
+        return result
     }
 }

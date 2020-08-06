@@ -20,4 +20,8 @@
     <string name="comment_notification_text">Added comment on your post.</string>
     <string name="like_notification_text">Liked your post.</string>
     <string name="follow_notification_text">is now Following you.</string>
+
+    <!--  Story strings  -->
+    <string name="views_count">Views : %d</string>
+    <string name="delete">Delete</string>
 </resources>

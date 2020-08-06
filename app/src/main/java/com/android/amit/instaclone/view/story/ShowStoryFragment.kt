@@ -13,6 +13,7 @@ import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.StoryModel
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentShowStoryBinding
+import com.android.amit.instaclone.repo.Repository
 import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import jp.shts.android.storiesprogressview.StoriesProgressView
@@ -28,6 +29,7 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
     var currentStory = StoryModel()
     var mStoryUser = UserDetailsModel()
     var isDataChanged = true
+    var isOwnStory = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +40,6 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         viewModel = ViewModelProvider(this).get(ShowStoryViewModel::class.java)
 
         storyBinding.activity = this
-        storyBinding.story = currentStory
         storyBinding.user = mStoryUser
 
         initView()
@@ -51,6 +52,8 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
             userId = arguments?.getString(Constants.USER_ID_TAG)!!
             getStories(userId)
             getUserDetails(userId)
+
+            isOwnStory = userId == Repository().getCurrentUserId()
         }
     }
 
@@ -64,12 +67,13 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
                     if (it.data != null) {
                         storyList.addAll(it.data!!)
                     }
+                    currentStory = storyList[storyCount]
+                    storyBinding.invalidateAll()
+
                     if (isDataChanged) {
                         setStoryView()
                         isDataChanged = false
                     }
-                    currentStory = storyList[storyCount]
-                    storyBinding.invalidateAll()
                 }
 
                 Status.statusLoading -> {
@@ -95,11 +99,14 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         })
     }
 
+    //Set dtory view with progree dialog
     private fun setStoryView() {
         story_progress_view.setStoriesCount(storyList.size)
         story_progress_view.setStoryDuration(10000L)
         story_progress_view.setStoriesListener(this)
         story_progress_view.startStories()
+
+        viewModel.setStorySeen(currentStory.storyId)
     }
 
     override fun onComplete() {
@@ -118,15 +125,43 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         storyBinding.invalidateAll()
     }
 
+    //Next button clicked
     fun onNextClicked() {
         story_progress_view.skip()
     }
 
+    //Previous button clicked
     fun onPreviousClicked() {
         story_progress_view.reverse()
     }
 
+    //set story as seen by current user
     fun setSeen(storyId: String) {
         viewModel.setStorySeen(storyId)
+    }
+
+    //Delete the story by story id
+    fun deleteStory(storyId: String) {
+        viewModel.deleteStory(storyId)
+        story_progress_view.skip()
+    }
+
+    //show seen user list
+    fun viewerList(storyId: String) {
+        var bundle = Bundle()
+        bundle.putString(Constants.STORY_ID_TAG, storyId)
+        bundle.putString(Constants.PURPOSE, Constants.VIEW_COLUMN)
+        view?.findNavController()
+            ?.navigate(R.id.action_showStoryFragment_to_usersListFragment, bundle)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        story_progress_view.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        story_progress_view.resume()
     }
 }

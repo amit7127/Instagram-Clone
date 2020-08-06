@@ -6,7 +6,7 @@ class StoryModel {
     var timeEnd: Long = 0
     var storyId: String = ""
     var userId: String = ""
-    var seenMap: HashMap<String, Boolean> = HashMap()
+    var seen: HashMap<String, Boolean> = HashMap()
 
     constructor()
 
@@ -20,13 +20,13 @@ class StoryModel {
         timeEnd: Long,
         storyId: String,
         userId: String,
-        seenMap: HashMap<String, Boolean>
+        seen: HashMap<String, Boolean>
     ) {
         this.imageUrl = imageUrl
         this.timeStart = timeStart
         this.timeEnd = timeEnd
         this.storyId = storyId
         this.userId = userId
-        this.seenMap = seenMap
+        this.seen = seen
     }
 }

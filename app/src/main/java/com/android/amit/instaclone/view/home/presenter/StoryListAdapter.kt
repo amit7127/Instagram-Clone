@@ -7,12 +7,15 @@ import com.android.amit.instaclone.data.StoryModel
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.AddStoryListItemBinding
 import com.android.amit.instaclone.databinding.StoryListItemBinding
+import com.android.amit.instaclone.repo.Repository
 
 class StoryListAdapter(
     private val listener: StoryListHandler,
     private val storyList: ArrayList<StoryModel>,
     private val userMap: HashMap<String, UserDetailsModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    val repo = Repository()
 
     /***
      * Enum class for recyclerview Cell type
@@ -90,7 +93,7 @@ class StoryListAdapter(
         fun bind(listener: StoryListHandler, story: StoryModel, user: UserDetailsModel?) {
             binding.apply {
                 this.listener = listener
-                this.story = story
+                this.isSeen = story.seen.containsKey(Repository().getCurrentUserId())
                 this.user = user
             }
         }

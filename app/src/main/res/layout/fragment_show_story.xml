@@ -5,9 +5,7 @@
 
     <data>
 
-        <variable
-            name="story"
-            type="com.android.amit.instaclone.data.StoryModel" />
+        <import type="android.view.View" />
 
         <variable
             name="user"
@@ -38,17 +36,17 @@
             android:id="@+id/story_previous"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:onClick="@{() -> activity.onPreviousClicked()}"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/story_skip"
-            android:onClick="@{() -> activity.onPreviousClicked()}"/>
+            app:layout_constraintRight_toLeftOf="@id/story_skip" />
 
         <View
             android:id="@+id/story_skip"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:onClick="@{() -> activity.onNextClicked()}"
             app:layout_constraintLeft_toRightOf="@id/story_previous"
-            app:layout_constraintRight_toRightOf="parent"
-            android:onClick="@{() -> activity.onNextClicked()}"/>
+            app:layout_constraintRight_toRightOf="parent" />
 
         <jp.shts.android.storiesprogressview.StoriesProgressView
             android:id="@+id/story_progress_view"
@@ -85,7 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:background="#20000000"
-            android:text="Views : 0"
+            android:onClick="@{() -> activity.viewerList(activity.currentStory.storyId)}"
+            android:text="@{@string/views_count(activity.currentStory.seen.size)}"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />
@@ -96,8 +95,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:background="#20000000"
-            android:text="Delete"
+            android:onClick="@{() -> activity.deleteStory(activity.currentStory.storyId)}"
+            android:text="@string/delete"
             android:textColor="@color/white"
+            android:visibility="@{activity.isOwnStory? View.VISIBLE: View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
