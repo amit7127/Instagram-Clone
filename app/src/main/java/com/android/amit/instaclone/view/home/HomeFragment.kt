@@ -239,6 +239,13 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
         view?.findNavController()?.navigate(R.id.action_homeFragment_to_usersListFragment, bundle)
     }
 
+    override fun onProfileClicked(userId: String) {
+        val bundle = Bundle()
+        bundle.putString(Constants.USER_ID_TAG, userId)
+
+        view?.findNavController()?.navigate(R.id.action_homeFragment_to_profileFragment, bundle)
+    }
+
     private fun sendNotification(postId: String, publisherId: String) {
         val notification = Notification()
         notification.isPost = true

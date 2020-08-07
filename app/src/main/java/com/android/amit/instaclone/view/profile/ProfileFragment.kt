@@ -87,6 +87,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         getSavedPostList()
     }
 
+    //get posts for the user
     fun getUsersPostList() {
         val recyclerView: RecyclerView =
             profileBinding.userPostImagesRv // In xml we have given id rv_movie_list to RecyclerView
@@ -113,6 +114,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         })
     }
 
+    //get saved posts list for the current user
     fun getSavedPostList() {
         val recyclerView: RecyclerView =
             profileBinding.savedPostImagesRv // In xml we have given id rv_movie_list to RecyclerView

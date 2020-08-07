@@ -2,14 +2,10 @@ package com.android.amit.instaclone.view.home.presenter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.LikeModel
 import com.android.amit.instaclone.data.PostListItem
 import com.android.amit.instaclone.databinding.PostListItemBinding
-import com.android.amit.instaclone.repo.Repository
-import com.android.amit.instaclone.view.home.HomeViewModel
 
 /**
  * ================================================
@@ -31,7 +27,7 @@ class PostsListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = PostListItemBinding.inflate(inflater, parent, false)
-        return PostsListViewHolder(binding, postListener)
+        return PostsListViewHolder(binding)
     }
 
     override fun getItemCount(): Int = postsList.size
@@ -47,48 +43,49 @@ class PostsListAdapter(
             isSaved = true
 
         holder.apply {
-            bind(post, like, commentsList[post.postId], isSaved)
+            bind(post, like, commentsList[post.postId], isSaved, postListener)
         }
     }
 
-    class PostsListViewHolder(val binding: PostListItemBinding, val postListener: PostListener) :
+    class PostsListViewHolder(val binding: PostListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        var commentsCount : Int? = 0
-        var isSaved : Boolean = false
+        var commentsCount: Int? = 0
+        var isSaved: Boolean = false
 
-        fun bind(item: PostListItem, like: LikeModel, commentsCount: Int?, isSaved: Boolean) {
+        fun bind(
+            item: PostListItem,
+            like: LikeModel,
+            commentsCount: Int?,
+            isSaved: Boolean,
+            postListener: PostListener
+        ) {
             this.commentsCount = commentsCount
             this.isSaved = isSaved
             binding.apply {
                 postListItem = item
                 holder = this@PostsListViewHolder
                 likeModel = like
+                listener = postListener
                 executePendingBindings()
             }
-        }
-
-        fun onCommentClicked(postId: String, postImageUrlString : String, publisherId: String){
-            postListener.onCommentButtonClicked(postId, postImageUrlString, publisherId)
-        }
-
-        fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean, publisherId: String) {
-            postListener.onLikeButtonClicked(postId, oldStatusIsLike, publisherId)
-        }
-
-        fun onSaveButtonClicked(postId: String, oldStatus: Boolean){
-            postListener.onSaveButtonClicked(postId, oldStatus)
-        }
-
-        fun onLikeTextClicked(postId: String){
-            postListener.onLikeTextClicked(postId)
         }
     }
 
     interface PostListener {
+        // on like button clicked
         fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean, publisherId: String)
-        fun onCommentButtonClicked(postId: String, postImageUrlString : String, publisherId: String)
+
+        //on comments button clicked event
+        fun onCommentButtonClicked(postId: String, postImageUrlString: String, publisherId: String)
+
+        //on saved button clicked
         fun onSaveButtonClicked(postId: String, oldStatus: Boolean)
+
+        // on show liked user list button clicked
         fun onLikeTextClicked(postId: String)
+
+        //on profile button clicked
+        fun onProfileClicked(userId: String)
     }
 }

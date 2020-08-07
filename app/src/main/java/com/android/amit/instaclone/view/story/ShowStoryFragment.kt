@@ -23,9 +23,9 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
 
     lateinit var storyBinding: FragmentShowStoryBinding
     lateinit var viewModel: ShowStoryViewModel
-    var storyCount = 0
-    var userId: String = ""
-    var storyList = ArrayList<StoryModel>()
+    var mStoryCount = 0
+    var mUserId: String = ""
+    var mStoryList = ArrayList<StoryModel>()
     var currentStory = StoryModel()
     var mStoryUser = UserDetailsModel()
     var isDataChanged = true
@@ -47,27 +47,29 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         return storyBinding.root
     }
 
+    //Initialize
     private fun initView() {
         if (arguments?.getString(Constants.USER_ID_TAG) != null) {
-            userId = arguments?.getString(Constants.USER_ID_TAG)!!
-            getStories(userId)
-            getUserDetails(userId)
+            mUserId = arguments?.getString(Constants.USER_ID_TAG)!!
+            getStories(mUserId)
+            getUserDetails(mUserId)
 
-            isOwnStory = userId == Repository().getCurrentUserId()
+            isOwnStory = mUserId == Repository().getCurrentUserId()
         }
     }
 
+    // Get stories for a specific user
     private fun getStories(userId: String) {
         isDataChanged = true
         viewModel.fetchStoryDetails(userId).observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
                     story_loader.visibility = View.GONE
-                    storyList.clear()
+                    mStoryList.clear()
                     if (it.data != null) {
-                        storyList.addAll(it.data!!)
+                        mStoryList.addAll(it.data!!)
                     }
-                    currentStory = storyList[storyCount]
+                    currentStory = mStoryList[mStoryCount]
                     storyBinding.invalidateAll()
 
                     if (isDataChanged) {
@@ -87,6 +89,7 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         })
     }
 
+    //Get user details from user id
     private fun getUserDetails(userId: String) {
         viewModel.getUserData(userId).observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -101,7 +104,7 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
 
     //Set dtory view with progree dialog
     private fun setStoryView() {
-        story_progress_view.setStoriesCount(storyList.size)
+        story_progress_view.setStoriesCount(mStoryList.size)
         story_progress_view.setStoryDuration(10000L)
         story_progress_view.setStoriesListener(this)
         story_progress_view.startStories()
@@ -114,13 +117,13 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
     }
 
     override fun onPrev() {
-        currentStory = storyList[--storyCount]
+        currentStory = mStoryList[--mStoryCount]
         setSeen(currentStory.storyId)
         storyBinding.invalidateAll()
     }
 
     override fun onNext() {
-        currentStory = storyList[++storyCount]
+        currentStory = mStoryList[++mStoryCount]
         setSeen(currentStory.storyId)
         storyBinding.invalidateAll()
     }

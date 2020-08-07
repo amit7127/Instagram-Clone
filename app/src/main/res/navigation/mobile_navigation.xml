@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_homeFragment_to_showStoryFragment"
             app:destination="@id/showStoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -81,6 +84,9 @@
         <action
             android:id="@+id/action_postDetailsFragment_to_usersListFragment"
             app:destination="@id/usersListFragment" />
+        <action
+            android:id="@+id/action_postDetailsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/usersListFragment"

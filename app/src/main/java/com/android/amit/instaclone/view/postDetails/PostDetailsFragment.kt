@@ -142,13 +142,21 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         })
     }
 
-    override fun onLikeButtonClicked(postId: String, oldStatusIsLike: Boolean,  publisherId: String) {
+    override fun onLikeButtonClicked(
+        postId: String,
+        oldStatusIsLike: Boolean,
+        publisherId: String
+    ) {
         viewModel.likeButtonClicked(postId, oldStatusIsLike)
         if (!oldStatusIsLike)
             sendNotification(postId, publisherId)
     }
 
-    override fun onCommentButtonClicked(postId: String, postImageUrlString: String, publisherId: String) {
+    override fun onCommentButtonClicked(
+        postId: String,
+        postImageUrlString: String,
+        publisherId: String
+    ) {
         var bundle = Bundle()
         bundle.putString(Constants.POST_IMAGE_URL_ID_TAG, postImageUrlString)
         bundle.putString(Constants.POST_ID_TAG, postId)
@@ -167,6 +175,14 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         bundle.putString(Constants.PURPOSE, Constants.LIKES_TAG)
         view?.findNavController()
             ?.navigate(R.id.action_postDetailsFragment_to_usersListFragment, bundle)
+    }
+
+    override fun onProfileClicked(userId: String) {
+        val bundle = Bundle()
+        bundle.putString(Constants.USER_ID_TAG, userId)
+
+        view?.findNavController()
+            ?.navigate(R.id.action_postDetailsFragment_to_profileFragment, bundle)
     }
 
     private fun sendNotification(postId: String, publisherId: String) {

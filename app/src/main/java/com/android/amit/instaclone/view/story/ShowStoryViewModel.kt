@@ -11,18 +11,22 @@ class ShowStoryViewModel : ViewModel() {
 
     var repo: Repository = Repository()
 
+    // Get stories for a specific user
     fun fetchStoryDetails(userId: String): MutableLiveData<Resource<List<StoryModel>>> {
         return repo.getStoryListForTheUser(userId)
     }
 
+    //Get user details from user id
     fun getUserData(userId: String): MutableLiveData<Resource<UserDetailsModel>> {
         return repo.getUserDetails(userId)
     }
 
+    //set story as seen by current user
     fun setStorySeen(storyId: String) {
         repo.setStorySeen(storyId)
     }
 
+    //Delete the story by story id
     fun deleteStory(storyId: String) {
         repo.deleteStory(storyId)
     }

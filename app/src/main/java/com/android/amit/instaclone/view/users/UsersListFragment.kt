@@ -48,6 +48,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         return userListBinding.root
     }
 
+    //Init views
     private fun init() {
 
         val recyclerView: RecyclerView =
@@ -62,6 +63,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
 
         userListBinding.invalidateAll()
 
+        //Find out the purpose for the users list
         when (purpose) {
             Constants.LIKES_TAG -> {
                 setLikesData()
@@ -81,6 +83,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         }
     }
 
+    //get Story view
     private fun setStoryViews() {
         if (arguments?.getString(Constants.STORY_ID_TAG) != null) {
             val storyId = arguments?.getString(Constants.STORY_ID_TAG)
@@ -97,6 +100,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         }
     }
 
+    //get following user ids
     private fun setFollowingData() {
         var userId: String? = null
         if (arguments?.getString(Constants.USER_ID_TAG) != null)
@@ -112,6 +116,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         })
     }
 
+    //get follower users ids
     private fun setFollowersData() {
         var userId: String? = null
         if (arguments?.getString(Constants.USER_ID_TAG) != null)
@@ -128,6 +133,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         })
     }
 
+    //get likes user ids
     private fun setLikesData() {
         if (arguments?.getString(Constants.POST_ID_TAG) != null) {
             val postId = arguments?.getString(Constants.POST_ID_TAG)!!
@@ -145,6 +151,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         }
     }
 
+    //set users list from ids
     private fun setUserList(userIdList: ArrayList<String>) {
         viewModel.getUsersFromIdList(userIdList).observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -164,7 +171,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
     }
 
     override fun onProfileClicked(userId: String) {
-        var bundle = bundleOf("userId" to userId)
+        var bundle = bundleOf(Constants.USER_ID_TAG to userId)
         view?.findNavController()
             ?.navigate(R.id.action_usersListFragment_to_profileFragment, bundle)
     }

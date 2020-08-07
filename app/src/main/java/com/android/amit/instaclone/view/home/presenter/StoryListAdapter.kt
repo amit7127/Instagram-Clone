@@ -103,7 +103,10 @@ class StoryListAdapter(
      * Interface to handle all story list related events
      */
     interface StoryListHandler {
+        //Click register for new story
         fun onAddStoryClicked()
+
+        //Click registered for showing story
         fun onShowStoryClicked(userId : String)
     }
 }
