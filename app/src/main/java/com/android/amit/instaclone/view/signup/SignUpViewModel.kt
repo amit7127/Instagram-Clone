@@ -29,6 +29,9 @@ class SignUpViewModel : ViewModel() {
     private lateinit var mContext: Context
     private lateinit var mView: View
 
+    /**
+     * create user
+     */
     fun createUser(ctx: Context, view: View): LiveData<Resource<FirebaseUser>> {
         mContext = ctx
         mView = view
@@ -45,6 +48,9 @@ class SignUpViewModel : ViewModel() {
         return result
     }
 
+    /**
+     * save user
+     */
     fun saveUserData(): LiveData<Resource<Unit>> {
         var result: MutableLiveData<Resource<Unit>> =
             MutableLiveData<Resource<Unit>>()
@@ -66,6 +72,9 @@ class SignUpViewModel : ViewModel() {
         return result
     }
 
+    /**
+     * validate data
+     */
     fun validateEteredData(): Boolean {
         when {
             TextUtils.isEmpty(fullName) -> {

@@ -32,6 +32,9 @@ class SignUpActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Signup button clicked event
+     */
     fun onSignUpClicked() {
         //onBackPressed()
         viewModel.createUser(this, signUpBinding.root).observe(this, Observer {

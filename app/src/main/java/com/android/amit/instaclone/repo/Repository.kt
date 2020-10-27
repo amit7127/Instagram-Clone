@@ -31,6 +31,11 @@ class Repository {
         return FirebaseAuth.getInstance().currentUser!!.uid
     }
 
+    /**
+     * Create firebase user with provider email and password
+     * email: String email
+     * password: String password
+     */
     fun createUSerWithEmailAndPassword(
         email: String,
         password: String
@@ -52,6 +57,11 @@ class Repository {
         return result
     }
 
+    /**
+     * login user with provided email and password
+     * email: String email
+     * password: String password
+     */
     fun loginUserWithEmailAndPassword(
         email: String,
         password: String
@@ -73,6 +83,10 @@ class Repository {
         return result
     }
 
+    /**
+     * Save user details in firebase database
+     * userDetails : user details object
+     */
     fun saveUserInFirebase(
         userDetails: UserDetailsModel
     ): MutableLiveData<Resource<Unit>> {
