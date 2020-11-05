@@ -155,7 +155,7 @@ class Repository {
 
             query.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    Timber.e(p0.message);
+                    Timber.e(p0.message)
                     result.value = resource.error(p0.message)
                 }
 
@@ -264,7 +264,7 @@ class Repository {
         result.value = resource.loading()
         userRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(p0.message)
             }
 
@@ -430,7 +430,7 @@ class Repository {
         //First fetch current user data, for get the following list
         currentUserReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(
                     Resources.getSystem().getString(R.string.unable_to_fetch_user_details)
                 )
@@ -444,7 +444,7 @@ class Repository {
                     //Get posts data
                     postsRef.addValueEventListener(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {
-                            Timber.e(p0.message);
+                            Timber.e(p0.message)
                             result.value = resource.error(
                                 Resources.getSystem().getString(R.string.failed_to_fetch_post_data)
                             )
@@ -530,7 +530,7 @@ class Repository {
         for (post in postsList) {
             postsRef.child(post.postId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    Timber.e(p0.message);
+                    Timber.e(p0.message)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -570,7 +570,7 @@ class Repository {
         for (post in postsList) {
             postsRef.child(post.postId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    Timber.e(p0.message);
+                    Timber.e(p0.message)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -652,7 +652,7 @@ class Repository {
 
         userRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(p0.message)
             }
 
@@ -689,7 +689,7 @@ class Repository {
         for (userId in userList) {
             userRef.child(userId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    Timber.e(p0.message);
+                    Timber.e(p0.message)
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -728,7 +728,7 @@ class Repository {
 
         query.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(p0.message)
             }
 
@@ -769,7 +769,7 @@ class Repository {
 
         postsRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(p0.message)
             }
 
@@ -783,7 +783,7 @@ class Repository {
                             .addValueEventListener(object : ValueEventListener {
                                 override fun onCancelled(p0: DatabaseError) {
                                     //if post does not exists
-                                    Timber.e(p0.message);
+                                    Timber.e(p0.message)
                                     post.publisherImageUrl = ""
                                     post.publisherUserName = "N/A"
                                     post.publisherFullName = "N/A"
@@ -857,7 +857,7 @@ class Repository {
                 .child(getCurrentUserId())
         saveRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -892,7 +892,7 @@ class Repository {
         for (postId in idList) {
             postsRef.child(postId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    Timber.e(p0.message);
+                    Timber.e(p0.message)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -929,7 +929,7 @@ class Repository {
             FirebaseDatabase.getInstance().reference.child(FieldName.LIKES_TABLE_NAME)
         likesRef.child(postId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(p0.message)
             }
 
@@ -964,7 +964,7 @@ class Repository {
                 .child(FieldName.FOLLOWER_COLUMN_NAME)
         followerRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -998,7 +998,7 @@ class Repository {
                 .child(FieldName.FOLLOWING_COLUMN_NAME)
         followingRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Timber.e(p0.message);
+                Timber.e(p0.message)
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -1050,7 +1050,7 @@ class Repository {
         notificationRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 notifications.clear()
-                Timber.e(p0.message);
+                Timber.e(p0.message)
                 result.value = resource.error(p0.message)
             }
 
@@ -1140,7 +1140,7 @@ class Repository {
             storyReference.orderByChild(Constants.USER_ID_TAG).equalTo(id)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {
-                        Timber.e(p0.message);
+                        Timber.e(p0.message)
                     }
 
                     override fun onDataChange(dataSnapShot: DataSnapshot) {
