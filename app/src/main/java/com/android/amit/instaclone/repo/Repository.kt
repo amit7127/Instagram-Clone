@@ -1,8 +1,10 @@
 package com.android.amit.instaclone.repo
 
+import android.content.res.Resources
 import android.net.Uri
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.*
 import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
@@ -12,6 +14,7 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -22,19 +25,24 @@ import kotlin.collections.HashMap
  * ================================================
  * Author: Amit Kumar Sahoo
  * Created On: April/27/2020
- * Description:
+ * Description: Repository to get the data from the server
  */
 class Repository {
-    val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    /**
+     * get current logged-in user id
+     */
     fun getCurrentUserId(): String {
         return FirebaseAuth.getInstance().currentUser!!.uid
     }
 
     /**
      * Create firebase user with provider email and password
-     * email: String email
-     * password: String password
+     * @param email: String email
+     * @param password: String password
+     *
+     * @return Firebase user object
      */
     fun createUSerWithEmailAndPassword(
         email: String,
@@ -42,15 +50,15 @@ class Repository {
     ): MutableLiveData<Resource<FirebaseUser>> {
 
         val result: MutableLiveData<Resource<FirebaseUser>> =
-            MutableLiveData<Resource<FirebaseUser>>()
-        val resouce = Resource<FirebaseUser>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<FirebaseUser>()
+        result.value = resource.loading()
 
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                result.value = resouce.success(it.result?.user)
+                result.value = resource.success(it.result?.user)
             } else {
-                result.value = resouce.error(it.exception?.message)
+                result.value = resource.error(it.exception?.message)
                 mAuth.signOut()
             }
         }
@@ -59,8 +67,10 @@ class Repository {
 
     /**
      * login user with provided email and password
-     * email: String email
-     * password: String password
+     * @param email: String email
+     * @param password: String password
+     *
+     * @return: Firebase user object
      */
     fun loginUserWithEmailAndPassword(
         email: String,
@@ -68,15 +78,15 @@ class Repository {
     ): MutableLiveData<Resource<FirebaseUser>> {
 
         val result: MutableLiveData<Resource<FirebaseUser>> =
-            MutableLiveData<Resource<FirebaseUser>>()
-        val resouce = Resource<FirebaseUser>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<FirebaseUser>()
+        result.value = resource.loading()
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                result.value = resouce.success(it.result?.user)
+                result.value = resource.success(it.result?.user)
             } else {
-                result.value = resouce.error(it.exception?.message)
+                result.value = resource.error(it.exception?.message)
                 mAuth.signOut()
             }
         }
@@ -85,7 +95,9 @@ class Repository {
 
     /**
      * Save user details in firebase database
-     * userDetails : user details object
+     * @param userDetails : user details object
+     *
+     * @return unit object for complete/error
      */
     fun saveUserInFirebase(
         userDetails: UserDetailsModel
@@ -96,33 +108,42 @@ class Repository {
         userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
 
         val result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
-        val resouce = Resource<Unit>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
 
         val userRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
         userRef.child(userId).setValue(userDetails).addOnCompleteListener {
             if (it.isSuccessful) {
-                result.value = resouce.success(null)
+                result.value = resource.success(null)
             } else {
-                result.value = resouce.error("Failed to save data")
+                //Pick string from Resources.getSystem().getString(R.string.common_google_play_services_install_text)
+                result.value =
+                    resource.error(Resources.getSystem().getString(R.string.failed_to_save_data))
                 FirebaseAuth.getInstance().signOut()
             }
         }
         return result
     }
 
+
+    /**
+     * Provides the list of users matching the search query
+     * @param nameQuery : searched string
+     *
+     * @return List of UserDetails object
+     */
     fun getUsers(nameQuery: String): MutableLiveData<Resource<ArrayList<UserDetailsModel>>> {
         val users = arrayListOf<UserDetailsModel>()
 
         val result: MutableLiveData<Resource<ArrayList<UserDetailsModel>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<UserDetailsModel>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<UserDetailsModel>>()
+        result.value = resource.loading()
 
         if (TextUtils.isEmpty(nameQuery)) {
-            result.value = resouce.success(null)
+            result.value = resource.success(null)
         } else {
             val userId = getCurrentUserId()
             val userRef: DatabaseReference =
@@ -134,128 +155,173 @@ class Repository {
 
             query.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    TODO("Not yet implemented")
+                    Timber.e(p0.message);
+                    result.value = resource.error(p0.message)
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
                     users.clear()
                     for (snapShot in dataSnapShot.children) {
                         val user = snapShot.getValue(UserDetailsModel::class.java)
-                        if (user != null && !user.userId.equals(userId)) {
+                        if (user != null && user.userId != userId) {
                             users.add(user)
                         }
                     }
-                    result.value = resouce.success(users)
+                    result.value = resource.success(users)
                 }
             })
         }
         return result
     }
 
+    /**
+     * follow/un-follow a user
+     * @param followUserId: user id to follow
+     * @param status: follow/un-follow
+     *
+     * @return: result confirmation complete/error
+     */
     fun follow(followUserId: String, status: String): MutableLiveData<Resource<Unit>> {
 
         val result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
-        val resouce = Resource<Unit>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
 
         val userId = getCurrentUserId()
-        if (status.equals(Status.follow)) {
+
+        if (status == Status.follow) {
+            //If status need to set to follow
+            //First set the user id in the current user following list
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
                 .child(FieldName.FOLLOWING_COLUMN_NAME).child(followUserId).setValue(true)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        //Set the current user id in the user's followers list
                         FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
                             .child(followUserId)
                             .child(FieldName.FOLLOWER_COLUMN_NAME).child(userId).setValue(true)
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
-                                    result.value = resouce.success(null)
+                                    result.value = resource.success(null)
                                 } else {
-                                    result.value = resouce.error("Unable to update status")
+                                    result.value = resource.error(
+                                        Resources.getSystem()
+                                            .getString(R.string.failed_to_update_status)
+                                    )
                                 }
                             }
                     } else {
-                        result.value = resouce.error("Unable to update status")
+                        result.value = resource.error(
+                            Resources.getSystem().getString(R.string.failed_to_update_status)
+                        )
                     }
                 }
-        } else if (status.equals(Status.following)) {
+        } else if (status == Status.following) {
+            //If status need to set to un-follow
+            //First remove the user id from the current user following list
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
                 .child(FieldName.FOLLOWING_COLUMN_NAME).child(followUserId).removeValue()
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        //Remove the current user id from the user's followers list
                         FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
                             .child(followUserId)
                             .child(FieldName.FOLLOWER_COLUMN_NAME).child(userId).removeValue()
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
-                                    result.value = resouce.success(null)
+                                    result.value = resource.success(null)
                                 } else {
-                                    result.value = resouce.error("Unable to update status")
+                                    result.value = resource.error(
+                                        Resources.getSystem()
+                                            .getString(R.string.failed_to_update_status)
+                                    )
                                 }
                             }
                     } else {
-                        result.value = resouce.error("Unable to update status")
+                        result.value = resource.error(
+                            Resources.getSystem().getString(R.string.failed_to_update_status)
+                        )
                     }
                 }
         }
         return result
     }
 
+    /**
+     * get user details from the provided user id
+     * @param userId:userId string
+     *
+     * @return : uerDetails object
+     */
     fun getUserDetails(userId: String): MutableLiveData<Resource<UserDetailsModel>> {
 
         val result = MutableLiveData<Resource<UserDetailsModel>>()
-        val resouce = Resource<UserDetailsModel>()
+        val resource = Resource<UserDetailsModel>()
 
         val userRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
-        result.value = resouce.loading()
+        result.value = resource.loading()
         userRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                Timber.e(p0.message);
+                result.value = resource.error(p0.message)
             }
 
             override fun onDataChange(dataSnapShot: DataSnapshot) {
                 if (dataSnapShot.exists()) {
                     val user = dataSnapShot.getValue(UserDetailsModel::class.java)
-                    result.value = resouce.success(user)
+                    result.value = resource.success(user)
                 } else {
-                    result.value = resouce.error("No user exists")
+                    result.value = resource.error(
+                        Resources.getSystem().getString(R.string.unable_to_fetch_user_details)
+                    )
                 }
             }
         })
         return result
     }
 
+    /**
+     * save/update user profile, with user profile image
+     * @param userDetails: userDetails object
+     * @param profilePictureUri: uri path for profile picture
+     *
+     * @return result confirmation complete/error
+     */
     fun saveUserProfileWithImage(
         userDetails: UserDetailsModel,
         profilePictureUri: Uri
     ): MutableLiveData<Resource<Unit>> {
 
         val result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
-        val resouce = Resource<Unit>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
 
         val firebaseStorage: StorageReference =
-            FirebaseStorage.getInstance().getReference().child("Profile Images")
+            FirebaseStorage.getInstance().reference.child(FieldName.PROFILE_PICTURE_FOLDER)
                 .child(userDetails.userId + "jpg")
 
+        //Upload profile image to firebase storage
         val uploadTask = firebaseStorage.putFile(profilePictureUri)
 
-        val urlTask = uploadTask.continueWithTask { task ->
+        uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
-                    result.value = resouce.error("Unable to update")
+                    result.value = resource.error(
+                        Resources.getSystem().getString(R.string.failed_to_upload_profile_image)
+                    )
                     throw it
                 }
             }
             firebaseStorage.downloadUrl
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                //After profile image uploaded successfully
+                // Insert/update the row into userDetails table in firebase db
                 val downloadUri = task.result
                 userDetails.image = downloadUri.toString()
-                //result.value = saveUserInFirebase(userDetails).value
 
                 userDetails.fullName = userDetails.fullName.toLowerCase(Locale.getDefault())
                 userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
@@ -264,42 +330,57 @@ class Repository {
                     FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
                 userRef.child(userDetails.userId).setValue(userDetails).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        result.value = resouce.success(null)
+                        result.value = resource.success(null)
                     } else {
-                        result.value = resouce.error("Failed to save data")
+                        result.value = resource.error(
+                            Resources.getSystem().getString(R.string.failed_to_update_user_detail)
+                        )
                         FirebaseAuth.getInstance().signOut()
                     }
                 }
             } else {
-                result.value = resouce.error("Unable to update")
+                result.value = resource.error(
+                    Resources.getSystem().getString(R.string.failed_to_update_user_detail)
+                )
             }
         }
 
         return result
     }
 
-    fun postWithImage(profilePictureUri: Uri, comment: String): MutableLiveData<Resource<Unit>> {
+    /**
+     * @param postPictureUri: uri path of the post picture
+     * @param comment: comment in string
+     *
+     * @return result confirmation complete/error
+     */
+    fun postWithImage(postPictureUri: Uri, comment: String): MutableLiveData<Resource<Unit>> {
         val result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
-        val resouce = Resource<Unit>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
 
+        //Storage reference for post picture
         val firebaseStorage: StorageReference =
-            FirebaseStorage.getInstance().getReference().child("Posts Pictures")
+            FirebaseStorage.getInstance().reference.child(FieldName.POST_PICTURE_FOLDER)
                 .child(System.currentTimeMillis().toString() + ".jpg")
 
-        val uploadTask = firebaseStorage.putFile(profilePictureUri)
+        val uploadTask = firebaseStorage.putFile(postPictureUri)
 
-        val urlTask = uploadTask.continueWithTask { task ->
+        uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
-                    result.value = resouce.error("Unable to update")
+                    result.value = resource.error(
+                        Resources.getSystem().getString(R.string.failed_to_upload_post_image)
+                    )
                     throw it
                 }
             }
             firebaseStorage.downloadUrl
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                //After post image successfully uploaded
+                // insert the row into posts table
                 val downloadUri = task.result
 
                 val userRef: DatabaseReference =
@@ -312,27 +393,32 @@ class Repository {
 
                 userRef.child(postId).setValue(post).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        result.value = resouce.success(null)
+                        result.value = resource.success(null)
                     } else {
-                        result.value = resouce.error("Failed to save data")
+                        result.value =
+                            resource.error(Resources.getSystem().getString(R.string.unable_post))
                         FirebaseAuth.getInstance().signOut()
                     }
                 }
             } else {
-                result.value = resouce.error("Unable to update")
+                result.value = resource.error(Resources.getSystem().getString(R.string.unable_post))
             }
         }
-
         return result
     }
 
+    /**
+     * get list of posts for the users which current user is following
+     *
+     * @return: List of Posts
+     */
     fun getPostsList(): MutableLiveData<Resource<ArrayList<PostListItem>>> {
         val posts = arrayListOf<PostListItem>()
 
         val result: MutableLiveData<Resource<ArrayList<PostListItem>>> =
-            MutableLiveData<Resource<ArrayList<PostListItem>>>()
-        val resouce = Resource<ArrayList<PostListItem>>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<ArrayList<PostListItem>>()
+        result.value = resource.loading()
 
         val postsRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
@@ -341,8 +427,13 @@ class Repository {
 
         val currentUserReference = userRef.child(getCurrentUserId())
 
+        //First fetch current user data, for get the following list
         currentUserReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
+                Timber.e(p0.message);
+                result.value = resource.error(
+                    Resources.getSystem().getString(R.string.unable_to_fetch_user_details)
+                )
             }
 
             override fun onDataChange(userDataSnapshot: DataSnapshot) {
@@ -350,9 +441,13 @@ class Repository {
                 if (userDataSnapshot.exists()) {
                     val currentUserDetails = userDataSnapshot.getValue(UserDetailsModel::class.java)
 
+                    //Get posts data
                     postsRef.addValueEventListener(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {
-                            result.value = resouce.error("Unable to fetch data")
+                            Timber.e(p0.message);
+                            result.value = resource.error(
+                                Resources.getSystem().getString(R.string.failed_to_fetch_post_data)
+                            )
                         }
 
                         override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -365,9 +460,11 @@ class Repository {
                                             userId
                                         ) || currentUserDetails.userId == userId)
                                     ) {
+                                        //get user info for the above posts
                                         userRef.child(userId)
                                             .addValueEventListener(object : ValueEventListener {
                                                 override fun onCancelled(p0: DatabaseError) {
+                                                    //unable to fetch data, set default data
                                                     post.publisherImageUrl = ""
                                                     post.publisherUserName = "N/A"
                                                     post.publisherFullName = "N/A"
@@ -396,30 +493,33 @@ class Repository {
                                                     }
                                                     posts.add(post)
                                                     posts.reverse()
-                                                    result.value = resouce.success(posts)
+                                                    result.value = resource.success(posts)
                                                 }
                                             })
                                     }
                                 }
                             }
-                            result.value = resouce.success(posts)
+                            result.value = resource.success(posts)
                         }
                     })
                 }
             }
-
         })
         return result
     }
 
     /**
      * get likes list with likes count and isLike by user
+     *
+     * @param postsList: list of posts
+     *
+     * @return: Map of postId and LikeModel
      */
     fun getLikesList(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, LikeModel>>> {
         val result: MutableLiveData<Resource<HashMap<String, LikeModel>>> =
-            MutableLiveData<Resource<HashMap<String, LikeModel>>>()
-        val resouce = Resource<HashMap<String, LikeModel>>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<HashMap<String, LikeModel>>()
+        result.value = resource.loading()
 
         val likesMap = HashMap<String, LikeModel>()
         val userId = getCurrentUserId()
@@ -430,7 +530,7 @@ class Repository {
         for (post in postsList) {
             postsRef.child(post.postId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    Timber.e(p0.message);
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -440,23 +540,27 @@ class Repository {
                     }
 
                     likeModel.likesCount = p0.childrenCount.toInt()
-                    likesMap.put(post.postId, likeModel)
-                    result.value = resouce.success(likesMap)
+                    likesMap[post.postId] = likeModel
+                    result.value = resource.success(likesMap)
                 }
 
             })
         }
-        return result;
+        return result
     }
 
     /**
-     * get comments list with likes count and isLike by user
+     * get comments list with comments count from all users
+     *
+     * @param postsList: List of posts
+     *
+     * @return : Map of PostsId and comments count as integer
      */
     fun getCommentsList(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, Int>>> {
         val result: MutableLiveData<Resource<HashMap<String, Int>>> =
-            MutableLiveData<Resource<HashMap<String, Int>>>()
-        val resouce = Resource<HashMap<String, Int>>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<HashMap<String, Int>>()
+        result.value = resource.loading()
 
         val commentsMap = HashMap<String, Int>()
 
@@ -466,26 +570,29 @@ class Repository {
         for (post in postsList) {
             postsRef.child(post.postId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    Timber.e(p0.message);
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
                     if (p0.exists() && p0.childrenCount > 0) {
-                        commentsMap.put(post.postId, p0.childrenCount.toInt())
+                        commentsMap[post.postId] = p0.childrenCount.toInt()
                     } else {
-                        commentsMap.put(post.postId, 0)
+                        commentsMap[post.postId] = 0
                     }
 
-                    result.value = resouce.success(commentsMap)
+                    result.value = resource.success(commentsMap)
                 }
 
             })
         }
-        return result;
+        return result
     }
 
     /**
      * to like or unlike a post
+     *
+     * @param postId: id of the post whick like status need to be changed
+     * @param oldStatusIsLike: previous status like/unlike
      */
     fun likeUnlikePost(postId: String, oldStatusIsLike: Boolean) {
         val userId = getCurrentUserId()
@@ -500,20 +607,25 @@ class Repository {
 
     /**
      * To post a comment
+     * @param postId: String post id for which comment is added
+     * @param comment: Comments details with message and commenter info
+     *
+     * @return result confirmation complete/error
      */
     fun postComment(postId: String, comment: CommentModel): MutableLiveData<Resource<Unit>> {
         val result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
-        val resouce = Resource<Unit>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
 
         val commentRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.COMMENT_TABLE_NAME)
         commentRef.child(postId).push().setValue(comment).addOnCompleteListener {
             if (it.isSuccessful) {
-                result.value = resouce.success(null)
+                result.value = resource.success(null)
             } else {
-                result.value = resouce.error("Unable to Post Comment")
+                result.value =
+                    resource.error(Resources.getSystem().getString(R.string.unable_to_post_comment))
             }
         }
         return result
@@ -521,12 +633,16 @@ class Repository {
 
     /**
      * get comments list for a particular post
+     *
+     * @param postId: String post id for which comments list need to be fetched
+     *
+     * @return: List of comments object
      */
     fun getListOfComments(postId: String): MutableLiveData<Resource<ArrayList<CommentModel>>> {
         val result: MutableLiveData<Resource<ArrayList<CommentModel>>> =
-            MutableLiveData<Resource<ArrayList<CommentModel>>>()
-        val resouce = Resource<ArrayList<CommentModel>>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<ArrayList<CommentModel>>()
+        result.value = resource.loading()
 
         val commentsList = ArrayList<CommentModel>()
 
@@ -536,6 +652,8 @@ class Repository {
 
         userRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
+                Timber.e(p0.message);
+                result.value = resource.error(p0.message)
             }
 
             override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -544,7 +662,7 @@ class Repository {
                     val comment = snapShot.getValue(CommentModel::class.java)
                     comment?.let { commentsList.add(it) }
                 }
-                result.value = resouce.success(commentsList)
+                result.value = resource.success(commentsList)
             }
         })
         return result
@@ -552,22 +670,26 @@ class Repository {
 
     /**
      * get userDetails map from users id list
+     *
+     * @param userList set of usersId string
+     *
+     * @return: Map of userId String and UserDetails object
      */
     fun getUsersListFromIDList(userList: HashSet<String>): MutableLiveData<Resource<HashMap<String, UserDetailsModel>>> {
 
         val result: MutableLiveData<Resource<HashMap<String, UserDetailsModel>>> =
-            MutableLiveData<Resource<HashMap<String, UserDetailsModel>>>()
-        val resouce = Resource<HashMap<String, UserDetailsModel>>()
-        result.value = resouce.loading()
+            MutableLiveData()
+        val resource = Resource<HashMap<String, UserDetailsModel>>()
+        result.value = resource.loading()
 
         val usersMap = HashMap<String, UserDetailsModel>()
-
         val userRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
 
         for (userId in userList) {
             userRef.child(userId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
+                    Timber.e(p0.message);
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -576,7 +698,7 @@ class Repository {
 
                         if (userDetails != null) {
                             usersMap[userDetails.userId] = userDetails
-                            result.value = resouce.success(usersMap)
+                            result.value = resource.success(usersMap)
                         }
                     }
                 }
@@ -585,13 +707,20 @@ class Repository {
         return result
     }
 
+    /**
+     * get user's posts
+     *
+     * @param userId: String userId
+     *
+     * @return: Lists of Posts
+     */
     fun getUserPosts(userId: String): MutableLiveData<Resource<ArrayList<Post>>> {
         val posts = ArrayList<Post>()
 
         val result: MutableLiveData<Resource<ArrayList<Post>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<Post>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<Post>>()
+        result.value = resource.loading()
 
         val postsRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME)
@@ -599,7 +728,8 @@ class Repository {
 
         query.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                Timber.e(p0.message);
+                result.value = resource.error(p0.message)
             }
 
             override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -611,7 +741,7 @@ class Repository {
                             posts.add(post)
                         }
                     }
-                    result.value = resouce.success(posts)
+                    result.value = resource.success(posts)
                 }
             }
 
@@ -621,12 +751,15 @@ class Repository {
 
     /**
      * get post from the post id
+     * @param postId: String id of the post
+     *
+     * @return: Post object with details
      */
     fun getPostFromId(postId: String): MutableLiveData<Resource<PostListItem>> {
         val result: MutableLiveData<Resource<PostListItem>> =
             MutableLiveData()
-        val resouce = Resource<PostListItem>()
-        result.value = resouce.loading()
+        val resource = Resource<PostListItem>()
+        result.value = resource.loading()
 
         val postsRef: DatabaseReference =
             FirebaseDatabase.getInstance().reference.child(FieldName.POST_TABLE_NAME).child(postId)
@@ -636,7 +769,8 @@ class Repository {
 
         postsRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                Timber.e(p0.message);
+                result.value = resource.error(p0.message)
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -648,6 +782,8 @@ class Repository {
                         userRef.child(userId)
                             .addValueEventListener(object : ValueEventListener {
                                 override fun onCancelled(p0: DatabaseError) {
+                                    //if post does not exists
+                                    Timber.e(p0.message);
                                     post.publisherImageUrl = ""
                                     post.publisherUserName = "N/A"
                                     post.publisherFullName = "N/A"
@@ -655,6 +791,7 @@ class Repository {
 
                                 override fun onDataChange(dataSnapShot: DataSnapshot) {
                                     if (dataSnapShot.exists()) {
+                                        //If posts exists then fetch the user details of the owner of the post
                                         val userDetails =
                                             dataSnapShot.getValue(UserDetailsModel::class.java)
                                         if (userDetails != null) {
@@ -674,10 +811,10 @@ class Repository {
                                         post.publisherUserName = "N/A"
                                         post.publisherFullName = "N/A"
                                     }
-                                    result.value = resouce.success(post)
+                                    result.value = resource.success(post)
                                 }
                             })
-                        result.value = resouce.success(post)
+                        result.value = resource.success(post)
                     }
                 }
             }
@@ -686,7 +823,10 @@ class Repository {
     }
 
     /**
-     * on saved button clicked
+     * Save post for the current user
+     *
+     * @param postId: String post id
+     * @param oldStatus: boolean previous status for saved/not-saved
      */
     fun saveClicked(postId: String, oldStatus: Boolean) {
         val saveRef: DatabaseReference =
@@ -700,14 +840,16 @@ class Repository {
     }
 
     /**
-     * get saved list
+     * get saved list for the current user
+     *
+     * @return: Map of postId string and saved status boolean
      */
     fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
 
         val result: MutableLiveData<Resource<HashMap<String, Boolean>>> =
             MutableLiveData()
-        val resouce = Resource<HashMap<String, Boolean>>()
-        result.value = resouce.loading()
+        val resource = Resource<HashMap<String, Boolean>>()
+        result.value = resource.loading()
 
         val savedMap = HashMap<String, Boolean>()
         val saveRef: DatabaseReference =
@@ -715,6 +857,7 @@ class Repository {
                 .child(getCurrentUserId())
         saveRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
+                Timber.e(p0.message);
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -723,7 +866,7 @@ class Repository {
                     savedMap.putAll(p0.getValue<HashMap<String, Boolean>>()!!)
                 }
 
-                result.value = resouce.success(savedMap)
+                result.value = resource.success(savedMap)
             }
         })
 
@@ -732,12 +875,15 @@ class Repository {
 
     /**
      * get posts list from id list
+     * @param idList: List of postId string
+     *
+     * @return: Lists of posts
      */
     fun getPostsFromIds(idList: ArrayList<String>): MutableLiveData<Resource<ArrayList<Post>>> {
         val result: MutableLiveData<Resource<ArrayList<Post>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<Post>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<Post>>()
+        result.value = resource.loading()
 
         val postsList = ArrayList<Post>()
 
@@ -746,7 +892,7 @@ class Repository {
         for (postId in idList) {
             postsRef.child(postId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    Timber.e(p0.message);
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -754,7 +900,7 @@ class Repository {
                         val post = p0.getValue(Post::class.java)
                         if (post != null) {
                             postsList.add(post)
-                            result.value = resouce.success(postsList)
+                            result.value = resource.success(postsList)
                         }
                     }
                 }
@@ -766,12 +912,16 @@ class Repository {
 
     /**
      * get users id list for a post likes
+     *
+     * @param postId: string of the post
+     *
+     * @return: userId string list, who liked that posts
      */
     fun getLikedUsersList(postId: String): MutableLiveData<Resource<ArrayList<String>>> {
         val result: MutableLiveData<Resource<ArrayList<String>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<String>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<String>>()
+        result.value = resource.loading()
 
         val usersList = ArrayList<String>()
 
@@ -779,30 +929,33 @@ class Repository {
             FirebaseDatabase.getInstance().reference.child(FieldName.LIKES_TABLE_NAME)
         likesRef.child(postId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                Timber.e(p0.message);
+                result.value = resource.error(p0.message)
             }
 
             override fun onDataChange(p0: DataSnapshot) {
                 usersList.clear()
                 if (p0.exists()) {
                     usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
-                    result.value = resouce.success(usersList)
+                    result.value = resource.success(usersList)
                 }
             }
-
         })
-
         return result
     }
 
     /**
      * Get followers user id list
+     *
+     * @param userId: string user id
+     *
+     * @return: Lists of userId, who are follower of the above user
      */
     fun getFollowerUserList(userId: String): MutableLiveData<Resource<ArrayList<String>>> {
         val result: MutableLiveData<Resource<ArrayList<String>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<String>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<String>>()
+        result.value = resource.loading()
 
         val usersList = ArrayList<String>()
 
@@ -811,14 +964,14 @@ class Repository {
                 .child(FieldName.FOLLOWER_COLUMN_NAME)
         followerRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                Timber.e(p0.message);
             }
 
             override fun onDataChange(p0: DataSnapshot) {
                 usersList.clear()
                 if (p0.exists()) {
                     usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
-                    result.value = resouce.success(usersList)
+                    result.value = resource.success(usersList)
                 }
             }
 
@@ -828,12 +981,15 @@ class Repository {
 
     /**
      * Get Following user id list
+     * @param userId: string user id
+     *
+     * @return: Lists of userId, who are following the above user
      */
     fun getFollowingUserList(userId: String): MutableLiveData<Resource<ArrayList<String>>> {
         val result: MutableLiveData<Resource<ArrayList<String>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<String>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<String>>()
+        result.value = resource.loading()
 
         val usersList = ArrayList<String>()
 
@@ -842,7 +998,7 @@ class Repository {
                 .child(FieldName.FOLLOWING_COLUMN_NAME)
         followingRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                Timber.e(p0.message);
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -850,7 +1006,7 @@ class Repository {
                 if (p0.exists()) {
                     usersList.addAll(p0.getValue<HashMap<String, Boolean>>()!!.keys)
                 }
-                result.value = resouce.success(usersList)
+                result.value = resource.success(usersList)
             }
 
         })
@@ -859,6 +1015,9 @@ class Repository {
 
     /**
      * Add notification to DB
+     *
+     * @param notification: notification object with all the details
+     * @param targetUserId: userId string, of target user to show
      */
     fun addNotification(notification: Notification, targetUserId: String) {
         notification.publisherId = getCurrentUserId()
@@ -873,13 +1032,15 @@ class Repository {
     }
 
     /**
-     * get notification list
+     * get notification list of the current user
+     *
+     * @return: List of notification objects
      */
     fun getNotifications(): MutableLiveData<Resource<ArrayList<Notification>>> {
         val result: MutableLiveData<Resource<ArrayList<Notification>>> =
             MutableLiveData()
-        val resouce = Resource<ArrayList<Notification>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<Notification>>()
+        result.value = resource.loading()
 
         val notifications = ArrayList<Notification>()
 
@@ -888,7 +1049,9 @@ class Repository {
                 .child(getCurrentUserId())
         notificationRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                notifications.clear()
+                Timber.e(p0.message);
+                result.value = resource.error(p0.message)
             }
 
             override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -900,7 +1063,7 @@ class Repository {
                     }
                 }
 
-                result.value = resouce.success(notifications)
+                result.value = resource.success(notifications)
             }
 
         })
@@ -909,6 +1072,8 @@ class Repository {
 
     /**
      * Mark notification as read
+     *
+     * @param notification: notification object which needs to be marked
      */
     fun markReadNotification(notification: Notification) {
         FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
@@ -918,11 +1083,13 @@ class Repository {
 
     /**
      * get number of unread notification
+     *
+     * @return : integer, unread notification count
      */
     fun getNotificationCount(): MutableLiveData<Resource<Int>> {
         val result = MutableLiveData<Resource<Int>>()
-        val resouce = Resource<Int>()
-        result.value = resouce.loading()
+        val resource = Resource<Int>()
+        result.value = resource.loading()
 
         val notificationRef =
             FirebaseDatabase.getInstance().reference.child(FieldName.NOTIFICATION_TABLE_NAME)
@@ -931,30 +1098,33 @@ class Repository {
         notificationRef.orderByChild(Constants.VIEW_COLUMN).equalTo(false)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    result.value = resource.error(p0.message)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
                     if (p0.exists()) {
-                        result.value = resouce.success(p0.children.count())
+                        result.value = resource.success(p0.children.count())
                     } else {
-                        result.value = resouce.success(0)
+                        result.value = resource.success(0)
                     }
                 }
             })
-
         return result
     }
 
     /**
      * get story list for following user list
+     *
+     * @param followingUserList: following user list
+     *
+     * @return lists of story objects
      */
     fun getStories(followingUserList: ArrayList<String>): MutableLiveData<Resource<ArrayList<StoryModel>>> {
         followingUserList.add(getCurrentUserId())
 
         val result = MutableLiveData<Resource<ArrayList<StoryModel>>>()
-        val resouce = Resource<ArrayList<StoryModel>>()
-        result.value = resouce.loading()
+        val resource = Resource<ArrayList<StoryModel>>()
+        result.value = resource.loading()
 
         val storyList = ArrayList<StoryModel>()
 
@@ -970,7 +1140,7 @@ class Repository {
             storyReference.orderByChild(Constants.USER_ID_TAG).equalTo(id)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {
-
+                        Timber.e(p0.message);
                     }
 
                     override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -994,7 +1164,7 @@ class Repository {
                                 }
                             }
                         }
-                        result.value = resouce.success(storyList)
+                        result.value = resource.success(storyList)
                     }
                 })
         }
@@ -1003,23 +1173,32 @@ class Repository {
 
     /**
      * Posts story to DB
+     *
+     * @param storyPictureUri: story picture Uri path
+     * @param story: story object with details
+     *
+     * @return: success/error
      */
     fun postStory(storyPictureUri: Uri, story: StoryModel): MutableLiveData<Resource<Unit>> {
         val result: MutableLiveData<Resource<Unit>> =
             MutableLiveData()
-        val resouce = Resource<Unit>()
-        result.value = resouce.loading()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
 
+        //firebase storage reference
         val firebaseStorage: StorageReference =
-            FirebaseStorage.getInstance().getReference().child("Story Pictures")
+            FirebaseStorage.getInstance().reference.child(FieldName.STORY_PICTURE_FOLDER)
                 .child(System.currentTimeMillis().toString() + ".jpg")
 
         val uploadTask = firebaseStorage.putFile(storyPictureUri)
 
-        val urlTask = uploadTask.continueWithTask { task ->
+        //Start uploading task
+        uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
-                    result.value = resouce.error("Unable to update")
+                    result.value = resource.error(
+                        Resources.getSystem().getString(R.string.failed_to_upload_status_image)
+                    )
                     throw it
                 }
             }
@@ -1028,28 +1207,37 @@ class Repository {
             if (task.isSuccessful) {
                 val downloadUri = task.result.toString()
 
-                val storyref: DatabaseReference =
+                val storyRef: DatabaseReference =
                     FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
-                val storyId = storyref.push().key.toString()
+                val storyId = storyRef.push().key.toString()
 
                 story.storyId = storyId
                 story.imageUrl = downloadUri
 
-                storyref.child(storyId).setValue(story).addOnCompleteListener {
+                storyRef.child(storyId).setValue(story).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        result.value = resouce.success(null)
+                        result.value = resource.success(null)
                     } else {
-                        result.value = resouce.error("Failed to save data")
+                        result.value = resource.error(
+                            Resources.getSystem().getString(R.string.unable_to_share_status)
+                        )
                     }
                 }
             } else {
-                result.value = resouce.error("Unable to update")
+                result.value =
+                    resource.error(Resources.getSystem().getString(R.string.unable_to_share_status))
             }
         }
         return result
     }
 
-    //get story for the user id
+    /**
+     * get story for the user id
+     *
+     * @param userId: string user id
+     *
+     * @return List of story object
+     */
     fun getStoryListForTheUser(userId: String): MutableLiveData<Resource<List<StoryModel>>> {
         val result: MutableLiveData<Resource<List<StoryModel>>> =
             MutableLiveData()
@@ -1065,7 +1253,7 @@ class Repository {
         storyReference.orderByChild(Constants.USER_ID_TAG).equalTo(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    result.value = resource.error(p0.message)
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
@@ -1091,7 +1279,11 @@ class Repository {
         return result
     }
 
-    //Set story seen as for current user
+    /**
+     * Set story seen as for current user
+     *
+     * @param storyId: string story id
+     */
     fun setStorySeen(storyId: String) {
         val currentUserId = getCurrentUserId()
 
@@ -1100,13 +1292,21 @@ class Repository {
             .child("seen").child(currentUserId).setValue(true)
     }
 
-    // delete story by story id
+    /**
+     * delete story by story id
+     *
+     * @param storyId: string story id
+     */
     fun deleteStory(storyId: String) {
         FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
             .child(storyId).removeValue()
     }
 
-    //Get story by story id
+    /**
+     * Get story by story id
+     *
+     * @param storyId: string story id
+     */
     fun getStoryById(storyId: String): MutableLiveData<Resource<StoryModel>> {
         val result: MutableLiveData<Resource<StoryModel>> =
             MutableLiveData()
@@ -1116,7 +1316,7 @@ class Repository {
         FirebaseDatabase.getInstance().reference.child(FieldName.STORY_TABLE_NAME)
             .child(storyId).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    result.value = resource.error(p0.message)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -1125,7 +1325,6 @@ class Repository {
                         result.value = resource.success(story)
                     }
                 }
-
             })
         return result
     }

@@ -22,4 +22,9 @@ object FieldName {
     const val PUBLISHER_COLUMN_NAME = "publisher"
     const val NOTIFICATION_TABLE_NAME = "Notifications"
     const val STORY_TABLE_NAME = "Story"
+
+    //Storage folder name
+    const val POST_PICTURE_FOLDER = "Posts Pictures"
+    const val PROFILE_PICTURE_FOLDER = "Profile Images"
+    const val STORY_PICTURE_FOLDER = "Story Pictures"
 }

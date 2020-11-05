@@ -4,9 +4,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="follow">Follow</string>
     <string name="following">Following</string>
 
@@ -24,4 +21,18 @@
     <!--  Story strings  -->
     <string name="views_count">Views : %d</string>
     <string name="delete">Delete</string>
+
+    <!--  Server message  -->
+    <string name="failed_to_save_data">Failed to save data</string>
+    <string name="failed_to_update_status">Unable to update status</string>
+    <string name="unable_to_fetch_user_details">Unable to fetch user details, at this moment</string>
+    <string name="failed_to_upload_profile_image">Failed to upload profile image, please try again later</string>
+    <string name="failed_to_update_user_detail">Unable to update user details, please try again later</string>
+    <string name="failed_to_upload_post_image">Failed to post picture, please try again later</string>
+    <string name="unable_post">Unable to post, please try again later</string>
+    <string name="failed_to_fetch_post_data">Unable to fetch posts data</string>
+    <string name="unable_to_post_comment">Unable to post comment</string>
+    <string name="failed_to_upload_status_image">Failed to upload status, please try again later</string>
+    <string name="unable_to_share_status">Unable to post status, please try again later</string>
+
 </resources>
