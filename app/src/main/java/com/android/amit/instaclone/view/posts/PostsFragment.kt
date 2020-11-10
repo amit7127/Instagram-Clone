@@ -16,23 +16,18 @@ import com.android.amit.instaclone.databinding.FragmentPostsBinding
 import com.android.amit.instaclone.util.Status
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
-import kotlinx.android.synthetic.main.fragment_account_settings.*
 import kotlinx.android.synthetic.main.fragment_posts.*
 
 /**
- * A simple [Fragment] subclass.
- * Use the [PostsFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Posts fragment
  */
 class PostsFragment : Fragment() {
 
-    lateinit var postsBinding: FragmentPostsBinding
+    private lateinit var postsBinding: FragmentPostsBinding
     lateinit var viewModel: PostFragmnetViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,12 +45,9 @@ class PostsFragment : Fragment() {
         return postsBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-    }
-
+    /**
+     * initialize gallery for pick an image
+     */
     private fun initGallery() {
         context?.let { CropImage.activity().setAspectRatio(2, 1).start(it, this) }
     }
@@ -72,6 +64,9 @@ class PostsFragment : Fragment() {
         }
     }
 
+    /**
+     * new post
+     */
     fun onPostButtonClicked() {
         viewModel.post(postsBinding.root).observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -99,6 +94,9 @@ class PostsFragment : Fragment() {
         })
     }
 
+    /**
+     * handle custom backbutton
+     */
     fun onFragmentClosed() {
         view?.findNavController()?.popBackStack()
     }

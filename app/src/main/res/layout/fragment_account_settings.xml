@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -12,9 +13,7 @@
             type="com.android.amit.instaclone.view.acountsettings.AccountSettingsViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.acountsettings.AccountSettingsFragment">
@@ -43,21 +42,23 @@
                         android:id="@+id/edit_profile_close_btn"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        android:onClick="@{() -> accountSettings.onFragmentClosed()}"
+                        android:src="@drawable/close"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:src="@drawable/close"
-                        android:onClick="@{() -> accountSettings.onFragmentClosed()}" />
+                        tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/save_profile_info_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:onClick="@{() -> accountSettings.onSaveProfileClicked()}"
                         android:src="@drawable/save_edited_info"
-                        android:onClick="@{() -> accountSettings.onSaveProfileClicked()}" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="ContentDescription" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.appcompat.widget.Toolbar>
@@ -65,111 +66,115 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image_view_editprofile"
+            load_image="@{viewModel.profileImageUri}"
             android:layout_width="130dp"
             android:layout_height="130dp"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/profile"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_appbar"
-            android:src="@drawable/profile"
-            android:layout_marginTop="15dp"
-            load_image="@{viewModel.profileImageUri}" />
+            app:layout_constraintTop_toBottomOf="@id/edit_profile_appbar" />
 
         <TextView
             android:id="@+id/change_image_text_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:onClick="@{() -> accountSettings.onChangeImageClicked()}"
+            android:text="@string/account_change_image"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_image_view_editprofile"
-            android:text="Change Image"
-            android:layout_marginTop="6dp"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="@color/colorPrimary"
-            android:onClick="@{() -> accountSettings.onChangeImageClicked()}" />
+            app:layout_constraintTop_toBottomOf="@id/profile_image_view_editprofile" />
 
         <EditText
             android:id="@+id/fullname_edittext_editprofile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="20dp"
+            android:hint="@string/account_full_name_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@={viewModel.fullName}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/change_image_text_button"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:hint="Full Name"
-            android:text="@={viewModel.fullName}" />
+            app:layout_constraintTop_toBottomOf="@id/change_image_text_button" />
 
         <EditText
             android:id="@+id/username_edittext_editprofile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="20dp"
+            android:hint="@string/account_user_name_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@={viewModel.userName}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fullname_edittext_editprofile"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:hint="User Name"
-            android:text="@={viewModel.userName}" />
+            app:layout_constraintTop_toBottomOf="@id/fullname_edittext_editprofile" />
 
         <EditText
             android:id="@+id/bio_edittext_editprofile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="20dp"
+            android:hint="@string/account_bio_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@={viewModel.userBio}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/username_edittext_editprofile"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:hint="Bio"
-            android:text="@={viewModel.userBio}" />
+            app:layout_constraintTop_toBottomOf="@id/username_edittext_editprofile" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/delete_account_editprofile_btn"
-            android:layout_marginBottom="6dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:textAllCaps="false"
+            android:layout_marginBottom="6dp"
             android:background="@drawable/button_black_background"
+            android:onClick="@{() -> accountSettings.onLogoutClicked()}"
+            android:text="@string/account_logout_button_text"
+            android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
-            android:text="Logout"
-            android:onClick="@{() -> accountSettings.onLogoutClicked()}" />
+            app:layout_constraintBottom_toTopOf="@id/delete_account_editprofile_btn"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <Button
             android:id="@+id/delete_account_editprofile_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="6dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:textAllCaps="false"
+            android:layout_marginBottom="6dp"
             android:background="@color/colorPrimary"
+            android:text="@string/delete_account_button_text"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:text="Delete Account" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ProgressBar
             android:id="@+id/account_settings_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone" />
-
-
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

@@ -8,12 +8,10 @@ import com.android.amit.instaclone.data.PostListItem
 import com.android.amit.instaclone.databinding.PostListItemBinding
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: June/11/2020
- * Description:
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Posts list adapter
  */
 class PostsListAdapter(
     private val postsList: ArrayList<PostListItem>,
@@ -34,9 +32,9 @@ class PostsListAdapter(
 
     override fun onBindViewHolder(holder: PostsListViewHolder, position: Int) {
         var like = LikeModel()
-        var post = postsList[position]
-        var isSaved: Boolean = false
-        if (likesList.get(post.postId) != null)
+        val post = postsList[position]
+        var isSaved = false
+        if (likesList[post.postId] != null)
             like = likesList.getValue(post.postId)
 
         if (savedList.containsKey(post.postId))

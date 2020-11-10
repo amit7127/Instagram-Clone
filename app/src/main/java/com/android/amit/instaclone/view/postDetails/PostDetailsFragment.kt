@@ -21,23 +21,23 @@ import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.home.presenter.PostsListAdapter
 import kotlinx.android.synthetic.main.fragment_post_details.*
 
-
 /**
- * A simple [Fragment] subclass.
- * Use the [PostDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Post details class
  */
 class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
 
     private var postId: String = ""
 
-    lateinit var postDetailsBinding: FragmentPostDetailsBinding
+    private lateinit var postDetailsBinding: FragmentPostDetailsBinding
     lateinit var viewModel: PostDetailsViewModel
     lateinit var adapter: PostsListAdapter
-    var postList = ArrayList<PostListItem>()
-    var likesList = HashMap<String, LikeModel>()
-    var mCommentsList = HashMap<String, Int>()
-    var mSavedList = HashMap<String, Boolean>()
+    private var postList = ArrayList<PostListItem>()
+    private var likesList = HashMap<String, LikeModel>()
+    private var mCommentsList = HashMap<String, Int>()
+    private var mSavedList = HashMap<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +62,18 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+    }
+
+    /**
+     * initialize the post data
+     */
+    private fun initViews() {
         val recyclerView: RecyclerView =
-            postDetailsBinding.postDetailsRecyclerview // In xml we have given id rv_movie_list to RecyclerView
+            postDetailsBinding.postDetailsRecyclerview
 
         val layoutManager =
-            LinearLayoutManager(context) // you can use getContext() instead of "this"
+            LinearLayoutManager(context)
 
         recyclerView.layoutManager = layoutManager
         adapter = PostsListAdapter(postList, this, likesList, mCommentsList, mSavedList)
@@ -96,7 +103,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
     /**
      * get Likes list from post list
      */
-    fun getLikes(postLists: ArrayList<PostListItem>) {
+    private fun getLikes(postLists: ArrayList<PostListItem>) {
         viewModel.getLikesList(postLists).observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
@@ -113,7 +120,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
     /**
      * Get comments count
      */
-    fun getCommentsCount(postLists: ArrayList<PostListItem>) {
+    private fun getCommentsCount(postLists: ArrayList<PostListItem>) {
         viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
@@ -127,7 +134,10 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         })
     }
 
-    fun getSavedList() {
+    /**
+     * get saved posts list
+     */
+    private fun getSavedList() {
         viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
@@ -142,6 +152,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         })
     }
 
+    //On like button clicked
     override fun onLikeButtonClicked(
         postId: String,
         oldStatusIsLike: Boolean,
@@ -157,7 +168,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         postImageUrlString: String,
         publisherId: String
     ) {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(Constants.POST_IMAGE_URL_ID_TAG, postImageUrlString)
         bundle.putString(Constants.POST_ID_TAG, postId)
         bundle.putString(Constants.PUBLISHER_ID_TAG, publisherId)
@@ -170,7 +181,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
     }
 
     override fun onLikeTextClicked(postId: String) {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(Constants.POST_ID_TAG, postId)
         bundle.putString(Constants.PURPOSE, Constants.LIKES_TAG)
         view?.findNavController()
@@ -185,12 +196,13 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
             ?.navigate(R.id.action_postDetailsFragment_to_profileFragment, bundle)
     }
 
+    //Send notification for new likes
     private fun sendNotification(postId: String, publisherId: String) {
-        var notification = Notification()
+        val notification = Notification()
         notification.isPost = true
         notification.postId = postId
         notification.notificationText = getString(R.string.like_notification_text)
 
-        publisherId?.let { viewModel.addNotification(notification, it) }
+        publisherId.let { viewModel.addNotification(notification, it) }
     }
 }

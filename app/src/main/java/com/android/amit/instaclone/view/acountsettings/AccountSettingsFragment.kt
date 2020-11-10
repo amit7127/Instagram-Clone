@@ -20,20 +20,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.fragment_account_settings.*
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AccountSettingsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AccountSettingsFragment : Fragment() {
 
-    lateinit var accountSettingBinding: FragmentAccountSettingsBinding
+    private lateinit var accountSettingBinding: FragmentAccountSettingsBinding
     lateinit var viewModel: AccountSettingsViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     @ExperimentalStdlibApi
     override fun onCreateView(
@@ -48,11 +38,16 @@ class AccountSettingsFragment : Fragment() {
         accountSettingBinding.accountSettings = this
         accountSettingBinding.viewModel = viewModel
 
+        //initialize the data
         initData()
 
+        //Return view
         return accountSettingBinding.root
     }
 
+    /**
+     * Call API for user details
+     */
     @ExperimentalStdlibApi
     private fun initData() {
         viewModel.getUserDetails().observe(viewLifecycleOwner, Observer {
@@ -79,6 +74,9 @@ class AccountSettingsFragment : Fragment() {
         })
     }
 
+    /**
+     * Logout button clicked
+     */
     fun onLogoutClicked() {
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(context, SigninActivity::class.java)
@@ -86,6 +84,9 @@ class AccountSettingsFragment : Fragment() {
         startActivity(intent)
     }
 
+    /**
+     * Save profile button clicked
+     */
     fun onSaveProfileClicked() {
         viewModel.saveUserData(accountSettingBinding.root).observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -113,10 +114,16 @@ class AccountSettingsFragment : Fragment() {
         })
     }
 
+    /**
+     * close button clicked
+     */
     fun onFragmentClosed() {
         view?.findNavController()?.popBackStack()
     }
 
+    /**
+     * change user profile pic
+     */
     fun onChangeImageClicked() {
         context?.let { CropImage.activity().setAspectRatio(1, 1).start(it, this) }
     }
@@ -124,6 +131,7 @@ class AccountSettingsFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        //get data from image picker activity
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             val result = CropImage.getActivityResult(data)
             viewModel.setImage(result.uri)

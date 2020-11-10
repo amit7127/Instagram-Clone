@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="Comments"
+                    android:text="@string/comments"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -53,7 +53,8 @@
             load_image="@{viewModel.postImageUri}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/comments_appbar" />
+            app:layout_constraintTop_toBottomOf="@id/comments_appbar"
+            tools:ignore="ContentDescription" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/comments_recyclerView"
@@ -104,14 +105,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:text="@={viewModel.commentString}"
                 android:inputType="textCapSentences|textMultiLine"
-                android:maxLines="5"/>
+                android:maxLines="5"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/publish_button_comment_fragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Publish"
+                android:text="@string/publish"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"

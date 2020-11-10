@@ -35,4 +35,22 @@
     <string name="failed_to_upload_status_image">Failed to upload status, please try again later</string>
     <string name="unable_to_share_status">Unable to post status, please try again later</string>
 
+    <!--  Validation String  -->
+    <string name="full_name_validation_string">Full name required</string>
+    <string name="user_name_validation_string">User name required</string>
+    <string name="user_bio_validation_string">User Bio required</string>
+    <string name="comment_field_validation_string">Please write something to add comment about the post.</string>
+
+    <!--  Comment screen texts  -->
+    <string name="comments">Comments</string>
+    <string name="publish">Publish</string>
+
+
+    <string name="account_change_image">Change Image</string>
+    <string name="account_full_name_hint">Full Name</string>
+    <string name="account_user_name_hint">User Name</string>
+    <string name="account_bio_hint">Bio</string>
+    <string name="account_logout_button_text">Logout</string>
+    <string name="delete_account_button_text">Delete Account</string>
+
 </resources>

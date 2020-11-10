@@ -7,7 +7,12 @@ import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.NotificationListItemBinding
-
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Notifications list adapter
+ */
 class NotificationListAdapter(
     private val notificationList: ArrayList<Notification>,
     private val userList: HashMap<String, UserDetailsModel>,
@@ -26,8 +31,8 @@ class NotificationListAdapter(
     }
 
     override fun onBindViewHolder(holder: NotificationListViewHolder, position: Int) {
-        var notification = notificationList[position]
-        var user = userList[notification.publisherId]
+        val notification = notificationList[position]
+        val user = userList[notification.publisherId]
         var post: Post? = null
         if (notification.isPost) {
             post = postList.find { it.postId == notification.postId }
@@ -62,7 +67,11 @@ class NotificationListAdapter(
         }
     }
 
+    /**
+     * interface to handle notification actions
+     */
     interface NotificationListHandler {
+        //notification clicked listener
         fun onNotificationClicked(notification: Notification)
     }
 }

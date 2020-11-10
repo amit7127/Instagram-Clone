@@ -7,62 +7,80 @@ import com.android.amit.instaclone.repo.Repository
 import java.util.*
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: June/10/2020
- * Description:
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Home view model
  */
 class HomeViewModel : ViewModel() {
     var repo: Repository = Repository()
 
-    //Get posts for current user
+    /**
+     * Get posts for current user
+     */
     fun getPosts(): MutableLiveData<Resource<ArrayList<PostListItem>>> {
         return repo.getPostsList()
     }
 
-    //Like button clicked
+    /**
+     * Like button clicked
+     */
     fun likeButtonClicked(postId: String, oldStatusIsLike: Boolean) {
         repo.likeUnlikePost(postId, oldStatusIsLike)
     }
 
-    //Likes list
+    /**
+     * Likes list
+     */
     fun getLikesList(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, LikeModel>>> {
         return repo.getLikesList(postsList)
     }
 
-    //Get comment count
+    /**
+     * Get comment count
+     */
     fun getCommentsCount(postsList: ArrayList<PostListItem>): MutableLiveData<Resource<HashMap<String, Int>>> {
         return repo.getCommentsList(postsList)
     }
 
-    //Get saved list
+    /**
+     * Get saved list
+     */
     fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
         return repo.getSavedList()
     }
 
-    //On saved button clicked
+    /**
+     * On saved button clicked
+     */
     fun savedClicked(postId: String, oldStatus: Boolean) {
         repo.saveClicked(postId, oldStatus)
     }
 
-    //get unread notification
+    /**
+     * get unread notification
+     */
     fun addNotification(notification: Notification, tergetUserId: String) {
         repo.addNotification(notification, tergetUserId)
     }
 
-    //Get following users list
+    /**
+     * Get following users list
+     */
     fun getFollowingUsersList(): MutableLiveData<Resource<ArrayList<String>>> {
         return repo.getFollowingUserList(repo.getCurrentUserId())
     }
 
-    //Get stories
+    /**
+     * Get stories
+     */
     fun getStories(followingList: ArrayList<String>): MutableLiveData<Resource<ArrayList<StoryModel>>> {
         return repo.getStories(followingList)
     }
 
-    //Get users map from story list
+    /**
+     * Get users map from story list
+     */
     fun getUsersMap(stories: ArrayList<StoryModel>): MutableLiveData<Resource<HashMap<String, UserDetailsModel>>> {
         val idList = stories.map { it.userId }
         return repo.getUsersListFromIDList(idList.toHashSet())

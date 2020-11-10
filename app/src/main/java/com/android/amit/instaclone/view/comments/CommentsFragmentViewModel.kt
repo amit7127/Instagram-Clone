@@ -1,10 +1,12 @@
 package com.android.amit.instaclone.view.comments
 
+import android.content.res.Resources
 import android.net.Uri
 import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.CommentModel
 import com.android.amit.instaclone.data.Notification
 import com.android.amit.instaclone.data.Resource
@@ -12,6 +14,12 @@ import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
 import com.google.android.material.snackbar.Snackbar
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Comments page view model
+ */
 class CommentsFragmentViewModel : ViewModel() {
     var repo: Repository = Repository()
     var postImageUri: Uri = Uri.EMPTY
@@ -21,23 +29,35 @@ class CommentsFragmentViewModel : ViewModel() {
 
     private lateinit var mView: View
 
+    /**
+     * set post data
+     */
     fun setPostData(postImageUrl: String) {
         postImageUri = Uri.parse(postImageUrl)
     }
 
-    fun setUserData(userDetailsModel: UserDetailsModel?, view: View) {
+    /**
+     * set user data
+     */
+    fun setUserData(userDetailsModel: UserDetailsModel?) {
         if (userDetailsModel != null) {
             publisherProfileImageUri = Uri.parse(userDetailsModel.image)
             userId = userDetailsModel.userId
         }
     }
 
+    /**
+     * fetch comment for the current post
+     */
     fun getComments(postId: String): MutableLiveData<Resource<ArrayList<CommentModel>>> {
         return repo.getListOfComments(postId)
     }
 
+    /**
+     * get commented users map
+     */
     fun getUsersMap(comments: ArrayList<CommentModel>): MutableLiveData<Resource<HashMap<String, UserDetailsModel>>> {
-        var usersIdList = HashSet<String>()
+        val usersIdList = HashSet<String>()
         for (comment in comments) {
             usersIdList.add(comment.publisher)
         }
@@ -45,30 +65,42 @@ class CommentsFragmentViewModel : ViewModel() {
         return repo.getUsersListFromIDList(usersIdList)
     }
 
+    /**
+     * get current user details
+     */
     fun getUserData(): MutableLiveData<Resource<UserDetailsModel>> {
         return repo.getUserDetails(repo.getCurrentUserId())
     }
 
+    /**
+     * post new comment
+     */
     fun postComment(postId: String): MutableLiveData<Resource<Unit>> {
-        var result: MutableLiveData<Resource<Unit>> = MutableLiveData<Resource<Unit>>()
-        if (validateEteredData()) {
-            var commentModel = CommentModel(userId, commentString)
+        var result: MutableLiveData<Resource<Unit>> = MutableLiveData()
+        if (validateEnteredData()) {
+            val commentModel = CommentModel(userId, commentString)
 
             result = repo.postComment(postId, commentModel)
         }
         return result
     }
 
+    /**
+     * clear comment box entry
+     */
     fun clearComment() {
         commentString = ""
     }
 
-    fun validateEteredData(): Boolean {
+    /**
+     * Validate comment form data
+     */
+    private fun validateEnteredData(): Boolean {
         when {
             TextUtils.isEmpty(commentString) -> {
                 Snackbar.make(
                     mView,
-                    "Full name required",
+                    Resources.getSystem().getString(R.string.comment_field_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -77,17 +109,19 @@ class CommentsFragmentViewModel : ViewModel() {
             TextUtils.isEmpty(userId) -> {
                 Snackbar.make(
                     mView,
-                    "Unable to fetch user info, please try again later",
+                    Resources.getSystem().getString(R.string.unable_to_fetch_user_details),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
             }
-
             else -> return true
         }
     }
 
-    fun addNotification(notification: Notification, tergetUserId: String){
+    /**
+     * Add notification for new comment
+     */
+    fun addNotification(notification: Notification, tergetUserId: String) {
         repo.addNotification(notification, tergetUserId)
     }
 }

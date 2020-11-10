@@ -1,11 +1,13 @@
 package com.android.amit.instaclone.view.acountsettings
 
+import android.content.res.Resources
 import android.net.Uri
 import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.amit.instaclone.R
 import com.android.amit.instaclone.data.Resource
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
@@ -25,8 +27,8 @@ class AccountSettingsViewModel : ViewModel() {
     var userName: String = ""
     var userBio: String = ""
     var profileImageUri: Uri = Uri.EMPTY
-    var mUserDetailsModel = UserDetailsModel()
-    var repo: Repository = Repository()
+    private var mUserDetailsModel = UserDetailsModel()
+    private var repo: Repository = Repository()
 
     @ExperimentalStdlibApi
     fun setUserInfo(userDetailsModel: UserDetailsModel?) {
@@ -39,15 +41,21 @@ class AccountSettingsViewModel : ViewModel() {
         }
     }
 
+    /**
+     * fetch user details
+     */
     fun getUserDetails(): MutableLiveData<Resource<UserDetailsModel>> {
         return repo.getUserDetails(repo.getCurrentUserId())
     }
 
+    /**
+     * Save user entered data
+     */
     fun saveUserData(view: View): LiveData<Resource<Unit>> {
         var result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
+            MutableLiveData()
 
-        if (validateEteredData(view)) {
+        if (validateEnteredData(view)) {
             mUserDetailsModel.fullName = this.fullName
             mUserDetailsModel.userName = this.userName
             mUserDetailsModel.bio = this.userBio
@@ -57,12 +65,15 @@ class AccountSettingsViewModel : ViewModel() {
         return result
     }
 
-    fun validateEteredData(mView: View): Boolean {
+    /**
+     * validate form
+     */
+    private fun validateEnteredData(mView: View): Boolean {
         when {
             TextUtils.isEmpty(mUserDetailsModel.fullName) -> {
                 Snackbar.make(
                     mView,
-                    "Full name required",
+                    Resources.getSystem().getString(R.string.full_name_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -71,7 +82,7 @@ class AccountSettingsViewModel : ViewModel() {
             TextUtils.isEmpty(mUserDetailsModel.userName) -> {
                 Snackbar.make(
                     mView,
-                    "User name required",
+                    Resources.getSystem().getString(R.string.user_name_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -80,16 +91,18 @@ class AccountSettingsViewModel : ViewModel() {
             TextUtils.isEmpty(mUserDetailsModel.bio) -> {
                 Snackbar.make(
                     mView,
-                    "User Bio required",
+                    Resources.getSystem().getString(R.string.user_bio_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
             }
-
             else -> return true
         }
     }
 
+    /**
+     * Set image in db
+     */
     fun setImage(uri: Uri) {
         profileImageUri = uri
     }

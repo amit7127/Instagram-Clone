@@ -9,6 +9,12 @@ import com.android.amit.instaclone.databinding.AddStoryListItemBinding
 import com.android.amit.instaclone.databinding.StoryListItemBinding
 import com.android.amit.instaclone.repo.Repository
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Story list adapter
+ */
 class StoryListAdapter(
     private val listener: StoryListHandler,
     private val storyList: ArrayList<StoryModel>,
@@ -20,12 +26,13 @@ class StoryListAdapter(
     /***
      * Enum class for recyclerview Cell type
      */
-    enum class StoryType(viewType: Int) {
-        ADD_STORY(0),
-        STORY(1)
+    enum class StoryType {
+        ADD_STORY,
+        STORY
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        //Check story type and according to that return view holder
         return when (viewType) {
             StoryType.ADD_STORY.ordinal -> {
                 val inflater = LayoutInflater.from(parent.context)
@@ -78,6 +85,9 @@ class StoryListAdapter(
         }
     }
 
+    /**
+     * Add new story holder class and properties
+     */
     class AddStoryViewHolder(val binding: AddStoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(listener: StoryListHandler, user: UserDetailsModel?) {
@@ -88,6 +98,9 @@ class StoryListAdapter(
         }
     }
 
+    /**
+     * Existing user story holder class and its properties
+     */
     class StoryViewHolder(val binding: StoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(listener: StoryListHandler, story: StoryModel, user: UserDetailsModel?) {
@@ -107,6 +120,6 @@ class StoryListAdapter(
         fun onAddStoryClicked()
 
         //Click registered for showing story
-        fun onShowStoryClicked(userId : String)
+        fun onShowStoryClicked(userId: String)
     }
 }

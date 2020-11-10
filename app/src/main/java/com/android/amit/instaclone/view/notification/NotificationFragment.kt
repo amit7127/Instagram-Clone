@@ -20,13 +20,19 @@ import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.notification.presenter.NotificationListAdapter
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Notifications fragment
+ */
 class NotificationFragment : Fragment(), NotificationListAdapter.NotificationListHandler {
 
-    lateinit var notificationBinding: NotificationFragmentBinding
+    private lateinit var notificationBinding: NotificationFragmentBinding
     private lateinit var viewModel: NotificationViewModel
     lateinit var adapter: NotificationListAdapter
-    var notificationList = ArrayList<Notification>()
-    var usersMap = HashMap<String, UserDetailsModel>()
+    private var notificationList = ArrayList<Notification>()
+    private var usersMap = HashMap<String, UserDetailsModel>()
     private var postList = ArrayList<Post>()
 
 
@@ -42,6 +48,9 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
         return notificationBinding.root
     }
 
+    /**
+     * initialize notification lists
+     */
     private fun initNotification() {
         val recyclerView: RecyclerView =
             notificationBinding.notificationRecyclerView // In xml we have given id rv_movie_list to RecyclerView
@@ -52,16 +61,16 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
         adapter = NotificationListAdapter(notificationList, usersMap, this, postList)
         recyclerView.adapter = adapter
 
-
-        viewModel.getNotificationList().observe(viewLifecycleOwner, Observer {
-            when (it.status) {
+        //fetch notification data
+        viewModel.getNotificationList().observe(viewLifecycleOwner, Observer { notificationList ->
+            when (notificationList.status) {
                 Status.statusSuccess -> {
-                    notificationList.clear()
-                    if (it.data != null) {
-                        notificationList.addAll(it.data!!)
-                        var userList = it.data!!.map { it.publisherId }
+                    this.notificationList.clear()
+                    if (notificationList.data != null) {
+                        this.notificationList.addAll(notificationList.data!!)
+                        val userList = notificationList.data!!.map { it.publisherId }
                         getUserList(userList)
-                        getPostList(it.data!!)
+                        getPostList(notificationList.data!!)
                     }
                     adapter.notifyDataSetChanged()
                 }
@@ -69,8 +78,11 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
         })
     }
 
+    /**
+     * get posts list
+     */
     private fun getPostList(data: ArrayList<Notification>) {
-        var postIdList = data.filter { it.isPost }.map { it.postId }
+        val postIdList = data.filter { it.isPost }.map { it.postId }
         viewModel.getPostList(postIdList as ArrayList<String>)
             .observe(viewLifecycleOwner, Observer {
                 when (it.status) {
@@ -85,6 +97,9 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
             })
     }
 
+    /**
+     * get user list to show notification list content
+     */
     private fun getUserList(userList: List<String>) {
         viewModel.getUsersFromIdList(userList as ArrayList<String>)
             .observe(viewLifecycleOwner, Observer {
@@ -100,6 +115,9 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
             })
     }
 
+    /**
+     * on notification clicked
+     */
     override fun onNotificationClicked(notification: Notification) {
         viewModel.markNotificationAsRead(notification)
 
@@ -115,5 +133,4 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
                 ?.navigate(R.id.action_notificationFragment_to_usersListFragment, bundle)
         }
     }
-
 }

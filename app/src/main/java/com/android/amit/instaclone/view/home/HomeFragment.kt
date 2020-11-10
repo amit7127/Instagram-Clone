@@ -1,7 +1,6 @@
 package com.android.amit.instaclone.view.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,22 +19,26 @@ import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.home.presenter.PostsListAdapter
 import com.android.amit.instaclone.view.home.presenter.StoryListAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
+import timber.log.Timber
 
 /**
- * A simple [Fragment] subclass.
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Home fragment containing all the post list and post related info
  */
 class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter.StoryListHandler {
 
-    lateinit var homeBinding: FragmentHomeBinding
+    private lateinit var homeBinding: FragmentHomeBinding
     lateinit var viewModel: HomeViewModel
     lateinit var adapter: PostsListAdapter
-    lateinit var storyAdapter: StoryListAdapter
-    var listOfPosts = arrayListOf<PostListItem>()
-    var likesList = HashMap<String, LikeModel>()
-    var mCommentsList = HashMap<String, Int>()
-    var mSavedList = HashMap<String, Boolean>()
-    var mStoryList = ArrayList<StoryModel>()
-    var mUserMap = HashMap<String, UserDetailsModel>()
+    private lateinit var storyAdapter: StoryListAdapter
+    private var listOfPosts = arrayListOf<PostListItem>()
+    private var likesList = HashMap<String, LikeModel>()
+    private var mCommentsList = HashMap<String, Int>()
+    private var mSavedList = HashMap<String, Boolean>()
+    private var mStoryList = ArrayList<StoryModel>()
+    private var mUserMap = HashMap<String, UserDetailsModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,7 +109,6 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
                 }
             }
         })
-
     }
 
     /**
@@ -130,12 +132,10 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
         viewModel.getPosts().observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusLoading -> {
-                    Log.i("Data", "Loading")
                     home_fragment_progressbar.visibility = View.VISIBLE
                 }
 
                 Status.statusSuccess -> {
-                    Log.i("Data", "Success")
                     if (it.data != null) {
                         listOfPosts.clear()
                         listOfPosts.addAll(it.data!!)
@@ -149,7 +149,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
                 }
 
                 else -> {
-                    Log.i("Data", "Error")
+                    Timber.e(it.message)
                     home_fragment_progressbar.visibility = View.GONE
                 }
             }
@@ -159,7 +159,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
     /**
      * get Likes list from post list
      */
-    fun getLikes(postLists: ArrayList<PostListItem>) {
+    private fun getLikes(postLists: ArrayList<PostListItem>) {
         viewModel.getLikesList(postLists).observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
@@ -176,7 +176,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
     /**
      * Get comments count
      */
-    fun getCommentsCount(postLists: ArrayList<PostListItem>) {
+    private fun getCommentsCount(postLists: ArrayList<PostListItem>) {
         viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
@@ -190,7 +190,10 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
         })
     }
 
-    fun getSavedList() {
+    /**
+     * get saved posts list
+     */
+    private fun getSavedList() {
         viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {

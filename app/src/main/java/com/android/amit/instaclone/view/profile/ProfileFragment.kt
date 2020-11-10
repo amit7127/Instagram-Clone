@@ -24,24 +24,21 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 /**
- * A simple [Fragment] subclass.
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : User Profile fragment
  */
 class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     CustomTab.CustomTabListener {
 
-    lateinit var profileBinding: FragmentProfileBinding
+    private lateinit var profileBinding: FragmentProfileBinding
     lateinit var viewModel: ProfileFragmentViewModel
-    var postsList: ArrayList<Post> = ArrayList()
-    var savedPostsList: ArrayList<Post> = ArrayList()
+    private var postsList: ArrayList<Post> = ArrayList()
+    private var savedPostsList: ArrayList<Post> = ArrayList()
     lateinit var adapter: UploadedPostImagesAdapter
-    lateinit var savedListAdapter: UploadedPostImagesAdapter
+    private lateinit var savedListAdapter: UploadedPostImagesAdapter
     var id: String? = null
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-    }
 
     @ExperimentalStdlibApi
     override fun onCreateView(
@@ -57,9 +54,12 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         profileBinding.viewModel = viewModel
         profileBinding.tabListener = this
         init()
-        return profileBinding.root;
+        return profileBinding.root
     }
 
+    /**
+     * initialize user details in corresponding fields
+     */
     @ExperimentalStdlibApi
     private fun init() {
         if (arguments?.getString(Constants.USER_ID_TAG) != null) {
@@ -82,13 +82,14 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                 }
             }
         })
-
         getUsersPostList()
         getSavedPostList()
     }
 
-    //get posts for the user
-    fun getUsersPostList() {
+    /**
+     * get posts for the current user
+     */
+    private fun getUsersPostList() {
         val recyclerView: RecyclerView =
             profileBinding.userPostImagesRv // In xml we have given id rv_movie_list to RecyclerView
 
@@ -114,8 +115,10 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         })
     }
 
-    //get saved posts list for the current user
-    fun getSavedPostList() {
+    /**
+     * get saved posts list for the current user
+     */
+    private fun getSavedPostList() {
         val recyclerView: RecyclerView =
             profileBinding.savedPostImagesRv // In xml we have given id rv_movie_list to RecyclerView
 
@@ -126,7 +129,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         savedListAdapter = UploadedPostImagesAdapter(savedPostsList, this)
         recyclerView.adapter = savedListAdapter
 
-        var mSavedList = HashMap<String, Boolean>()
+        val mSavedList = HashMap<String, Boolean>()
 
         viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -137,12 +140,12 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
 
                         if (mSavedList.size > 0) {
                             viewModel.getSavedPostsImages(ArrayList(mSavedList.keys.toList()))
-                                .observe(viewLifecycleOwner, Observer {
-                                    when (it.status) {
+                                .observe(viewLifecycleOwner, Observer { postList ->
+                                    when (postList.status) {
                                         Status.statusSuccess -> {
                                             savedPostsList.clear()
-                                            if (it.data != null) {
-                                                savedPostsList.addAll(it.data!!)
+                                            if (postList.data != null) {
+                                                savedPostsList.addAll(postList.data!!)
                                                 savedPostsList.reverse()
                                             }
                                             savedListAdapter.notifyDataSetChanged()
@@ -156,16 +159,24 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         })
     }
 
+    /**
+     *on edit profile button clicked
+     */
     fun onEditProfileClicked(isEditProfile: Boolean, userId: String, buttonView: View) {
         if (isEditProfile)
+            //Own profile
             view?.findNavController()
                 ?.navigate(R.id.action_profileFragment_to_accountSettingsFragment)
         else {
+            //Viewer profile
             onFollowButtonClicked(userId, buttonView)
         }
     }
 
-    fun onFollowButtonClicked(userId: String, view: View) {
+    /**
+     * Follow button clicked, change follow status in db
+     */
+    private fun onFollowButtonClicked(userId: String, view: View) {
         if (view is Button) {
             val status = view.text
             viewModel.setFollowStatus(userId, status.toString()).observe(this, Observer {
@@ -177,7 +188,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                             Snackbar.LENGTH_SHORT
                         )
                             .show()
-                        if (status.equals(Status.follow)) {
+                        if (status == Status.follow) {
                             sendNotification(userId)
                         }
                     }
@@ -186,8 +197,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                             profileBinding.root,
                             it.message.toString(),
                             Snackbar.LENGTH_SHORT
-                        )
-                            .show()
+                        ).show()
                     }
                 }
             })
@@ -209,9 +219,11 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
             user_post_images_rv.visibility = View.GONE
             saved_post_images_rv.visibility = View.VISIBLE
         }
-
     }
 
+    /**
+     * get followers status and list
+     */
     fun onFollowersClicked() {
         val bundle = Bundle()
         bundle.putString(Constants.PURPOSE, Constants.FOLLOWERS_TAG)
@@ -219,6 +231,9 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
             ?.navigate(R.id.action_profileFragment_to_usersListFragment, bundle)
     }
 
+    /**
+     * get following user list
+     */
     fun onFollowingClicked() {
         val bundle = Bundle()
         bundle.putString(Constants.PURPOSE, Constants.FOLLOWING_TAG)
@@ -227,8 +242,11 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
             ?.navigate(R.id.action_profileFragment_to_usersListFragment, bundle)
     }
 
+    /**
+     * send notification to the target user
+     */
     private fun sendNotification(targetId: String) {
-        var notification = Notification()
+        val notification = Notification()
         notification.isFollow = true
         notification.notificationText = getString(R.string.follow_notification_text)
 

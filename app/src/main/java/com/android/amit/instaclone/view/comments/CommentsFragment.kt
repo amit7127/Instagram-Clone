@@ -17,30 +17,26 @@ import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.FragmentCommentsBinding
 import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
-import com.android.amit.instaclone.view.comments.presenter.CommnetsListAdapter
+import com.android.amit.instaclone.view.comments.presenter.CommentsListAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_comments.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 /**
- * A simple [Fragment] subclass.
- * Use the [CommentsFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Comments fragment
  */
 class CommentsFragment : Fragment() {
 
-    lateinit var commentFragmentBinding: FragmentCommentsBinding
+    private lateinit var commentFragmentBinding: FragmentCommentsBinding
     lateinit var viewModel: CommentsFragmentViewModel
     var postId: String? = null
-    var publisherId: String? = null
-    var postImageString: String? = null
-    var commentsList = ArrayList<CommentModel>()
-    var usersMap = HashMap<String, UserDetailsModel>()
-    lateinit var adapter: CommnetsListAdapter
+    private var publisherId: String? = null
+    private var postImageString: String? = null
+    private var commentsList = ArrayList<CommentModel>()
+    private var usersMap = HashMap<String, UserDetailsModel>()
+    lateinit var adapter: CommentsListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +64,9 @@ class CommentsFragment : Fragment() {
         return commentFragmentBinding.root
     }
 
+    /**
+     * initialize comments list
+     */
     private fun initCommentsList() {
         val recyclerView: RecyclerView =
             commentFragmentBinding.commentsRecyclerView // In xml we have given id rv_movie_list to RecyclerView
@@ -76,7 +75,7 @@ class CommentsFragment : Fragment() {
             LinearLayoutManager(context) // you can use getContext() instead of "this"
         layoutManager.reverseLayout = true
         recyclerView.layoutManager = layoutManager
-        adapter = CommnetsListAdapter(commentsList, usersMap)
+        adapter = CommentsListAdapter(commentsList, usersMap)
         recyclerView.adapter = adapter
 
         viewModel.getComments(postId!!).observe(viewLifecycleOwner, Observer {
@@ -116,6 +115,9 @@ class CommentsFragment : Fragment() {
         })
     }
 
+    /**
+     * fetch current post data from the post id
+     */
     private fun initDataFetching() {
         if (arguments?.getString(Constants.POST_IMAGE_URL_ID_TAG) != null) {
             postImageString = arguments?.getString(Constants.POST_IMAGE_URL_ID_TAG)!!
@@ -129,13 +131,16 @@ class CommentsFragment : Fragment() {
         viewModel.getUserData().observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.statusSuccess -> {
-                    viewModel.setUserData(it.data, commentFragmentBinding.root)
+                    viewModel.setUserData(it.data)
                     commentFragmentBinding.invalidateAll()
                 }
             }
         })
     }
 
+    /**
+     * post comment button clicked
+     */
     fun onPostCommentClicked() {
         if (postId != null) {
             viewModel.postComment(postId!!).observe(viewLifecycleOwner, Observer {
@@ -165,8 +170,11 @@ class CommentsFragment : Fragment() {
         }
     }
 
+    /**
+     * send notification for target user, regarding the new comment
+     */
     private fun sendNotification(postId: String) {
-        var notification = Notification()
+        val notification = Notification()
         notification.isPost = true
         notification.postId = postId
         notification.notificationText = getString(R.string.comment_notification_text)

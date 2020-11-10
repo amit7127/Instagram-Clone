@@ -7,10 +7,17 @@ import com.android.amit.instaclone.data.CommentModel
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.databinding.CommentsListItemBinding
 
-class CommnetsListAdapter(
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Comments list adapter
+ */
+
+class CommentsListAdapter(
     private val commentsList: ArrayList<CommentModel>,
     private val usersMap: HashMap<String, UserDetailsModel>
-) : RecyclerView.Adapter<CommnetsListAdapter.CommnetsListViewHolder>() {
+) : RecyclerView.Adapter<CommentsListAdapter.CommnetsListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommnetsListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -23,7 +30,7 @@ class CommnetsListAdapter(
     }
 
     override fun onBindViewHolder(holder: CommnetsListViewHolder, position: Int) {
-        var comment = commentsList[position]
+        val comment = commentsList[position]
         var user = UserDetailsModel()
         if (usersMap[comment.publisher] != null) {
             user = usersMap[comment.publisher]!!

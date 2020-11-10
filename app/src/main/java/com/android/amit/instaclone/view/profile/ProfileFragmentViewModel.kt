@@ -14,12 +14,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: April/24/2020
- * Description:
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Profile fragment view model
  */
 class ProfileFragmentViewModel : ViewModel() {
     var mFollower: Int = 0
@@ -27,7 +25,7 @@ class ProfileFragmentViewModel : ViewModel() {
     var mPost: Int = 0
     var mFullName = "N/A"
     var mBio = "N/A"
-    var mProfileImage = Uri.EMPTY
+    var mProfileImage: Uri = Uri.EMPTY
     var isEditProfile: Boolean = false
     var mEditButtonText = Status.follow
 
@@ -58,34 +56,55 @@ class ProfileFragmentViewModel : ViewModel() {
         }
     }
 
-    fun setStatus(item: UserDetailsModel) {
-        if (item.Follower.containsKey(repo.getCurrentUserId())) {
-            mEditButtonText = Status.following
+    /**
+     * set follow button functionality
+     */
+    private fun setStatus(item: UserDetailsModel) {
+        mEditButtonText = if (item.Follower.containsKey(repo.getCurrentUserId())) {
+            Status.following
         } else {
-            mEditButtonText = Status.follow
+            Status.follow
         }
     }
 
+    /**
+     * follow/un-follow
+     */
     fun setFollowStatus(userId: String, currentStatus: String): MutableLiveData<Resource<Unit>> {
         return repo.follow(userId, currentStatus)
     }
 
+    /**
+     * get posts images
+     */
     fun getPostsImages(): MutableLiveData<Resource<ArrayList<Post>>> {
         return repo.getUserPosts(id)
     }
 
+    /**
+     * get saved posts images
+     */
     fun getSavedPostsImages(idList: ArrayList<String>): MutableLiveData<Resource<ArrayList<Post>>> {
         return repo.getPostsFromIds(idList)
     }
 
+    /**
+     * get saved lists
+     */
     fun getSavedList(): MutableLiveData<Resource<HashMap<String, Boolean>>> {
         return repo.getSavedList()
     }
 
+    /**
+     * set posts count
+     */
     fun setPostsCount(postsCount: Int) {
         mPost = postsCount
     }
 
+    /**
+     * add new notification
+     */
     fun addNotification(notification: Notification, tergetUserId: String) {
         repo.addNotification(notification, tergetUserId)
     }

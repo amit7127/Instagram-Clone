@@ -11,26 +11,29 @@ import com.android.amit.instaclone.repo.Repository
 import com.google.android.material.snackbar.Snackbar
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: June/09/2020
- * Description:
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Posts fragment view model
  */
 class PostFragmnetViewModel : ViewModel() {
     var mPostComment: String = ""
     var mPostPictureUri: Uri = Uri.EMPTY
     var repo: Repository = Repository()
 
+    /**
+     * upload post picture
+     */
     fun setPostPicture(postPicUri: Uri) {
         mPostPictureUri = postPicUri
     }
 
+    /**
+     * publish new post
+     */
     fun post(view: View): LiveData<Resource<Unit>> {
 
-        var result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData<Resource<Unit>>()
+        var result: MutableLiveData<Resource<Unit>> = MutableLiveData()
 
         if (validateData(view)) {
             result = repo.postWithImage(mPostPictureUri, mPostComment)
@@ -38,18 +41,20 @@ class PostFragmnetViewModel : ViewModel() {
         return result
     }
 
-    fun validateData(view: View): Boolean {
-        when {
+    /**
+     * Post form validation
+     */
+    private fun validateData(view: View): Boolean {
+        return when {
             TextUtils.isEmpty(mPostComment) -> {
                 Snackbar.make(
                     view,
                     "Pleas add comment for this post",
                     Snackbar.LENGTH_SHORT
                 ).show()
-                return false
+                false
             }
-
-            else -> return true
+            else -> true
         }
     }
 }

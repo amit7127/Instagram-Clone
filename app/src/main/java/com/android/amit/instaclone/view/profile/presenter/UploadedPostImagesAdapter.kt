@@ -6,6 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.amit.instaclone.data.Post
 import com.android.amit.instaclone.databinding.PostImageProfileListItemBinding
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : posts images adapter for saved and liked posts
+ */
 class UploadedPostImagesAdapter(
     private val postList: ArrayList<Post>,
     private val postListener: PostImageHandler) :
@@ -35,7 +41,11 @@ class UploadedPostImagesAdapter(
         }
     }
 
+    /**
+     * post image listeners
+     */
     interface PostImageHandler{
+        //post button click
         fun onPostClicked(postId: String)
     }
 }
