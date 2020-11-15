@@ -18,7 +18,7 @@ import com.android.amit.instaclone.databinding.LayoutCustomTabBinding
 class CustomTab : LinearLayout {
 
     var selectedTab: Int = Constants.postsTab
-    lateinit var mBinding: LayoutCustomTabBinding
+    private lateinit var mBinding: LayoutCustomTabBinding
     var listener: CustomTabListener? = null
 
     constructor(context: Context?) : super(context) {
@@ -34,13 +34,16 @@ class CustomTab : LinearLayout {
             init()
     }
 
+    /**
+     * initialize view
+     */
     private fun init() {
         mBinding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
             R.layout.layout_custom_tab,
             this,
             true
-        );
+        )
         mBinding.listener = this
     }
 
@@ -53,13 +56,20 @@ class CustomTab : LinearLayout {
             init()
     }
 
+    /**
+     * on tab selected
+     */
     fun onTabSelected(id: Int) {
         selectedTab = id
         mBinding.invalidateAll()
         listener?.onTabChanged(id)
     }
 
+    /**
+     * tab listener
+     */
     interface CustomTabListener {
+        //On tab changed
         fun onTabChanged(id: Int)
     }
 }

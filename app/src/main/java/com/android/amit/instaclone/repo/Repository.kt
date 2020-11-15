@@ -20,12 +20,10 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: April/27/2020
- * Description: Repository to get the data from the server
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Repository to get the data from the server
  */
 class Repository {
     private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()

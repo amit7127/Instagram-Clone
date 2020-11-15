@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -78,7 +77,7 @@ class CommentsFragment : Fragment() {
         adapter = CommentsListAdapter(commentsList, usersMap)
         recyclerView.adapter = adapter
 
-        viewModel.getComments(postId!!).observe(viewLifecycleOwner, Observer {
+        viewModel.getComments(postId!!).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     load_comment_loader.visibility = View.VISIBLE
@@ -89,7 +88,7 @@ class CommentsFragment : Fragment() {
                         commentsList.addAll(it.data!!)
                         adapter.notifyDataSetChanged()
                         viewModel.getUsersMap(commentsList)
-                            .observe(viewLifecycleOwner, Observer { result ->
+                            .observe(viewLifecycleOwner, { result ->
                                 when (result.status) {
                                     Status.statusSuccess -> {
                                         if (result.data != null) {
@@ -128,7 +127,7 @@ class CommentsFragment : Fragment() {
             postId = arguments?.getString(Constants.POST_ID_TAG)!!
         }
 
-        viewModel.getUserData().observe(viewLifecycleOwner, Observer {
+        viewModel.getUserData().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     viewModel.setUserData(it.data)
@@ -143,7 +142,7 @@ class CommentsFragment : Fragment() {
      */
     fun onPostCommentClicked() {
         if (postId != null) {
-            viewModel.postComment(postId!!).observe(viewLifecycleOwner, Observer {
+            viewModel.postComment(postId!!).observe(viewLifecycleOwner, {
                 when (it.status) {
                     Status.statusLoading -> {
                         publish_comment_progress_bar.visibility = View.VISIBLE

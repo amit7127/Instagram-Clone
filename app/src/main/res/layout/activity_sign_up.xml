@@ -16,132 +16,139 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/signup_containe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/back_ui"
-        android:id="@+id/signup_containe_layout"
         tools:context=".view.signup.SignUpActivity">
 
         <ImageView
             android:id="@+id/insta_logo"
             android:layout_width="160dp"
             android:layout_height="90dp"
+            android:layout_marginTop="140dp"
+            android:src="@drawable/instagram"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="140dp"
-            android:src="@drawable/instagram"
-            android:tint="@android:color/white" />
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription" />
 
         <EditText
-            android:id="@+id/fullname_signup"
+            android:id="@+id/full_name_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/inputs_background"
+            android:hint="@string/account_full_name_hint"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="@={viewModel.fullName}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/insta_logo"
-            android:background="@drawable/inputs_background"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="6dp"
-            android:maxLines="1"
-            android:text="@={viewModel.fullName}"
-            android:hint="Full Name..."
-            android:padding="10dp" />
+            android:importantForAutofill="no"
+            android:inputType="textCapWords" />
 
         <EditText
             android:id="@+id/username_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/inputs_background"
+            android:hint="@string/account_user_name_hint"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="@={viewModel.userName}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fullname_signup"
-            android:background="@drawable/inputs_background"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="6dp"
-            android:maxLines="1"
-            android:text="@={viewModel.userName}"
-            android:hint="User Name..."
-            android:padding="10dp" />
+            app:layout_constraintTop_toBottomOf="@id/full_name_sign_up"
+            android:inputType="text"
+            tools:ignore="Autofill" />
 
         <EditText
             android:id="@+id/email_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/inputs_background"
+            android:hint="@string/email_sign_up_hint"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="@={viewModel.email}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/username_signup"
-            android:background="@drawable/inputs_background"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="6dp"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:text="@={viewModel.email}"
-            android:hint="Email..."
-            android:padding="10dp" />
+            tools:ignore="Autofill" />
 
         <EditText
             android:id="@+id/password_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/inputs_background"
+            android:hint="@string/password_sign_up_hint"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="@={viewModel.passWord}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/email_signup"
-            android:background="@drawable/inputs_background"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="6dp"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:text="@={viewModel.passWord}"
-            android:hint="Password..."
-            android:padding="10dp" />
+            tools:ignore="Autofill" />
 
         <Button
             android:id="@+id/signup_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="20dp"
+            android:background="@android:color/white"
+            android:onClick="@{() -> signUp.onSignUpClicked()}"
+            android:text="@string/register_sign_up_button_text"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password_login"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="6dp"
-            android:text="Register"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:background="@android:color/white"
-            android:onClick="@{() -> signUp.onSignUpClicked()}" />
+            app:layout_constraintTop_toBottomOf="@id/password_login" />
 
         <Button
             android:id="@+id/signin_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
-            android:text="Already have an Account? Sign In"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textColor="@android:color/white"
             android:background="@color/colorAccent"
-            android:onClick="@{() -> signUp.onSignInClicked()}" />
+            android:onClick="@{() -> signUp.onSignInClicked()}"
+            android:text="@string/sign_in_redirect_link_sign_up_page"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ProgressBar
             android:id="@+id/progressbar_signup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="@{signUp.isLoading}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:visibility="@{signUp.isLoading}" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

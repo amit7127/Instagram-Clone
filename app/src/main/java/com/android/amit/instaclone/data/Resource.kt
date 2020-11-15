@@ -1,7 +1,6 @@
 package com.android.amit.instaclone.data
 
 import com.android.amit.instaclone.util.Status
-import com.google.firebase.auth.FirebaseUser
 
 /**
  * ================================================

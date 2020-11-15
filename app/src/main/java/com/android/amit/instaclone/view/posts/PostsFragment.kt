@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.android.amit.instaclone.R
@@ -68,7 +67,7 @@ class PostsFragment : Fragment() {
      * new post
      */
     fun onPostButtonClicked() {
-        viewModel.post(postsBinding.root).observe(viewLifecycleOwner, Observer {
+        viewModel.post(postsBinding.root).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     posts_progressbar.visibility = View.VISIBLE

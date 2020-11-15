@@ -10,12 +10,10 @@ import com.android.amit.instaclone.repo.Repository
 import com.android.amit.instaclone.util.Status
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: June/02/2020
- * Description:
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Search users list adapter
  */
 class UserSerchAdapter(
     private val usersList: ArrayList<UserDetailsModel>,
@@ -37,7 +35,7 @@ class UserSerchAdapter(
 
     class UserSearchViewHolder(
         val binding: ProfileListItemBinding,
-        val searchListener: UserSearchListener
+        private val searchListener: UserSearchListener
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -48,18 +46,24 @@ class UserSerchAdapter(
             binding.executePendingBindings()
         }
 
+        /**
+         * get follow un-follow status
+         */
         fun getStatus(item: UserDetailsModel): String {
             val repo = Repository()
-            if (item.Follower.containsKey(repo.getCurrentUserId())) {
-                return Status.following
+            return if (item.Follower.containsKey(repo.getCurrentUserId())) {
+                Status.following
             } else {
-                return Status.follow
+                Status.follow
             }
         }
     }
 
     interface UserSearchListener {
+        //Follow button clicked
         fun onFollowButtonClicked(userId: String, view: View)
+
+        //on profile selected
         fun onProfileClicked(userId: String)
     }
 }

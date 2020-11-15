@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -88,10 +87,10 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
         storyAdapter = StoryListAdapter(this, mStoryList, mUserMap)
         storyRecyclerView.adapter = storyAdapter
 
-        viewModel.getFollowingUsersList().observe(viewLifecycleOwner, Observer {
+        viewModel.getFollowingUsersList().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
-                    viewModel.getStories(it.data!!).observe(viewLifecycleOwner, Observer { result ->
+                    viewModel.getStories(it.data!!).observe(viewLifecycleOwner, { result ->
                         when (result.status) {
                             Status.statusSuccess -> {
                                 mStoryList.clear()
@@ -115,7 +114,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
      * get user map from Story List
      */
     private fun getUserMapForStory(mStoryList: ArrayList<StoryModel>) {
-        viewModel.getUsersMap(mStoryList).observe(viewLifecycleOwner, Observer {
+        viewModel.getUsersMap(mStoryList).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     mUserMap.clear()
@@ -129,7 +128,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
 
     //Initialize posts
     private fun init() {
-        viewModel.getPosts().observe(viewLifecycleOwner, Observer {
+        viewModel.getPosts().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     home_fragment_progressbar.visibility = View.VISIBLE
@@ -160,7 +159,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
      * get Likes list from post list
      */
     private fun getLikes(postLists: ArrayList<PostListItem>) {
-        viewModel.getLikesList(postLists).observe(viewLifecycleOwner, Observer {
+        viewModel.getLikesList(postLists).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     if (it.data != null) {
@@ -177,7 +176,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
      * Get comments count
      */
     private fun getCommentsCount(postLists: ArrayList<PostListItem>) {
-        viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, Observer {
+        viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     if (it.data != null) {
@@ -194,7 +193,7 @@ class HomeFragment : Fragment(), PostsListAdapter.PostListener, StoryListAdapter
      * get saved posts list
      */
     private fun getSavedList() {
-        viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
+        viewModel.getSavedList().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     mSavedList.clear()

@@ -2,15 +2,6 @@ package com.android.amit.instaclone.data
 
 import com.google.firebase.database.IgnoreExtraProperties
 
-/**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: April/30/2020
- * Description:
- */
-
 @IgnoreExtraProperties
 class UserDetailsModel {
     var userId: String = ""

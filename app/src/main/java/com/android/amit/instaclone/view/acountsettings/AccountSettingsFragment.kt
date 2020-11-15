@@ -8,13 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.databinding.FragmentAccountSettingsBinding
 import com.android.amit.instaclone.util.Status
-import com.android.amit.instaclone.view.signin.SigninActivity
+import com.android.amit.instaclone.view.signin.SignInActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.theartofdev.edmodo.cropper.CropImage
@@ -50,7 +49,7 @@ class AccountSettingsFragment : Fragment() {
      */
     @ExperimentalStdlibApi
     private fun initData() {
-        viewModel.getUserDetails().observe(viewLifecycleOwner, Observer {
+        viewModel.getUserDetails().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     account_settings_progress_bar.visibility = View.VISIBLE
@@ -79,7 +78,7 @@ class AccountSettingsFragment : Fragment() {
      */
     fun onLogoutClicked() {
         FirebaseAuth.getInstance().signOut()
-        val intent = Intent(context, SigninActivity::class.java)
+        val intent = Intent(context, SignInActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
@@ -88,7 +87,7 @@ class AccountSettingsFragment : Fragment() {
      * Save profile button clicked
      */
     fun onSaveProfileClicked() {
-        viewModel.saveUserData(accountSettingBinding.root).observe(viewLifecycleOwner, Observer {
+        viewModel.saveUserData(accountSettingBinding.root).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     account_settings_progress_bar.visibility = View.VISIBLE

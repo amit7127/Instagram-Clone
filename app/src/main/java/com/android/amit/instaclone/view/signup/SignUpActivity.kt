@@ -5,18 +5,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.android.amit.instaclone.MainActivity
 import com.android.amit.instaclone.R
 import com.android.amit.instaclone.databinding.ActivitySignUpBinding
 import com.android.amit.instaclone.util.Status
+import com.android.amit.instaclone.view.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
 
-    lateinit var signUpBinding: ActivitySignUpBinding
+    private lateinit var signUpBinding: ActivitySignUpBinding
     lateinit var viewModel: SignUpViewModel
 
     var isLoading: Int = View.GONE
@@ -33,27 +32,25 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     /**
-     * Signup button clicked event
+     * Sign-up button clicked event
      */
     fun onSignUpClicked() {
-        //onBackPressed()
-        viewModel.createUser(this, signUpBinding.root).observe(this, Observer {
+        viewModel.createUser(this, signUpBinding.root).observe(this, {
             when (it.status) {
                 Status.statusLoading -> {
                     //isLoading = View.VISIBLE
                     progressbar_signup.visibility = View.VISIBLE
                 }
-
+                //On new user created successfully, save the user data to firebase db
                 Status.statusSuccess -> {
                     Snackbar.make(signUpBinding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
                         .show()
-//                    progressbar_signup.visibility = View.GONE
-                    viewModel.saveUserData().observe(this, Observer {
-                        when (it.status) {
+                    viewModel.saveUserData().observe(this, { response ->
+                        when (response.status) {
                             Status.statusSuccess -> {
                                 Snackbar.make(
                                     signUpBinding.root,
-                                    it.message.toString(),
+                                    response.message.toString(),
                                     Snackbar.LENGTH_SHORT
                                 ).show()
                                 progressbar_signup.visibility = View.GONE
@@ -65,7 +62,7 @@ class SignUpActivity : AppCompatActivity() {
                             else -> {
                                 Snackbar.make(
                                     signUpBinding.root,
-                                    it.message.toString(),
+                                    response.message.toString(),
                                     Snackbar.LENGTH_SHORT
                                 ).show()
                                 progressbar_signup.visibility = View.GONE
@@ -83,7 +80,10 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-    fun onSignInClicked(){
+    /**
+     * signIn button clicked
+     */
+    fun onSignInClicked() {
         onBackPressed()
     }
 }

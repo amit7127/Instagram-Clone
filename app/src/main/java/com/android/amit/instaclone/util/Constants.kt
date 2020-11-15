@@ -1,5 +1,11 @@
 package com.android.amit.instaclone.util
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Constants
+ */
 object Constants {
     const val postsTab: Int = 1
     const val savedTab: Int = 2
@@ -16,4 +22,6 @@ object Constants {
     const val FOLLOWERS_TAG = "Followers"
     const val FOLLOWING_TAG = "Following"
     const val VIEW_COLUMN = "view"
+
+    const val STORY_END_INTERVAL = 86400000
 }

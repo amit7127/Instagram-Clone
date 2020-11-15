@@ -50,7 +50,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginTop="8dp"
                 android:set_name="@{userModel.userName}"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textColor="@color/colorPrimary" />
 
             <TextView
@@ -63,7 +63,7 @@
                 android:layout_marginTop="2dp"
                 android:set_name="@{userModel.fullName}"
                 android:textStyle="bold"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textColor="@color/colorPrimary" />
 
             <Button

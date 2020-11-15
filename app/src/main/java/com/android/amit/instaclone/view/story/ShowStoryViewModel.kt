@@ -7,26 +7,40 @@ import com.android.amit.instaclone.data.StoryModel
 import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Story view model
+ */
 class ShowStoryViewModel : ViewModel() {
 
     var repo: Repository = Repository()
 
-    // Get stories for a specific user
+    /**
+     * Get stories for a specific user
+     */
     fun fetchStoryDetails(userId: String): MutableLiveData<Resource<List<StoryModel>>> {
         return repo.getStoryListForTheUser(userId)
     }
 
-    //Get user details from user id
+    /**
+     * Get user details from user id
+     */
     fun getUserData(userId: String): MutableLiveData<Resource<UserDetailsModel>> {
         return repo.getUserDetails(userId)
     }
 
-    //set story as seen by current user
+    /**
+     * set story as seen by current user
+     */
     fun setStorySeen(storyId: String) {
         repo.setStorySeen(storyId)
     }
 
-    //Delete the story by story id
+    /**
+     * Delete the story by story id
+     */
     fun deleteStory(storyId: String) {
         repo.deleteStory(storyId)
     }

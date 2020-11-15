@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Insta Clone</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -11,7 +11,7 @@
 
     <!--    Post list items-->
     <string name="comments_count">%d Comments</string>
-    <string name="likes_count">%d Likes</string>
+    <string name="likes_count" tools:ignore="PluralsCandidate">%d Likes</string>
 
     <!--  Notification texts  -->
     <string name="comment_notification_text">Added comment on your post.</string>
@@ -40,6 +40,10 @@
     <string name="user_name_validation_string">User name required</string>
     <string name="user_bio_validation_string">User Bio required</string>
     <string name="comment_field_validation_string">Please write something to add comment about the post.</string>
+    <string name="email_field_required">Email required</string>
+    <string name="password_field_required">Password required</string>
+    <string name="full_name_field_required">Full name required</string>
+    <string name="user_name_field_required">User name required</string>
 
     <!--  Comment screen texts  -->
     <string name="comments">Comments</string>
@@ -52,5 +56,19 @@
     <string name="account_bio_hint">Bio</string>
     <string name="account_logout_button_text">Logout</string>
     <string name="delete_account_button_text">Delete Account</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="email_sign_up_hint">Email</string>
+    <string name="password_sign_up_hint">Password</string>
+    <string name="register_sign_up_button_text">Register</string>
+    <string name="sign_in_redirect_link_sign_up_page">Already have an Account? Sign In</string>
+    <string name="post_comment_text_hint">Post Comment</string>
+    <string name="login_button_test">Login</string>
+    <string name="sign_up_redirect_link">Need New Account? Sign Up</string>
+    <string name="add_story_text">Add Story</string>
+    <string name="photo">Photo</string>
+    <string name="user_name">USER NAME</string>
+    <string name="posts">Posts</string>
+    <string name="followers_label">Followers</string>
+    <string name="following_label">Following</string>
 
 </resources>

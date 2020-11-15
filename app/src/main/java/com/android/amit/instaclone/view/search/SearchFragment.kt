@@ -8,7 +8,6 @@ import android.widget.Button
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,13 +23,16 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.*
 
 /**
- * A simple [Fragment] subclass.
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Search users fragment
  */
 class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
 
     lateinit var binding: FragmentSearchBinding
     lateinit var viewModel: SearchFragmentViewModel
-    var listOfUsers = arrayListOf<UserDetailsModel>()
+    private var listOfUsers = arrayListOf<UserDetailsModel>()
     lateinit var adapter: UserSerchAdapter
 
     override fun onCreateView(
@@ -61,9 +63,12 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         recyclerView.adapter = adapter
     }
 
+    /**
+     * watch test change event for search box
+     */
     fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        viewModel.searchUserByQuerry(s.toString().toLowerCase(Locale.getDefault()))
-            .observe(this, Observer {
+        viewModel.searchUserByQuery(s.toString().toLowerCase(Locale.getDefault()))
+            .observe(this, {
                 when (it.status) {
                     Status.statusLoading -> {
                         serach_fragment_progressbar.visibility = View.VISIBLE
@@ -83,16 +88,19 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
             })
     }
 
+    /**
+     * on follow button clicked
+     */
     override fun onFollowButtonClicked(userId: String, view: View) {
         if (view is Button) {
             val status = view.text
-            viewModel.setFollowStatus(userId, status.toString()).observe(this, Observer {
+            viewModel.setFollowStatus(userId, status.toString()).observe(this, {
                 when (it.status) {
                     Status.statusSuccess -> {
                         Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
                             .show()
 
-                        if (status.equals(Status.follow)) {
+                        if (status == Status.follow) {
                             sendNotification(userId)
                         }
                     }
@@ -105,13 +113,19 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         }
     }
 
+    /**
+     * on user profile tile selected
+     */
     override fun onProfileClicked(userId: String) {
-        var bundle = bundleOf("userId" to userId)
+        val bundle = bundleOf("userId" to userId)
         view?.findNavController()?.navigate(R.id.action_searchFragment_to_profileFragment, bundle)
     }
 
+    /**
+     * add new notification for user follow
+     */
     private fun sendNotification(targetId: String) {
-        var notification = Notification()
+        val notification = Notification()
         notification.isFollow = true
         notification.notificationText = getString(R.string.follow_notification_text)
 

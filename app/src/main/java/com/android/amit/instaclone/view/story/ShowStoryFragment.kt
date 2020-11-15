@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.android.amit.instaclone.R
@@ -19,16 +18,22 @@ import com.android.amit.instaclone.util.Status
 import jp.shts.android.storiesprogressview.StoriesProgressView
 import kotlinx.android.synthetic.main.fragment_show_story.*
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Show story fragment
+ */
 class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
 
-    lateinit var storyBinding: FragmentShowStoryBinding
+    private lateinit var storyBinding: FragmentShowStoryBinding
     lateinit var viewModel: ShowStoryViewModel
-    var mStoryCount = 0
-    var mUserId: String = ""
-    var mStoryList = ArrayList<StoryModel>()
+    private var mStoryCount = 0
+    private var mUserId: String = ""
+    private var mStoryList = ArrayList<StoryModel>()
     var currentStory = StoryModel()
-    var mStoryUser = UserDetailsModel()
-    var isDataChanged = true
+    private var mStoryUser = UserDetailsModel()
+    private var isDataChanged = true
     var isOwnStory = false
 
     override fun onCreateView(
@@ -47,7 +52,9 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         return storyBinding.root
     }
 
-    //Initialize
+    /**
+     * Initialize
+     */
     private fun initView() {
         if (arguments?.getString(Constants.USER_ID_TAG) != null) {
             mUserId = arguments?.getString(Constants.USER_ID_TAG)!!
@@ -58,10 +65,12 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         }
     }
 
-    // Get stories for a specific user
+    /**
+     * Get stories for a specific user
+     */
     private fun getStories(userId: String) {
         isDataChanged = true
-        viewModel.fetchStoryDetails(userId).observe(viewLifecycleOwner, Observer {
+        viewModel.fetchStoryDetails(userId).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     story_loader.visibility = View.GONE
@@ -89,9 +98,11 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         })
     }
 
-    //Get user details from user id
+    /**
+     * Get user details from user id
+     */
     private fun getUserDetails(userId: String) {
-        viewModel.getUserData(userId).observe(viewLifecycleOwner, Observer {
+        viewModel.getUserData(userId).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     mStoryUser.image = it.data!!.image
@@ -102,7 +113,9 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         })
     }
 
-    //Set dtory view with progree dialog
+    /**
+     * Set story view with progress dialog
+     */
     private fun setStoryView() {
         story_progress_view.setStoriesCount(mStoryList.size)
         story_progress_view.setStoryDuration(10000L)
@@ -128,30 +141,40 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
         storyBinding.invalidateAll()
     }
 
-    //Next button clicked
+    /**
+     * Next button clicked
+     */
     fun onNextClicked() {
         story_progress_view.skip()
     }
 
-    //Previous button clicked
+    /**
+     * Previous button clicked
+     */
     fun onPreviousClicked() {
         story_progress_view.reverse()
     }
 
-    //set story as seen by current user
-    fun setSeen(storyId: String) {
+    /**
+     * set story as seen by current user
+     */
+    private fun setSeen(storyId: String) {
         viewModel.setStorySeen(storyId)
     }
 
-    //Delete the story by story id
+    /**
+     * Delete the story by story id
+     */
     fun deleteStory(storyId: String) {
         viewModel.deleteStory(storyId)
         story_progress_view.skip()
     }
 
-    //show seen user list
+    /**
+     * show seen user list
+     */
     fun viewerList(storyId: String) {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(Constants.STORY_ID_TAG, storyId)
         bundle.putString(Constants.PURPOSE, Constants.VIEW_COLUMN)
         view?.findNavController()

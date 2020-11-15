@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,13 +18,19 @@ import com.android.amit.instaclone.util.Constants
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.view.search.presenter.UserSerchAdapter
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Users List fragment
+ */
 class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
 
     lateinit var purpose: String
-    lateinit var userListBinding: FragmentUsersListBinding
+    private lateinit var userListBinding: FragmentUsersListBinding
     lateinit var viewModel: UsersListViewModel
     lateinit var adapter: UserSerchAdapter
-    var listOfUsers = arrayListOf<UserDetailsModel>()
+    private var listOfUsers = arrayListOf<UserDetailsModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +53,9 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         return userListBinding.root
     }
 
-    //Init views
+    /**
+     * Init views
+     */
     private fun init() {
 
         val recyclerView: RecyclerView =
@@ -83,12 +90,14 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         }
     }
 
-    //get Story view
+    /**
+     * get Story view
+     */
     private fun setStoryViews() {
         if (arguments?.getString(Constants.STORY_ID_TAG) != null) {
             val storyId = arguments?.getString(Constants.STORY_ID_TAG)
             storyId?.let { it ->
-                viewModel.getStory(it).observe(viewLifecycleOwner, Observer {
+                viewModel.getStory(it).observe(viewLifecycleOwner, {
                     when (it.status) {
                         Status.statusSuccess -> {
                             setUserList(ArrayList(it.data!!.seen.keys))
@@ -96,16 +105,17 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
                     }
                 })
             }
-
         }
     }
 
-    //get following user ids
+    /**
+     * get following user ids
+     */
     private fun setFollowingData() {
         var userId: String? = null
         if (arguments?.getString(Constants.USER_ID_TAG) != null)
             userId = arguments?.getString(Constants.USER_ID_TAG)
-        viewModel.getFollowingIdList(userId).observe(viewLifecycleOwner, Observer {
+        viewModel.getFollowingIdList(userId).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     it.data?.let { it1 ->
@@ -116,13 +126,15 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         })
     }
 
-    //get follower users ids
+    /**
+     * get follower users ids
+     */
     private fun setFollowersData() {
         var userId: String? = null
         if (arguments?.getString(Constants.USER_ID_TAG) != null)
             userId = arguments?.getString(Constants.USER_ID_TAG)
 
-        viewModel.getFollowerIdList(userId).observe(viewLifecycleOwner, Observer {
+        viewModel.getFollowerIdList(userId).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     it.data?.let { it1 ->
@@ -133,12 +145,14 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         })
     }
 
-    //get likes user ids
+    /**
+     * get likes user ids
+     */
     private fun setLikesData() {
         if (arguments?.getString(Constants.POST_ID_TAG) != null) {
             val postId = arguments?.getString(Constants.POST_ID_TAG)!!
 
-            viewModel.getUsersIdList(postId).observe(viewLifecycleOwner, Observer {
+            viewModel.getUsersIdList(postId).observe(viewLifecycleOwner, {
                 when (it.status) {
                     Status.statusSuccess -> {
                         it.data?.let { it1 ->
@@ -147,13 +161,14 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
                     }
                 }
             })
-
         }
     }
 
-    //set users list from ids
+    /**
+     * set users list from ids
+     */
     private fun setUserList(userIdList: ArrayList<String>) {
-        viewModel.getUsersFromIdList(userIdList).observe(viewLifecycleOwner, Observer {
+        viewModel.getUsersFromIdList(userIdList).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     listOfUsers.clear()
@@ -167,11 +182,13 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
     }
 
     override fun onFollowButtonClicked(userId: String, view: View) {
-
     }
 
+    /**
+     * on Profile button clicked
+     */
     override fun onProfileClicked(userId: String) {
-        var bundle = bundleOf(Constants.USER_ID_TAG to userId)
+        val bundle = bundleOf(Constants.USER_ID_TAG to userId)
         view?.findNavController()
             ?.navigate(R.id.action_usersListFragment_to_profileFragment, bundle)
     }

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -79,7 +78,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
         adapter = PostsListAdapter(postList, this, likesList, mCommentsList, mSavedList)
         recyclerView.adapter = adapter
 
-        viewModel.getPostDetails(postId).observe(viewLifecycleOwner, Observer {
+        viewModel.getPostDetails(postId).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     post_details_progressbar.visibility = View.VISIBLE
@@ -104,7 +103,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
      * get Likes list from post list
      */
     private fun getLikes(postLists: ArrayList<PostListItem>) {
-        viewModel.getLikesList(postLists).observe(viewLifecycleOwner, Observer {
+        viewModel.getLikesList(postLists).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     if (it.data != null) {
@@ -121,7 +120,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
      * Get comments count
      */
     private fun getCommentsCount(postLists: ArrayList<PostListItem>) {
-        viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, Observer {
+        viewModel.getCommentsCount(postLists).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     if (it.data != null) {
@@ -138,7 +137,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
      * get saved posts list
      */
     private fun getSavedList() {
-        viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
+        viewModel.getSavedList().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     mSavedList.clear()

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.android.amit.instaclone.R
@@ -18,6 +17,12 @@ import com.android.amit.instaclone.util.Status
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.fragment_add_story.*
 
+/**
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Add Story fragment
+ */
 class AddStoryFragment : Fragment() {
 
     lateinit var binding: FragmentAddStoryBinding
@@ -59,7 +64,7 @@ class AddStoryFragment : Fragment() {
      */
     private fun processCroppedImage(data: Intent) {
         val result = CropImage.getActivityResult(data)
-        viewModel.postStory(result.uri).observe(viewLifecycleOwner, Observer {
+        viewModel.postStory(result.uri).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     add_story_progressbar.visibility = View.VISIBLE
@@ -85,7 +90,6 @@ class AddStoryFragment : Fragment() {
                 }
             }
         })
-
     }
 
     /**

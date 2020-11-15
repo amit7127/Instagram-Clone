@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,7 +61,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
         recyclerView.adapter = adapter
 
         //fetch notification data
-        viewModel.getNotificationList().observe(viewLifecycleOwner, Observer { notificationList ->
+        viewModel.getNotificationList().observe(viewLifecycleOwner, { notificationList ->
             when (notificationList.status) {
                 Status.statusSuccess -> {
                     this.notificationList.clear()
@@ -84,7 +83,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
     private fun getPostList(data: ArrayList<Notification>) {
         val postIdList = data.filter { it.isPost }.map { it.postId }
         viewModel.getPostList(postIdList as ArrayList<String>)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 when (it.status) {
                     Status.statusSuccess -> {
                         postList.clear()
@@ -102,7 +101,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
      */
     private fun getUserList(userList: List<String>) {
         viewModel.getUsersFromIdList(userList as ArrayList<String>)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 when (it.status) {
                     Status.statusSuccess -> {
                         usersMap.clear()

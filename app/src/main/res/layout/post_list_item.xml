@@ -50,7 +50,7 @@
                 android:id="@+id/user_name_post_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:onClick="@{() -> listener.onProfileClicked(postListItem.publisher)}"
                 android:text="@{postListItem.publisherUserName}"
                 android:textColor="@color/colorPrimaryDark"

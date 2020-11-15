@@ -8,31 +8,33 @@ import com.android.amit.instaclone.data.UserDetailsModel
 import com.android.amit.instaclone.repo.Repository
 
 /**
- * ================================================
- * Property of of Ubii , LLC
- * ================================================
- * Author: Amit Kumar Sahoo
- * Created On: June/03/2020
- * Description:
+ * File created at 27/05/2020
+ * Author : Amit Kumar Sahoo
+ * email: amit.sahoo@mindfiresolutions.com
+ * About file : Search users fragment view model
  */
 class SearchFragmentViewModel : ViewModel() {
     var searchQuerry: String = ""
     var repo: Repository = Repository()
 
-    fun searchUserByQuerry(querry: String): MutableLiveData<Resource<ArrayList<UserDetailsModel>>> {
-        var result: MutableLiveData<Resource<ArrayList<UserDetailsModel>>>
-
-//        if (!TextUtils.isEmpty(querry)) {
-        result = repo.getUsers(querry)
-//        }
-        return result
+    /**
+     * search user by string
+     */
+    fun searchUserByQuery(query: String): MutableLiveData<Resource<ArrayList<UserDetailsModel>>> {
+        return repo.getUsers(query)
     }
 
+    /**
+     * set follow status
+     */
     fun setFollowStatus(userId: String, currentStatus: String): MutableLiveData<Resource<Unit>> {
         return repo.follow(userId, currentStatus)
     }
 
-    fun addNotification(notification: Notification, tergetUserId: String){
+    /**
+     * add new notification to db
+     */
+    fun addNotification(notification: Notification, tergetUserId: String) {
         repo.addNotification(notification, tergetUserId)
     }
 }

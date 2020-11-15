@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -65,7 +64,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         if (arguments?.getString(Constants.USER_ID_TAG) != null) {
             id = arguments?.getString(Constants.USER_ID_TAG)!!
         }
-        viewModel.getUserData(id)?.observe(viewLifecycleOwner, Observer {
+        viewModel.getUserData(id)?.observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     profile_fragment_progress_bar.visibility = View.VISIBLE
@@ -100,7 +99,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
         adapter = UploadedPostImagesAdapter(postsList, this)
         recyclerView.adapter = adapter
 
-        viewModel.getPostsImages().observe(viewLifecycleOwner, Observer {
+        viewModel.getPostsImages().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     postsList.clear()
@@ -131,7 +130,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
 
         val mSavedList = HashMap<String, Boolean>()
 
-        viewModel.getSavedList().observe(viewLifecycleOwner, Observer {
+        viewModel.getSavedList().observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusSuccess -> {
                     mSavedList.clear()
@@ -140,7 +139,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
 
                         if (mSavedList.size > 0) {
                             viewModel.getSavedPostsImages(ArrayList(mSavedList.keys.toList()))
-                                .observe(viewLifecycleOwner, Observer { postList ->
+                                .observe(viewLifecycleOwner, { postList ->
                                     when (postList.status) {
                                         Status.statusSuccess -> {
                                             savedPostsList.clear()
@@ -179,7 +178,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     private fun onFollowButtonClicked(userId: String, view: View) {
         if (view is Button) {
             val status = view.text
-            viewModel.setFollowStatus(userId, status.toString()).observe(this, Observer {
+            viewModel.setFollowStatus(userId, status.toString()).observe(this, {
                 when (it.status) {
                     Status.statusSuccess -> {
                         Snackbar.make(
