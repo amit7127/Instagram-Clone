@@ -62,7 +62,7 @@ class AccountSettingsViewModel : ViewModel() {
 
             val uriString = profileImageUri.toString()
             if (uriString.contains("http")){
-                result = repo.saveUserProfileDataWithoutImage(mUserDetailsModel)
+                result = repo.saveUserInFirebase(mUserDetailsModel)
             }else{
                 result = repo.saveUserProfileWithImage(mUserDetailsModel, profileImageUri)
             }

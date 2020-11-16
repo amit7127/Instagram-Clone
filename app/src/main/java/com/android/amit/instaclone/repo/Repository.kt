@@ -346,30 +346,6 @@ class Repository {
         return result
     }
 
-    fun saveUserProfileDataWithoutImage(userDetails: UserDetailsModel): MutableLiveData<Resource<Unit>>{
-        val result: MutableLiveData<Resource<Unit>> =
-            MutableLiveData()
-        val resource = Resource<Unit>()
-        result.value = resource.loading()
-
-        userDetails.fullName = userDetails.fullName.toLowerCase(Locale.getDefault())
-        userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
-
-        val userRef: DatabaseReference =
-            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
-        userRef.child(userDetails.userId).setValue(userDetails).addOnCompleteListener {
-            if (it.isSuccessful) {
-                result.value = resource.success(null)
-            } else {
-                result.value = resource.error(
-                    Resources.getSystem().getString(R.string.failed_to_update_user_detail)
-                )
-                FirebaseAuth.getInstance().signOut()
-            }
-        }
-        return result
-    }
-
     /**
      * @param postPictureUri: uri path of the post picture
      * @param comment: comment in string
