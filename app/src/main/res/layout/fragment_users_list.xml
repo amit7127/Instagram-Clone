@@ -27,15 +27,17 @@
                 android:id="@+id/user_list_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:titleTextColor="@android:color/black"
                 app:title="@{fragment.purpose}" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/user_list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            tools:listitem="@layout/profile_list_item"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_list_appbar" />
-
+            app:layout_constraintTop_toBottomOf="@id/user_list_appbar"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

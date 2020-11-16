@@ -51,10 +51,10 @@ class UserSerchAdapter(
          */
         fun getStatus(item: UserDetailsModel): String {
             val repo = Repository()
-            return if (item.Follower.containsKey(repo.getCurrentUserId())) {
-                Status.following
+            return if (item.follower.containsKey(repo.getCurrentUserId())) {
+                Status.Following
             } else {
-                Status.follow
+                Status.Follow
             }
         }
     }

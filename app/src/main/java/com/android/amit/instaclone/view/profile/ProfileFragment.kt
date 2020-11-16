@@ -187,7 +187,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
                             Snackbar.LENGTH_SHORT
                         )
                             .show()
-                        if (status == Status.follow) {
+                        if (status == Status.Follow) {
                             sendNotification(userId)
                         }
                     }

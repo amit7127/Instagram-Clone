@@ -27,7 +27,7 @@ class ProfileFragmentViewModel : ViewModel() {
     var mBio = "N/A"
     var mProfileImage: Uri = Uri.EMPTY
     var isEditProfile: Boolean = false
-    var mEditButtonText = Status.follow
+    var mEditButtonText = Status.Follow
 
     var repo: Repository = Repository()
     var id = repo.getCurrentUserId()
@@ -44,8 +44,8 @@ class ProfileFragmentViewModel : ViewModel() {
     @ExperimentalStdlibApi
     fun setUserDetails(userDetailsModel: UserDetailsModel?) {
         if (userDetailsModel != null) {
-            mFollower = userDetailsModel.Follower.size
-            mFollowing = userDetailsModel.Following.size
+            mFollower = userDetailsModel.follower.size
+            mFollowing = userDetailsModel.following.size
             mFullName = userDetailsModel.fullName.capitalizeWords()
             mBio = userDetailsModel.bio
             mProfileImage = Uri.parse(userDetailsModel.image)
@@ -60,10 +60,10 @@ class ProfileFragmentViewModel : ViewModel() {
      * set follow button functionality
      */
     private fun setStatus(item: UserDetailsModel) {
-        mEditButtonText = if (item.Follower.containsKey(repo.getCurrentUserId())) {
-            Status.following
+        mEditButtonText = if (item.follower.containsKey(repo.getCurrentUserId())) {
+            Status.Following
         } else {
-            Status.follow
+            Status.Follow
         }
     }
 

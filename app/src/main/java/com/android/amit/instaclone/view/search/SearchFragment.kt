@@ -100,7 +100,7 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
                         Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT)
                             .show()
 
-                        if (status == Status.follow) {
+                        if (status == Status.Follow) {
                             sendNotification(userId)
                         }
                     }

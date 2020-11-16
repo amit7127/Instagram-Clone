@@ -26,19 +26,11 @@ import com.android.amit.instaclone.view.search.presenter.UserSerchAdapter
  */
 class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
 
-    lateinit var purpose: String
+    var purpose: String = Constants.FOLLOWING_TAG
     private lateinit var userListBinding: FragmentUsersListBinding
     lateinit var viewModel: UsersListViewModel
     lateinit var adapter: UserSerchAdapter
     private var listOfUsers = arrayListOf<UserDetailsModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (arguments?.getString(Constants.PURPOSE) != null) {
-            this.purpose = arguments?.getString(Constants.PURPOSE)!!
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,9 +39,8 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
         userListBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_users_list, container, false)
         viewModel = ViewModelProvider(this).get(UsersListViewModel::class.java)
-
+        userListBinding.fragment = this
         init()
-
         return userListBinding.root
     }
 
@@ -57,6 +48,10 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
      * Init views
      */
     private fun init() {
+
+        if (arguments?.getString(Constants.PURPOSE) != null) {
+            this.purpose = arguments?.getString(Constants.PURPOSE)!!
+        }
 
         val recyclerView: RecyclerView =
             userListBinding.userListRecyclerView // In xml we have given id rv_movie_list to RecyclerView

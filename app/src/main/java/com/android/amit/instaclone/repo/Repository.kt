@@ -188,7 +188,7 @@ class Repository {
 
         val userId = getCurrentUserId()
 
-        if (status == Status.follow) {
+        if (status == Status.Follow) {
             //If status need to set to follow
             //First set the user id in the current user following list
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
@@ -215,7 +215,7 @@ class Repository {
                         )
                     }
                 }
-        } else if (status == Status.following) {
+        } else if (status == Status.Following) {
             //If status need to set to un-follow
             //First remove the user id from the current user following list
             FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME).child(userId)
@@ -346,6 +346,30 @@ class Repository {
         return result
     }
 
+    fun saveUserProfileDataWithoutImage(userDetails: UserDetailsModel): MutableLiveData<Resource<Unit>>{
+        val result: MutableLiveData<Resource<Unit>> =
+            MutableLiveData()
+        val resource = Resource<Unit>()
+        result.value = resource.loading()
+
+        userDetails.fullName = userDetails.fullName.toLowerCase(Locale.getDefault())
+        userDetails.userName = userDetails.userName.toLowerCase(Locale.getDefault())
+
+        val userRef: DatabaseReference =
+            FirebaseDatabase.getInstance().reference.child(FieldName.USER_TABLE_NAME)
+        userRef.child(userDetails.userId).setValue(userDetails).addOnCompleteListener {
+            if (it.isSuccessful) {
+                result.value = resource.success(null)
+            } else {
+                result.value = resource.error(
+                    Resources.getSystem().getString(R.string.failed_to_update_user_detail)
+                )
+                FirebaseAuth.getInstance().signOut()
+            }
+        }
+        return result
+    }
+
     /**
      * @param postPictureUri: uri path of the post picture
      * @param comment: comment in string
@@ -454,7 +478,7 @@ class Repository {
                                 if (post != null) {
                                     posts.clear()
                                     val userId = post.publisher
-                                    if (currentUserDetails != null && (currentUserDetails.Following.containsKey(
+                                    if (currentUserDetails != null && (currentUserDetails.following.containsKey(
                                             userId
                                         ) || currentUserDetails.userId == userId)
                                     ) {

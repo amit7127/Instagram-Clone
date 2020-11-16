@@ -60,7 +60,12 @@ class AccountSettingsViewModel : ViewModel() {
             mUserDetailsModel.userName = this.userName
             mUserDetailsModel.bio = this.userBio
 
-            result = repo.saveUserProfileWithImage(mUserDetailsModel, profileImageUri)
+            val uriString = profileImageUri.toString()
+            if (uriString.contains("http")){
+                result = repo.saveUserProfileDataWithoutImage(mUserDetailsModel)
+            }else{
+                result = repo.saveUserProfileWithImage(mUserDetailsModel, profileImageUri)
+            }
         }
         return result
     }

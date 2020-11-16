@@ -8,10 +8,10 @@ package com.android.amit.instaclone.util
  */
 class Status {
     companion object {
-        val statusSuccess: String = "SUCCESS"
-        val statusError: String = "ERROR"
-        val statusLoading: String = "LOADING"
-        val following: String = "Following"
-        val follow: String = "Follow"
+        const val statusSuccess: String = "SUCCESS"
+        const val statusError: String = "ERROR"
+        const val statusLoading: String = "LOADING"
+        const val Following: String = "Following"
+        const val Follow: String = "Follow"
     }
 }

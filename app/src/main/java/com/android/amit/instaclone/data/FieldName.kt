@@ -10,8 +10,8 @@ package com.android.amit.instaclone.data
  */
 object FieldName {
     const val USER_TABLE_NAME = "Users"
-    const val FOLLOWER_COLUMN_NAME = "Follower"
-    const val FOLLOWING_COLUMN_NAME = "Following"
+    const val FOLLOWER_COLUMN_NAME = "follower"
+    const val FOLLOWING_COLUMN_NAME = "following"
     const val FULL_NAME_COLUMN_NAME = "fullName"
     const val USER_ID_COLUMN_NAME = "userId"
 
