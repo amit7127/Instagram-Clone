@@ -39,7 +39,7 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         storyBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_show_story, container, false)
         viewModel = ViewModelProvider(this).get(ShowStoryViewModel::class.java)

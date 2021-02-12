@@ -49,7 +49,7 @@ class PostDetailsFragment : Fragment(), PostsListAdapter.PostListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         postDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_post_details, container, false)

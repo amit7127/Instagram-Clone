@@ -1,6 +1,5 @@
 package com.android.amit.instaclone.view.signup
 
-import android.content.Context
 import android.content.res.Resources
 import android.text.TextUtils
 import android.view.View
@@ -28,19 +27,14 @@ class SignUpViewModel : ViewModel() {
     var email: String = ""
     var passWord: String = ""
 
-    private lateinit var mContext: Context
-    private lateinit var mView: View
-
     /**
      * create user
      */
-    fun createUser(ctx: Context, view: View): LiveData<Resource<FirebaseUser>> {
-        mContext = ctx
-        mView = view
+    fun createUser(view: View): LiveData<Resource<FirebaseUser>> {
 
         var result: MutableLiveData<Resource<FirebaseUser>> = MutableLiveData()
 
-        if (validateEnteredData()) {
+        if (validateEnteredData(view)) {
             val repo = Repository()
 
             result = repo.createUSerWithEmailAndPassword(email, passWord)
@@ -74,11 +68,11 @@ class SignUpViewModel : ViewModel() {
     /**
      * validate data
      */
-    private fun validateEnteredData(): Boolean {
+    private fun validateEnteredData(view: View): Boolean {
         when {
             TextUtils.isEmpty(fullName) -> {
                 Snackbar.make(
-                    mView,
+                    view,
                     Resources.getSystem().getString(R.string.full_name_field_required),
                     Snackbar.LENGTH_SHORT
                 ).show()
@@ -87,7 +81,7 @@ class SignUpViewModel : ViewModel() {
 
             TextUtils.isEmpty(userName) -> {
                 Snackbar.make(
-                    mView,
+                    view,
                     Resources.getSystem().getString(R.string.user_name_field_required),
                     Snackbar.LENGTH_SHORT
                 ).show()
@@ -96,7 +90,7 @@ class SignUpViewModel : ViewModel() {
 
             TextUtils.isEmpty(email) -> {
                 Snackbar.make(
-                    mView,
+                    view,
                     Resources.getSystem().getString(R.string.email_field_required),
                     Snackbar.LENGTH_SHORT
                 ).show()
@@ -105,7 +99,7 @@ class SignUpViewModel : ViewModel() {
 
             TextUtils.isEmpty(passWord) -> {
                 Snackbar.make(
-                    mView,
+                    view,
                     Resources.getSystem().getString(R.string.password_field_required),
                     Snackbar.LENGTH_SHORT
                 ).show()

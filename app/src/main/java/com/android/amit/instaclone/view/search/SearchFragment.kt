@@ -38,7 +38,7 @@ class SearchFragment : Fragment(), UserSerchAdapter.UserSearchListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
         viewModel = ViewModelProvider(this).get(SearchFragmentViewModel::class.java)

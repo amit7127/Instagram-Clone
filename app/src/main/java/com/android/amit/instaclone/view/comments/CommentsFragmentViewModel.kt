@@ -27,8 +27,6 @@ class CommentsFragmentViewModel : ViewModel() {
     var commentString: String = ""
     var userId: String = ""
 
-    private lateinit var mView: View
-
     /**
      * set post data
      */
@@ -75,9 +73,9 @@ class CommentsFragmentViewModel : ViewModel() {
     /**
      * post new comment
      */
-    fun postComment(postId: String): MutableLiveData<Resource<Unit>> {
+    fun postComment(postId: String, mView: View): MutableLiveData<Resource<Unit>> {
         var result: MutableLiveData<Resource<Unit>> = MutableLiveData()
-        if (validateEnteredData()) {
+        if (validateEnteredData(mView)) {
             val commentModel = CommentModel(userId, commentString)
 
             result = repo.postComment(postId, commentModel)
@@ -95,7 +93,7 @@ class CommentsFragmentViewModel : ViewModel() {
     /**
      * Validate comment form data
      */
-    private fun validateEnteredData(): Boolean {
+    private fun validateEnteredData(mView: View): Boolean {
         when {
             TextUtils.isEmpty(commentString) -> {
                 Snackbar.make(

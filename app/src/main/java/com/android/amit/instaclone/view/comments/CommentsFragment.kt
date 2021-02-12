@@ -48,7 +48,7 @@ class CommentsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         commentFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_comments, container, false)
         viewModel = ViewModelProvider(this).get(CommentsFragmentViewModel::class.java)
@@ -142,30 +142,35 @@ class CommentsFragment : Fragment() {
      */
     fun onPostCommentClicked() {
         if (postId != null) {
-            viewModel.postComment(postId!!).observe(viewLifecycleOwner, {
-                when (it.status) {
-                    Status.statusLoading -> {
-                        publish_comment_progress_bar.visibility = View.VISIBLE
-                        publish_button_comment_fragment.visibility = View.GONE
-                    }
-                    Status.statusSuccess -> {
-                        publish_comment_progress_bar.visibility = View.GONE
-                        publish_button_comment_fragment.visibility = View.VISIBLE
-                        sendNotification(postId!!)
-                        viewModel.clearComment()
-                        commentFragmentBinding.invalidateAll()
-                    }
-
-                    else -> {
-                        publish_comment_progress_bar.visibility = View.GONE
-                        it.message?.let { it1 ->
-                            Snackbar.make(commentFragmentBinding.root, it1, Snackbar.LENGTH_SHORT)
-                                .show()
+            viewModel.postComment(postId!!, commentFragmentBinding.root)
+                .observe(viewLifecycleOwner, {
+                    when (it.status) {
+                        Status.statusLoading -> {
+                            publish_comment_progress_bar.visibility = View.VISIBLE
+                            publish_button_comment_fragment.visibility = View.GONE
                         }
-                        publish_button_comment_fragment.visibility = View.VISIBLE
+                        Status.statusSuccess -> {
+                            publish_comment_progress_bar.visibility = View.GONE
+                            publish_button_comment_fragment.visibility = View.VISIBLE
+                            sendNotification(postId!!)
+                            viewModel.clearComment()
+                            commentFragmentBinding.invalidateAll()
+                        }
+
+                        else -> {
+                            publish_comment_progress_bar.visibility = View.GONE
+                            it.message?.let { it1 ->
+                                Snackbar.make(
+                                    commentFragmentBinding.root,
+                                    it1,
+                                    Snackbar.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                            publish_button_comment_fragment.visibility = View.VISIBLE
+                        }
                     }
-                }
-            })
+                })
         }
     }
 

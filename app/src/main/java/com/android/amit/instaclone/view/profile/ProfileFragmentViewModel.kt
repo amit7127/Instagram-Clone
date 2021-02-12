@@ -11,7 +11,6 @@ import com.android.amit.instaclone.repo.Repository
 import com.android.amit.instaclone.util.Status
 import com.android.amit.instaclone.util.StringUtils.capitalizeWords
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * File created at 27/05/2020
@@ -32,7 +31,7 @@ class ProfileFragmentViewModel : ViewModel() {
     var repo: Repository = Repository()
     var id = repo.getCurrentUserId()
 
-    fun getUserData(userId: String?): MutableLiveData<Resource<UserDetailsModel>>? {
+    fun getUserData(userId: String?): MutableLiveData<Resource<UserDetailsModel>> {
         if (userId != null) {
             id = userId
         } else {

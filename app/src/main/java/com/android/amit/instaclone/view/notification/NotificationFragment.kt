@@ -38,7 +38,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.NotificationLis
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         notificationBinding =
             DataBindingUtil.inflate(inflater, R.layout.notification_fragment, container, false)
         viewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)

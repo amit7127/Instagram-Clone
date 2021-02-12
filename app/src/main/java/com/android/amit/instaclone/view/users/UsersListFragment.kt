@@ -35,7 +35,7 @@ class UsersListFragment : Fragment(), UserSerchAdapter.UserSearchListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         userListBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_users_list, container, false)
         viewModel = ViewModelProvider(this).get(UsersListViewModel::class.java)

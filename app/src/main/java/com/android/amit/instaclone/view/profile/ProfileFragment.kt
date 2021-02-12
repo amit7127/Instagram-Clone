@@ -43,7 +43,7 @@ class ProfileFragment : Fragment(), UploadedPostImagesAdapter.PostImageHandler,
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         profileBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)

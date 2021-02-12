@@ -31,7 +31,7 @@ class PostsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         postsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_posts, container, false)
         viewModel = ViewModelProvider(this).get(PostFragmnetViewModel::class.java)
