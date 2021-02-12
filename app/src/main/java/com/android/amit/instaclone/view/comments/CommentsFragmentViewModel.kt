@@ -1,6 +1,6 @@
 package com.android.amit.instaclone.view.comments
 
-import android.content.res.Resources
+import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import android.view.View
@@ -73,9 +73,13 @@ class CommentsFragmentViewModel : ViewModel() {
     /**
      * post new comment
      */
-    fun postComment(postId: String, mView: View): MutableLiveData<Resource<Unit>> {
+    fun postComment(
+        postId: String,
+        mView: View,
+        context: Context
+    ): MutableLiveData<Resource<Unit>> {
         var result: MutableLiveData<Resource<Unit>> = MutableLiveData()
-        if (validateEnteredData(mView)) {
+        if (validateEnteredData(mView, context)) {
             val commentModel = CommentModel(userId, commentString)
 
             result = repo.postComment(postId, commentModel)
@@ -93,12 +97,12 @@ class CommentsFragmentViewModel : ViewModel() {
     /**
      * Validate comment form data
      */
-    private fun validateEnteredData(mView: View): Boolean {
+    private fun validateEnteredData(mView: View, context: Context): Boolean {
         when {
             TextUtils.isEmpty(commentString) -> {
                 Snackbar.make(
                     mView,
-                    Resources.getSystem().getString(R.string.comment_field_validation_string),
+                    context.getString(R.string.comment_field_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -107,7 +111,7 @@ class CommentsFragmentViewModel : ViewModel() {
             TextUtils.isEmpty(userId) -> {
                 Snackbar.make(
                     mView,
-                    Resources.getSystem().getString(R.string.unable_to_fetch_user_details),
+                    context.getString(R.string.unable_to_fetch_user_details),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false

@@ -28,7 +28,7 @@ class AccountSettingsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         accountSettingBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_account_settings, container, false)
@@ -87,30 +87,31 @@ class AccountSettingsFragment : Fragment() {
      * Save profile button clicked
      */
     fun onSaveProfileClicked() {
-        viewModel.saveUserData(accountSettingBinding.root).observe(viewLifecycleOwner, {
-            when (it.status) {
-                Status.statusLoading -> {
-                    account_settings_progress_bar.visibility = View.VISIBLE
+        viewModel.saveUserData(accountSettingBinding.root, requireContext())
+            .observe(viewLifecycleOwner, {
+                when (it.status) {
+                    Status.statusLoading -> {
+                        account_settings_progress_bar.visibility = View.VISIBLE
+                    }
+                    Status.statusSuccess -> {
+                        Snackbar.make(
+                            accountSettingBinding.root,
+                            it.message.toString(),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                        account_settings_progress_bar.visibility = View.GONE
+                        onFragmentClosed()
+                    }
+                    else -> {
+                        account_settings_progress_bar.visibility = View.GONE
+                        Snackbar.make(
+                            accountSettingBinding.root,
+                            it.message.toString(),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-                Status.statusSuccess -> {
-                    Snackbar.make(
-                        accountSettingBinding.root,
-                        it.message.toString(),
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                    account_settings_progress_bar.visibility = View.GONE
-                    onFragmentClosed()
-                }
-                else -> {
-                    account_settings_progress_bar.visibility = View.GONE
-                    Snackbar.make(
-                        accountSettingBinding.root,
-                        it.message.toString(),
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        })
+            })
     }
 
     /**

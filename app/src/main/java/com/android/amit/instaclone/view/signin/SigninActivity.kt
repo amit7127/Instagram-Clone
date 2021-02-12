@@ -50,7 +50,7 @@ class SignInActivity : AppCompatActivity() {
      * on sign-in button clicked
      */
     fun onSignInClicked() {
-        viewModel.signInUser(signInBinding.root).observe(this, {
+        viewModel.signInUser(signInBinding.root, this).observe(this, {
             when (it.status) {
                 Status.statusLoading -> {
                     //isLoading = View.VISIBLE

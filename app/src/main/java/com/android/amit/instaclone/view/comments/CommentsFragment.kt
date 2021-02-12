@@ -142,7 +142,7 @@ class CommentsFragment : Fragment() {
      */
     fun onPostCommentClicked() {
         if (postId != null) {
-            viewModel.postComment(postId!!, commentFragmentBinding.root)
+            viewModel.postComment(postId!!, commentFragmentBinding.root, requireContext())
                 .observe(viewLifecycleOwner, {
                     when (it.status) {
                         Status.statusLoading -> {

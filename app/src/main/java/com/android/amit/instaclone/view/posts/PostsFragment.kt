@@ -67,7 +67,7 @@ class PostsFragment : Fragment() {
      * new post
      */
     fun onPostButtonClicked() {
-        viewModel.post(postsBinding.root).observe(viewLifecycleOwner, {
+        viewModel.post(postsBinding.root, requireContext()).observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.statusLoading -> {
                     posts_progressbar.visibility = View.VISIBLE

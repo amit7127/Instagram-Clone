@@ -1,5 +1,6 @@
 package com.android.amit.instaclone.view.signin
 
+import android.content.Context
 import android.content.res.Resources
 import android.text.TextUtils
 import android.view.View
@@ -25,11 +26,11 @@ class SignInViewModel : ViewModel() {
     /**
      * Sign-in user
      */
-    fun signInUser(view: View): LiveData<Resource<FirebaseUser>> {
+    fun signInUser(view: View, context: Context): LiveData<Resource<FirebaseUser>> {
 
         var result: MutableLiveData<Resource<FirebaseUser>> = MutableLiveData()
 
-        if (validateEnteredData(view)) {
+        if (validateEnteredData(view, context)) {
             val repo = Repository()
 
             result = repo.loginUserWithEmailAndPassword(email, passWord)
@@ -41,12 +42,12 @@ class SignInViewModel : ViewModel() {
     /**
      * validate username and password field
      */
-    private fun validateEnteredData(view: View): Boolean {
+    private fun validateEnteredData(view: View, context: Context): Boolean {
         when {
             TextUtils.isEmpty(email) -> {
                 Snackbar.make(
                     view,
-                    Resources.getSystem().getString(R.string.email_field_required),
+                    context.getString(R.string.email_field_required),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -55,7 +56,7 @@ class SignInViewModel : ViewModel() {
             TextUtils.isEmpty(passWord) -> {
                 Snackbar.make(
                     view,
-                    Resources.getSystem().getString(R.string.password_field_required),
+                    context.getString(R.string.password_field_required),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false

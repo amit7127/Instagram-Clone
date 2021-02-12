@@ -70,5 +70,6 @@
     <string name="posts">Posts</string>
     <string name="followers_label">Followers</string>
     <string name="following_label">Following</string>
+    <string name="add_comment_error_message">Pleas add comment for this post</string>
 
 </resources>

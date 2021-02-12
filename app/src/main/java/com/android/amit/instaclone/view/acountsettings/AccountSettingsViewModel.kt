@@ -1,6 +1,6 @@
 package com.android.amit.instaclone.view.acountsettings
 
-import android.content.res.Resources
+import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import android.view.View
@@ -51,19 +51,19 @@ class AccountSettingsViewModel : ViewModel() {
     /**
      * Save user entered data
      */
-    fun saveUserData(view: View): LiveData<Resource<Unit>> {
+    fun saveUserData(view: View, context: Context): LiveData<Resource<Unit>> {
         var result: MutableLiveData<Resource<Unit>> =
             MutableLiveData()
 
-        if (validateEnteredData(view)) {
+        if (validateEnteredData(view, context)) {
             mUserDetailsModel.fullName = this.fullName
             mUserDetailsModel.userName = this.userName
             mUserDetailsModel.bio = this.userBio
 
             val uriString = profileImageUri.toString()
-            if (uriString.contains("http")){
+            if (uriString.contains("http")) {
                 result = repo.saveUserInFirebase(mUserDetailsModel)
-            }else{
+            } else {
                 result = repo.saveUserProfileWithImage(mUserDetailsModel, profileImageUri)
             }
         }
@@ -73,12 +73,12 @@ class AccountSettingsViewModel : ViewModel() {
     /**
      * validate form
      */
-    private fun validateEnteredData(mView: View): Boolean {
+    private fun validateEnteredData(mView: View, context: Context): Boolean {
         when {
             TextUtils.isEmpty(mUserDetailsModel.fullName) -> {
                 Snackbar.make(
                     mView,
-                    Resources.getSystem().getString(R.string.full_name_validation_string),
+                    context.getString(R.string.full_name_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -87,7 +87,7 @@ class AccountSettingsViewModel : ViewModel() {
             TextUtils.isEmpty(mUserDetailsModel.userName) -> {
                 Snackbar.make(
                     mView,
-                    Resources.getSystem().getString(R.string.user_name_validation_string),
+                    context.getString(R.string.user_name_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
@@ -96,7 +96,7 @@ class AccountSettingsViewModel : ViewModel() {
             TextUtils.isEmpty(mUserDetailsModel.bio) -> {
                 Snackbar.make(
                     mView,
-                    Resources.getSystem().getString(R.string.user_bio_validation_string),
+                    context.getString(R.string.user_bio_validation_string),
                     Snackbar.LENGTH_SHORT
                 ).show()
                 return false
