@@ -35,7 +35,7 @@ class SignUpActivity : AppCompatActivity() {
      * Sign-up button clicked event
      */
     fun onSignUpClicked() {
-        viewModel.createUser(this, signUpBinding.root).observe(this, {
+        viewModel.createUser(signUpBinding.root).observe(this, {
             when (it.status) {
                 Status.statusLoading -> {
                     //isLoading = View.VISIBLE
