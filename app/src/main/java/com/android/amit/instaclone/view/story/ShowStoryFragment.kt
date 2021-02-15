@@ -130,9 +130,13 @@ class ShowStoryFragment : Fragment(), StoriesProgressView.StoriesListener {
     }
 
     override fun onPrev() {
-        currentStory = mStoryList[--mStoryCount]
-        setSeen(currentStory.storyId)
-        storyBinding.invalidateAll()
+        if (mStoryCount != 0) {
+            currentStory = mStoryList[--mStoryCount]
+            setSeen(currentStory.storyId)
+            storyBinding.invalidateAll()
+        } else{
+            onComplete()
+        }
     }
 
     override fun onNext() {
